@@ -1,16 +1,23 @@
-fx_version 'bodacious'
+fx_version 'cerulean'
 games { 'gta5' }
 
 author 'multiple'
 description '[Serpent] Serverside Platform for Entity Management - Dev Resource'
 version '0.1'
 
+shared_scripts {
+  'Common/commonfct_shared.lua',
+  'Config/config_shared.lua',
+  'Def/def_shared.lua',
+}
+
 server_scripts {
   'Common/commonfct_sv.lua',
-  'Common/commonfct_shared.lua',
   'Config/config_sv.lua',
-  'Config/config_shared.lua',
+  'Def/def_sv.lua',
   'Main/main_sv.lua',
+  'Natives/Handler/*.lua',
+  'Natives/Server/*.lua',
   'NodeConfig/nodes_sv.lua',
   'Pathfinding/paths_sv.lua',
   'Sync/sync_sv.lua',
@@ -19,10 +26,10 @@ server_scripts {
 
 client_scripts {
   'Common/commonfct_cl.lua',
-  'Common/commonfct_shared.lua',
   'Config/config_cl.lua',
-  'Config/config_shared.lua',
+  'Def/def_cl.lua',
   'Main/main_cl.lua',
+  'Natives/Client/*.lua',
   'Pathfinding/paths_cl.lua',
   'Sync/sync_cl.lua',
   'Startup/startup_cl.lua',
@@ -32,4 +39,5 @@ server_exports {
   'ssv_nat_CreatePed',
   'ssv_nat_CreateVehicle',
   'ssv_nat_CreateObject',
+  'ssv_nat_TaskGoStraightToCoord',
 }

@@ -1,7 +1,3 @@
-AddEventHandler('scl:SendPedData', function(pedid, type, key, value)
-  TriggerServerEvent('ssv:RecievePedData', pedid, type, key, value)
-end)
-
 RegisterNetEvent('scl:RecievePedData')
 AddEventHandler('scl:RecievePedData', function(pedid, type, key, value)
   if type == 'Component' then

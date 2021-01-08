@@ -15,11 +15,14 @@ AddEventHandler('scl:MainClientPedLoop', function()
         scl_PedList[pedid].x = pedx
         scl_PedList[pedid].y = pedy
         scl_PedList[pedid].z = pedz
+        TriggerServerEvent('ssv:RecievePedData', pedid, 'Position', 'x', pedx)
+        TriggerServerEvent('ssv:RecievePedData', pedid, 'Position', 'y', pedy)
+        TriggerServerEvent('ssv:RecievePedData', pedid, 'Position', 'z', pedz)
 
         if ssh_VectorDistance(pedx, pedy, pedz, plx, ply, plz) > DespawnRange then
-          TriggerEvent('scl:DespawnRangeCheck', pedid)
+          TriggerEvent('scl:DespawnPed', pedid)
         else
-          -- Trigger main client task handler
+          TriggerEvent('scl:MainTaskHandler', pedid)
         end
       end
       Wait(500)
@@ -29,7 +32,25 @@ AddEventHandler('scl:MainClientPedLoop', function()
 end)
 
 AddEventHandler('scl:MainTaskHandler', function(pedid)
-  --print('Executing Task')
+  local isOverride = false
+  local Objective = nil
+  local ObjectiveData = nil
+  local PathfindingData = nil
+  if scl_PedList[pedid].OverrideObjective ~= 'none' then
+    isOverride = true
+    Objective = scl_PedList[pedid].OverrideObjective
+    ObjectiveData = scl_PedList[pedid].OverrideObjectiveData
+    PathfindingData = scl_PedList[pedid].OverridePathfindingData
+  else
+    Objective = scl_PedList[pedid].CurrObjective
+    ObjectiveData = scl_PedList[pedid].CurrObjectiveData
+    PathfindingData = scl_PedList[pedid].OverridePathfindingData
+  end
+
+  if Objective ~= 'idle' and ObjectiveData.task ~= 'Ignore' then
+    local ped = NetToPed(scl_PedList[pedid].PedNetID)
+    TriggerServerEvent('ssv:nat:' .. Objective, pedid, ObjectiveData, PathfindingData, isOverride)
+  end
 end)
 
 RegisterNetEvent('scl:SpawnPed')
@@ -58,7 +79,7 @@ AddEventHandler('scl:SpawnPed', function(pedid, peddata)
     Wait(50)
   end
 
-  local ped = CreatePed(peddata.PedType, peddata.ModelHash, x, y, z, peddata.heading, true, true)
+  local ped = CreatePed(peddata.PedType, peddata.ModelHash, x, y, z-1.0, peddata.heading, true, true)
   local PedNetID = PedToNet(ped)
 
   scl_PedList[pedid] = peddata
@@ -81,33 +102,17 @@ AddEventHandler('scl:SpawnPed', function(pedid, peddata)
 end)
 
 RegisterNetEvent('scl:SpawnPedInVeh')
-AddEventHandler('scl:SpawnPedInVeh', function(pedid)
+AddEventHandler('scl:SpawnPedInVeh', function(pedid, peddata, vehdata)
 
-end)
-
-AddEventHandler('scl:DespawnRangeCheck', function(pedid)
-  --print('Despawn Range Check')
-  -- GetNearestPlayerToEntity()
-
-  local distance = 99999.9
-
-  if distance > DespawnRange then
-    TriggerEvent('scl:DespawnPed', pedid)
-  else
-    -- Get info on the client taking over
-
-    TriggerEvent('scl:SwitchPedOwnership', pedid)
-  end
-end)
-
-AddEventHandler('scl:SwitchPedOwnership', function(pedid)
-  -- send all info to the server
 end)
 
 RegisterNetEvent('scl:RecievePedOwnership')
 AddEventHandler('scl:RecievePedOwnership', function(pedid, peddata)
 
   scl_PedList[pedid] = peddata
+
+  local PedNetID = peddata.PedNetID
+  local ped = NetToPed(PedNetID)
 
   SetBlockingOfNonTemporaryEvents(ped, peddata.BlockNonTemporaryEvents)
   SetPedRelationshipGroupHash(ped, GetHashKey(peddata.PedRelationshipGroup))
@@ -119,7 +124,7 @@ AddEventHandler('scl:DespawnPed', function(pedid)
   local PedNetID = peddata.PedNetID
   local ped = NetToPed(PedNetID)
 
-  TriggerServerEvent('ssv:DespawnPed', pedid, peddata)
+  TriggerServerEvent('ssv:RecieveEntityControlFromClient', pedid, peddata)
 
   scl_PedList[pedid] = nil
 end)

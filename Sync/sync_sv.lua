@@ -1,7 +1,3 @@
-AddEventHandler('ssv:SendPedData', function(PlayerId, pedid, type, key, value)
-  TriggerClientEvent('scl:RecievePedData', PlayerId, pedid, type, key, value)
-end)
-
 RegisterNetEvent('ssv:RecievePedData')
 AddEventHandler('ssv:RecievePedData', function(pedid, type, key, value)
   if type == 'Component' then

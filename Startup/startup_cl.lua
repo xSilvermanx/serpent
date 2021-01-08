@@ -1,7 +1,3 @@
-scl_PedList = {}
-scl_VehicleList = {}
-scl_ObjectList = {}
-
 AddEventHandler('scl:Startup', function()
 
   TriggerServerEvent('ssv:PlayerConnected')
@@ -11,14 +7,11 @@ AddEventHandler('scl:Startup', function()
   TriggerEvent('scl:MainClientPedLoop')
 end)
 
-FreemodeHashM = GetHashKey('mp_m_freemode_01')
-FreemodeHashF = GetHashKey('mp_f_freemode_01')
-
 TriggerEvent('scl:Startup')
 
 
 
-CreateThread(function()
+--[[CreateThread(function()
   while true do
     for pedid, peddata in ipairs(scl_PedList) do
       print('PedID', pedid)
@@ -28,4 +21,4 @@ CreateThread(function()
     print('------------')
     Wait(1000)
   end
-end)
+end)]]

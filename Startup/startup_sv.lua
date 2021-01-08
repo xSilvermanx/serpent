@@ -1,8 +1,3 @@
-ssv_PedList = {}
-ssv_VehicleList = {}
-ssv_ObjectList = {}
-ssv_PlayerList = {}
-
 RegisterNetEvent('ssv:PlayerConnected')
 AddEventHandler('ssv:PlayerConnected', function()
   local PID = tonumber(source)
@@ -20,6 +15,13 @@ end)
 
 AddEventHandler('playerDropped', function(reason)
   local PID = tonumber(source)
+
+  for pedid, peddata in pairs(ssv_PedList) do
+    if peddata.OwnerClientNetID == PID then
+      TriggerEvent('ssv:RecieveEntityControlFromClient', pedid, peddata)
+    end
+  end
+
   ssv_PlayerList[PID] = nil
 end)
 
@@ -27,9 +29,6 @@ AddEventHandler('ssv:Startup', function()
 
   TriggerEvent('ssv:MainServerPedLoop')
 end)
-
-FreemodeHashM = GetHashKey('mp_m_freemode_01')
-FreemodeHashF = GetHashKey('mp_f_freemode_01')
 
 TriggerEvent('ssv:Startup')
 
@@ -41,10 +40,10 @@ CreateThread(function()
       print('IsSpawned', peddata.IsSpawnedBool)
       print('OwnerNetID', peddata.OwnerClientNetID)
       print('PedNetID', peddata.PedNetID)
-      for plid, pldata in ipairs(ssv_PlayerList) do
-        local distance = ssh_VectorDistance(pldata.x, pldata.y, pldata.z, peddata.x, peddata.y, peddata.z)
-        print('Distance from player', plid, distance)
-      end
+      print('PedCurrTask', peddata.CurrObjective)
+      print('x', peddata.x)
+      print('y', peddata.y)
+      print('z', peddata.z)
       print('---')
     end
     print('------------')
