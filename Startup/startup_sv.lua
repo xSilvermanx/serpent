@@ -31,22 +31,3 @@ AddEventHandler('ssv:Startup', function()
 end)
 
 TriggerEvent('ssv:Startup')
-
-
-CreateThread(function()
-  while true do
-    for pedid, peddata in ipairs(ssv_PedList) do
-      print('SID', pedid)
-      print('IsSpawned', peddata.IsSpawnedBool)
-      print('OwnerNetID', peddata.OwnerClientNetID)
-      print('PedNetID', peddata.PedNetID)
-      print('PedCurrTask', peddata.CurrObjective)
-      print('x', peddata.x)
-      print('y', peddata.y)
-      print('z', peddata.z)
-      print('---')
-    end
-    print('------------')
-    Wait(1000)
-  end
-end)

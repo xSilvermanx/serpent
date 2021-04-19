@@ -1,4 +1,7 @@
-function AStar(Start, Goal)
+function AStar(Start, Goal, Type, TypeData) -- Type: Vehicle, Cycle, Ped; TypeData = {}
+  -- VehData: {IgnoreNoVeh; Speeding}
+  -- CycData: {IgnoreNoVeh; IgnoreAbsNoVeh; Speeding}
+  -- PedData: {IgnoreNoPed}
   local OpenList = {}
   local IsInOpenList = {}
   local PriorityList = {}
@@ -11,10 +14,10 @@ function AStar(Start, Goal)
   ClosedList[Start] = 'None'
   CostSoFarList[Start] = 0
 
-  local Number = 0
+  --local Number = 0
 
   while #OpenList ~= 0 do
-    Number = Number + 1
+    --Number = Number + 1
     local NextIndex = 1
     local SmallestPriority = PriorityList[1]
 
@@ -27,8 +30,6 @@ function AStar(Start, Goal)
 
     local CurrentLocation = OpenList[NextIndex]
     local CurrentPriority = PriorityList[NextIndex]
-    --print('Current', CurrentLocation)
-    --print('CurrPrio', CurrentPriority)
 
     if CurrentLocation == Goal then
       break
@@ -39,38 +40,59 @@ function AStar(Start, Goal)
     table.remove(PriorityList, NextIndex)
 
     for i, NextLocation in ipairs(ListNodes[CurrentLocation].paths) do
-      local NewCost = CostSoFarList[CurrentLocation] + CostFunction(ListNodes[CurrentLocation], ListNodes[NextLocation[1]])
-      if not CostSoFarList[NextLocation[1]] or NewCost < CostSoFarList[NextLocation[1]] then
-        CostSoFarList[NextLocation[1]] = NewCost
-        local NewPriority = NewCost + HeuristicFunction(ListNodes[Goal], ListNodes[NextLocation[1]])
-        if IsInOpenList[NextLocation[1]] then
-          for i, Entry in ipairs(OpenList) do
-            if NextLocation[1] == Entry then
-              PriorityList[i] = NewPriority
-              break
-            end
-          end
-        else
-          table.insert(OpenList, NextLocation[1])
-          IsInOpenList[NextLocation[1]] = true
-          table.insert(PriorityList, NewPriority)
+      local UseNextLocation = false
+      if Type == 'Vehicle' then
+        if (not NextLocation.AbsNoVeh) and (TypeData.IgnoreNoVeh or not NextLocation.NoVeh) then
+          UseNextLocation = true
         end
-        ClosedList[NextLocation[1]] = CurrentLocation
+      elseif Type == 'Cycle' then
+        if (TypeData.IgnoreNoVeh or not NextLocation.NoVeh) and (TypeData.IgnoreAbsNoVeh or not NextLocation.AbsNoVeh) then
+          UseNextLocation = true
+        end
+      elseif Type == 'Ped' then
+        if (TypeData.IgnoreNoPed or not NextLocation.NoPed) then
+          UseNextLocation = true
+        end
       end
 
-    end
+      if UseNextLocation then
 
-    --[[print('Frontier:')
-    for i, Entry in ipairs(OpenList) do
-      print(Entry)
-      print(PriorityList[i])
+        local speed = NextLocation.S + 0.0
+        local maxspeed = 60.0 / 2.237
+
+        if Type == 'Ped' then
+          speed = 1.0
+          maxspeed = 1.0
+        elseif TypeData.Speeding == true then
+          speed = speed*NextLocation.SMult
+          maxspeed = 180.0 / 2.237
+        end
+
+        local NewCost = CostSoFarList[CurrentLocation] + CostFunction(ListNodes[CurrentLocation], ListNodes[NextLocation.id], speed)
+        if not CostSoFarList[NextLocation.id] or NewCost < CostSoFarList[NextLocation.id] then
+          CostSoFarList[NextLocation.id] = NewCost
+          local NewPriority = NewCost + HeuristicFunction(ListNodes[Goal], ListNodes[NextLocation.id], maxspeed)
+          if IsInOpenList[NextLocation.id] then
+            for i, Entry in ipairs(OpenList) do
+              if NextLocation.id == Entry then
+                PriorityList[i] = NewPriority
+                break
+              end
+            end
+          else
+            table.insert(OpenList, NextLocation.id)
+            IsInOpenList[NextLocation.id] = true
+            table.insert(PriorityList, NewPriority)
+          end
+          ClosedList[NextLocation.id] = CurrentLocation
+        end
+      end
     end
-    print('---')]]
 
     Wait(0)
   end
 
-  print('No. of Steps:', Number)
+  --print('No. of Steps: ', Number)
 
   local PathCurrLocation = Goal
   local Path = {}
@@ -84,12 +106,49 @@ function AStar(Start, Goal)
   return(Path)
 end
 
-function CostFunction(CurrentLocation, NextLocation) --to determine the costs between two neighboring functions. That means that NextLocation has to be one node inside CurrentLocation.paths
+function CostFunction(CurrentLocation, NextLocation, speed) --to determine the costs between two neighboring functions. That means that NextLocation has to be one node inside CurrentLocation.paths
 
-  return math.sqrt ( math.pow ( NextLocation.x - CurrentLocation.x, 2 ) + math.pow ( NextLocation.y - CurrentLocation.y, 2 ) + math.pow ( NextLocation.z - CurrentLocation.z, 2 ) )
+  return ( math.sqrt ( math.pow ( NextLocation.x - CurrentLocation.x, 2 ) + math.pow ( NextLocation.y - CurrentLocation.y, 2 ) + math.pow ( NextLocation.z - CurrentLocation.z, 2 ) ) ) / speed
 end
 
-function HeuristicFunction(NodeA, NodeB) -- to determine the costs between two nodes. Mostly used with NodeB the end-node. No node can be sure to be a part of NodeX.paths
+function HeuristicFunction(NodeA, NodeB, maxspeed) -- to determine the costs between two nodes. Mostly used with NodeB the end-node. No node can be sure to be a part of NodeX.paths
 
-  return math.sqrt ( math.pow ( NodeA.x - NodeB.x, 2 ) + math.pow ( NodeA.y - NodeB.y, 2 ) + math.pow ( NodeA.z - NodeB.z, 2 ) )
+  return ( math.sqrt ( math.pow ( NodeA.x - NodeB.x, 2 ) + math.pow ( NodeA.y - NodeB.y, 2 ) + math.pow ( NodeA.z - NodeB.z, 2 ) ) ) / maxspeed
+end
+
+--[[CreateThread(function()
+  local Start = "PALETO-53"
+  local Goal = "PALETO-51"
+
+  Path = AStar(Start, Goal, "Vehicle", {IgnoreNoVeh = false, Speeding = false})
+  for i, entry in ipairs(Path) do
+    print(entry)
+  end
+end)]]
+
+function ssv_nat_GetClosestVehicleNodeId(x, y, z)
+  local Id = nil
+  local Found = false
+  local ClosestDist = 9999999999.9
+  local radius = 100.0
+  for name, data in pairs(ListNodes) do
+    if data.x - radius < x and data.x + radius > x and data.y - radius < y and data.y + radius > y then
+      local Dist = math.sqrt(math.pow(data.x-x, 2)+math.pow(data.y-y, 2)+math.pow(data.z-z,2))
+      if Dist < ClosestDist then
+        ClosestDist = Dist
+        Id = name
+      end
+    end
+  end
+
+  if Id ~= nil then
+    Found = true
+  end
+
+  return Found, Id
+end
+
+function ssv_nat_GetVehicleNodeData(Id)
+  local Data = ListNodes[Id]
+  return Data
 end

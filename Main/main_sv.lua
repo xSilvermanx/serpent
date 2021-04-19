@@ -68,7 +68,7 @@ function ssv_nat_CreatePed(pedType, modelHash, posx, posy, posz, pedheading)
     PedRelationshipGroup = "NO_RELATIONSHIP",
     PedHealth = 100,
     PedArmor = 0,
-    BlockNonTemporaryEvents = true
+    BlockNonTemporaryEvents = true,
   }
 
   table.remove(PedThreads)
@@ -230,7 +230,7 @@ AddEventHandler('ssv:MainTaskHandler', function(pedid)
     PathfindingData = ssv_PedList[pedid].OverridePathfindingData
   end
 
-  if Objective ~= 'idle' then
+  if Objective ~= 'idle' and ObjectiveData.task ~= 'Ignore' then
     TriggerEvent('ssv:nat:' .. Objective, pedid, ObjectiveData, PathfindingData, isOverride)
   end
 end)
@@ -285,7 +285,7 @@ AddEventHandler('ssv:RecieveEntityControlFromClient', function(pedid, peddata)
     local ply = pldata.y
     local plz = pldata.z
     local pldist = ssh_VectorDistance(pedx, pedy, pedz, plx, ply, plz)
-    if pldist < SpawnRange then
+    if pldist < DespawnRange then
       BoolCloseToPl = true
       if pldist < ClosestPlDist then
         ClosestPlId = plid

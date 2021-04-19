@@ -2,7 +2,7 @@ fx_version 'cerulean'
 games { 'gta5' }
 
 author 'multiple'
-description '[Serpent] Serverside Platform for Entity Management - Dev Resource'
+description '[Serpent] Server Platform for Entity Management - Dev Resource'
 version '0.1'
 
 shared_scripts {
@@ -39,5 +39,7 @@ server_exports {
   'ssv_nat_CreatePed',
   'ssv_nat_CreateVehicle',
   'ssv_nat_CreateObject',
+  'ssv_nat_GetClosestVehicleNodeId',
+  'ssv_nat_GetVehicleNodeData',
   'ssv_nat_TaskGoStraightToCoord',
 }

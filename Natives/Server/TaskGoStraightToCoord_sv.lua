@@ -6,9 +6,9 @@ AddEventHandler('ssv:nat:res:TaskGoStraightToCoord:Init', function(SID, tarx, ta
 
   local nx, ny, nz = ssh_getNormalisedVector(posx, posy, posz, tarx, tary, tarz)
 
-  ssv_PedList[SID].x = posx + nx/2
-  ssv_PedList[SID].y = posy + ny/2
-  ssv_PedList[SID].z = posz + nz/2
+  ssv_PedList[SID].x = posx + speed*nx/2
+  ssv_PedList[SID].y = posy + speed*ny/2
+  ssv_PedList[SID].z = posz + speed*nz/2
 
   if isOverride then
     ssv_PedList[SID].OverridePathfindingData['nx'] = nx
@@ -41,8 +41,8 @@ AddEventHandler('ssv:nat:res:TaskGoStraightToCoord:Continue', function(SID, x, y
     nz = ssv_PedList[SID].CurrPathfindingData['nz']
   end
 
-  ssv_PedList[SID].x = posx + nx/2
-  ssv_PedList[SID].y = posy + ny/2
-  ssv_PedList[SID].z = posz + nz/2
+  ssv_PedList[SID].x = posx + speed*nx/2
+  ssv_PedList[SID].y = posy + speed*ny/2
+  ssv_PedList[SID].z = posz + speed*nz/2
 
 end)

@@ -88,33 +88,11 @@ AddEventHandler('ssv:nat:TaskGoStraightToCoord', function(SID, ObjectiveData, Pa
   local distance = ssh_VectorDistance(x, y, z, tarx, tary, tarz)
 
   if distance - (ObjectiveData.speed/2) <= ObjectiveData.distanceToSlide then
-
-    local NewObjective = ssv_PedList[SID].NextObjective
-    local NewObjectiveData = ssv_PedList[SID].NextObjectiveData
-    local NewPathfindingData = ssv_PedList[SID].NextPathfindingData
-
-    ssv_PedList[SID].CurrObjective = NewObjective
-    ssv_PedList[SID].CurrObjectiveData = NewObjectiveData
-    ssv_PedList[SID].CurrPathfindingData = NewPathfindingData
-
-    ssv_PedList[SID].NextObjective = "idle"
-    ssv_PedList[SID].NextObjectiveData = {}
-    ssv_PedList[SID].NextPathfindingData = {}
-
-    if ssv_PedList[SID].IsSpawnedBool then
-      local OwnerID = ssv_PedList[SID].OwnerClientNetID
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'Objective', 'CurrObjective', NewObjective)
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'Objective', 'CurrObjectiveData', NewObjectiveData)
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'Objective', 'CurrPathfindingData', NewPathfindingData)
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'Objective', 'NextObjective', "idle")
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'Objective', 'NextObjectiveData', {} )
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'Objective', 'NextPathfindingData', {} )
-    end
+    TriggerEvent('ssv:FinishTask', SID, isOverride, true)
   end
 end)
 
 AddEventHandler('ssv:nat:TaskGoStraightToCoord:Init', function(SID, x, y, z, speed, timeout, targetHeading, distanceToSlide, isOverride)
-  print('triggered init')
   if ssv_PedList[SID].IsSpawnedBool then
     local PedNetID = ssv_PedList[SID].PedNetID
     local ped = NetworkGetEntityFromNetworkId(PedNetID)
@@ -127,13 +105,11 @@ AddEventHandler('ssv:nat:TaskGoStraightToCoord:Init', function(SID, x, y, z, spe
 end)
 
 AddEventHandler('ssv:nat:TaskGoStraightToCoord:Continue', function(SID, x, y, z, speed, timeout, targetHeading, distanceToSlide, isOverride)
-  print('triggered continue')
   if ssv_PedList[SID].IsSpawnedBool then
     local PedNetID = ssv_PedList[SID].PedNetID
     local ped = NetworkGetEntityFromNetworkId(PedNetID)
     local OwnerID = NetworkGetEntityOwner(ped)
     if ssv_PedList[SID].ScriptOwnerNetID ~= OwnerID then
-      print('Reinit clientside')
       ssv_PedList[SID].ScriptOwnerNetID = OwnerID
       TriggerClientEvent('scl:nat:res:TaskGoStraightToCoord', OwnerID, SID, PedNetID, x, y, z, speed, timeout, targetHeading, distanceToSlide, isOverride)
     end
