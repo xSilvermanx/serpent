@@ -10,6 +10,8 @@ AddEventHandler('scl:RecievePedData', function(pedid, type, key, value)
 
   elseif type == 'Appearance' then
 
+  elseif type == 'CurrPathfindingData' or type == 'OverridePathfindingData' or type == 'NextPathfindingData' or type == 'CurrObjectiveData' or type == 'OverrideObjectiveData' or type == 'NextObjectiveData' then
+    scl_PedList[pedid][type][key] = value
   else
     scl_PedList[pedid][key] = value
   end

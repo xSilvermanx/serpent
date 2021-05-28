@@ -227,7 +227,7 @@ AddEventHandler('ssv:MainTaskHandler', function(pedid)
   else
     Objective = ssv_PedList[pedid].CurrObjective
     ObjectiveData = ssv_PedList[pedid].CurrObjectiveData
-    PathfindingData = ssv_PedList[pedid].OverridePathfindingData
+    PathfindingData = ssv_PedList[pedid].CurrPathfindingData
   end
 
   if Objective ~= 'idle' and ObjectiveData.task ~= 'Ignore' then
@@ -239,9 +239,9 @@ AddEventHandler('ssv:SpawnPed', function (pedid, peddata, plid)
   ssv_PedList[pedid].IsSpawnedBool = true
   ssv_PedList[pedid].OwnerClientNetID = plid
 
-  if ssv_PedList[pedid].OverrideObjective ~= 'none' then
+  if ssv_PedList[pedid].OverrideObjective ~= 'none' and ssv_PedList[pedid].OverrideObjectiveData.task ~= 'Ignore' then
     ssv_PedList[pedid].OverrideObjectiveData.task = 'Init'
-  else
+  elseif ssv_PedList[pedid].CurrObjectiveData.task ~= 'Ignore' then
     ssv_PedList[pedid].CurrObjectiveData.task = 'Init'
   end
 

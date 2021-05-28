@@ -31,3 +31,17 @@ AddEventHandler('ssv:Startup', function()
 end)
 
 TriggerEvent('ssv:Startup')
+
+--[[CreateThread(function()
+  while true do
+    for pedid, peddata in pairs(ssv_PedList) do
+      print('SID', peddata.PedSID)
+      print('Pos', peddata.x, peddata.y, peddata.z)
+      print('Heading', peddata.heading)
+      print('Current Task', peddata.CurrObjective)
+      print('---')
+    end
+    print('----------------')
+    Wait(1000)
+  end
+end)]]

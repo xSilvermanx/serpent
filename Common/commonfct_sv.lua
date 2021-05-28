@@ -1,4 +1,6 @@
 AddEventHandler('ssv:FinishTask', function(SID, isOverride, isSuccess) --implement isSuccess for event listeners
+  Resource = ssv_PedList[SID].OwningRes
+
   if isOverride then
     ssv_PedList[SID].OverrideObjective = 'none'
     ssv_PedList[SID].OverrideObjectiveData = {}

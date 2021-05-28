@@ -1,8 +1,9 @@
 AddEventHandler('ssv:nat:res:TaskGoStraightToCoord:Init', function(SID, tarx, tary, tarz, speed, timeout, targetHeading, distanceToSlide, isOverride)
-  ssv_PedList[SID].heading = targetHeading
   local posx = ssv_PedList[SID].x
   local posy = ssv_PedList[SID].y
   local posz = ssv_PedList[SID].z
+
+  ssv_PedList[SID].heading = ssh_getGameHeadingFromPoints(posx, posy, tarx, tary)
 
   local nx, ny, nz = ssh_getNormalisedVector(posx, posy, posz, tarx, tary, tarz)
 

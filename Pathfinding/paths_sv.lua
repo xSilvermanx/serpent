@@ -116,17 +116,18 @@ function HeuristicFunction(NodeA, NodeB, maxspeed) -- to determine the costs bet
   return ( math.sqrt ( math.pow ( NodeA.x - NodeB.x, 2 ) + math.pow ( NodeA.y - NodeB.y, 2 ) + math.pow ( NodeA.z - NodeB.z, 2 ) ) ) / maxspeed
 end
 
---[[CreateThread(function()
-  local Start = "PALETO-53"
-  local Goal = "PALETO-51"
+CreateThread(function()
 
-  Path = AStar(Start, Goal, "Vehicle", {IgnoreNoVeh = false, Speeding = false})
+  local Start = "PALETO-4"
+  local Goal = "PALETO-23"
+
+  Path = AStar(Start, Goal, "Ped", {IgnoreNoVeh = false, Speeding = false})
   for i, entry in ipairs(Path) do
     print(entry)
   end
-end)]]
+end)
 
-function ssv_nat_GetClosestVehicleNodeId(x, y, z)
+function ssv_nat_GetClosestNodeId(x, y, z)
   local Id = nil
   local Found = false
   local ClosestDist = 9999999999.9
@@ -148,7 +149,7 @@ function ssv_nat_GetClosestVehicleNodeId(x, y, z)
   return Found, Id
 end
 
-function ssv_nat_GetVehicleNodeData(Id)
+function ssv_nat_GetNodeData(Id)
   local Data = ListNodes[Id]
   return Data
 end

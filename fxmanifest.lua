@@ -39,7 +39,8 @@ server_exports {
   'ssv_nat_CreatePed',
   'ssv_nat_CreateVehicle',
   'ssv_nat_CreateObject',
-  'ssv_nat_GetClosestVehicleNodeId',
-  'ssv_nat_GetVehicleNodeData',
+  'ssv_nat_GetClosestNodeId',
+  'ssv_nat_GetNodeData',
+  'ssv_nat_TaskFollowNavMeshToCoord',
   'ssv_nat_TaskGoStraightToCoord',
 }

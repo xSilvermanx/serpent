@@ -44,7 +44,7 @@ AddEventHandler('scl:MainTaskHandler', function(pedid)
   else
     Objective = scl_PedList[pedid].CurrObjective
     ObjectiveData = scl_PedList[pedid].CurrObjectiveData
-    PathfindingData = scl_PedList[pedid].OverridePathfindingData
+    PathfindingData = scl_PedList[pedid].CurrPathfindingData
   end
 
   if Objective ~= 'idle' and ObjectiveData.task ~= 'Ignore' then
@@ -60,17 +60,25 @@ AddEventHandler('scl:SpawnPed', function(pedid, peddata)
   local y = peddata.y
   local z = peddata.z
 
-  if IsActualPath then -- recode to check the serpent-pathlink depending on current task
+  if peddata.OverrideObjective ~= 'none' then
+    isOverride = true
+  end
 
+  local retval, r = GetSafeCoordForPed(peddata.x, peddata.y, peddata.z, false, 16)
+  local rx, ry, rz = table.unpack(r)
+  if retval and ssh_VectorDistance(x, y, z, rx, ry, rz) < 22.0 then
+    x = rx
+    y = ry
+    z = rz
   else
-    local retval, r = GetSafeCoordForPed(peddata.x, peddata.y, peddata.z, true, 16)
-    local rx, ry, rz = table.unpack(r)
-    if retval == true and ssh_VectorDistance(x, y, z, rx, ry, rz) < 22.0 then
+    retval, r = GetPointOnRoadSide(peddata.x, peddata.y, peddata.z, 0)
+    if retval and ssh_VectorDistance(x, y, z, rx, ry, rz) < 22.0 then
       x = rx
       y = ry
       z = rz
     end
   end
+
 
   RequestModel(peddata.ModelHash)
 
