@@ -116,7 +116,7 @@ function HeuristicFunction(NodeA, NodeB, maxspeed) -- to determine the costs bet
   return ( math.sqrt ( math.pow ( NodeA.x - NodeB.x, 2 ) + math.pow ( NodeA.y - NodeB.y, 2 ) + math.pow ( NodeA.z - NodeB.z, 2 ) ) ) / maxspeed
 end
 
-CreateThread(function()
+--[[CreateThread(function()
 
   local Start = "PALETO-4"
   local Goal = "PALETO-23"
@@ -125,7 +125,7 @@ CreateThread(function()
   for i, entry in ipairs(Path) do
     print(entry)
   end
-end)
+end)]]
 
 function ssv_nat_GetClosestNodeId(x, y, z)
   local Id = nil

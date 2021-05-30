@@ -355,7 +355,7 @@ ListNodes = {
     paths = {
       {id = "PALETO-1", S = 30, SMult = 3.0, NoVeh = true},
       {id = "PALETO-2", S = 30, SMult = 3.0},
-      {id = "PALETO-30", S = 30, SMult = 3.0, NoVeh = true},
+      {id = "PALETO-28", S = 30, SMult = 3.0, NoVeh = true},
     },
     intersection = false,
   },
@@ -824,7 +824,7 @@ ListNodes = {
     y=6645.72,
     z=31.61,
     paths = {
-      {id = "PALETO-70", S = 30, SMult = 3.0},
+      {id = "PALETO-71", S = 30, SMult = 3.0},
       {id = "PALETO-13", S = 30, SMult = 3.0},
     },
     intersection = false,
