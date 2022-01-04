@@ -1,4 +1,4 @@
 ssv_PedList = {}
-ssv_VehicleList = {}
-ssv_ObjectList = {}
+ssv_VehList = {}
+ssv_ObjList = {}
 ssv_PlayerList = {}

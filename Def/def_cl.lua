@@ -1,3 +1,3 @@
 scl_PedList = {}
-scl_VehicleList = {}
-scl_ObjectList = {}
+scl_VehList = {}
+scl_ObjList = {}

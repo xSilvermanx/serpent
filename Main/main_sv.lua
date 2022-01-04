@@ -1,166 +1,3 @@
-local PedThreads = {}
-
-function ssv_nat_CreatePed(pedType, modelHash, posx, posy, posz, pedheading)
-
-  local Owner = GetInvokingResource()
-
-  local SID = 1
-
-  table.insert(PedThreads, 1)
-  local tCount = #PedThreads
-  local tCountNow = tCount
-
-  while tCount > 1 and tCountNow > tCount-1 do
-    tCountNow = table.getn(PedThreads)
-  end
-
-  while ssv_PedList[SID] ~= nil do
-    SID = SID + 1
-  end
-
-  ssv_PedList[SID] = {
-    PedSID = SID,
-    OwningRes = Owner,
-    x = posx,
-    y = posy,
-    z = posz,
-    heading = pedheading,
-    IsSpawnedBool = false,
-    ScriptOwnerNetID = 0, -- FiveM Networking Ownership
-    OwnerClientNetID = 0, -- Serpent Ownership
-    PedNetID = 0,
-    PedType = pedType,
-    ModelHash = modelHash,
-    PedVisualData = {
-      Components = {
-        {0, 0, 0},
-        {1, 0, 0},
-        {2, 0, 0},
-        {3, 0, 0},
-        {4, 0, 0},
-        {5, 0, 0},
-        {6, 0, 0},
-        {7, 0, 0},
-        {8, 0, 0},
-        {9, 0, 0},
-        {10, 0, 0},
-        {11, 0, 0},
-      },
-      Props = {
-        {0, 0, 0},
-        {1, 0, 0},
-        {2, 0, 0},
-        {6, 0, 0},
-        {7, 0, 0},
-      },
-    },
-    CurrObjective = "idle",
-    CurrObjectiveData = {},
-    CurrPathfindingData = {},
-    OverrideObjective = "none",
-    OverrideObjectiveData = {},
-    OverridePathfindingData = {},
-    NextObjective = "idle",
-    NextObjectiveData = {},
-    NextPathfindingData = {},
-    IsInVeh = false,
-    VehSID = 0,
-    PedRelationshipGroup = "NO_RELATIONSHIP",
-    PedHealth = 100,
-    PedArmor = 0,
-    BlockNonTemporaryEvents = true,
-  }
-
-  table.remove(PedThreads)
-
-  if modelhash == FreemodeHashM or modelhash == FreemodeHashF then
-    ssv_PedList[SID].PedVisualData.Inheritance = {
-      MotherShapeID = 0,
-      FatherShapeID = 0,
-      MotherSkinID = 0,
-      FatherSkinID = 0,
-      shapeMix = 0.0,
-      skinMix = 0.0,
-    }
-    ssv_PedList[SID].PedVisualData.FaceFeatures = {
-      NoseWidth = 0.0,
-      NosePeakHeight = 0.0,
-      NosePeakLength = 0.0,
-      NoseBoneHeight = 0.0,
-      NosePeakLowering = 0.0,
-      NoseBoneTwist = 0.0,
-      EyeBrowHeight = 0.0,
-      EyeBrowForward = 0.0,
-      CheeksBoneHeight = 0.0,
-      CheeksBoneWidth = 0.0,
-      CheeksWidth = 0.0,
-      EyesOpening = 0.0,
-      LipsThickness = 0.0,
-      JawBoneWidth = 0.0,
-      JawBoneBackLength = 0.0,
-      ChimpBoneLower = 0.0,
-      ChimpBoneLength = 0.0,
-      ChimpBoneWidth = 0.0,
-      ChimpHole = 0.0,
-      NeckThickness = 0.0,
-    }
-    ssv_PedList[SID].PedVisualData.Appearance = {
-      HairColor = 0,
-      HairHighlightColor = 0,
-      BlemishesStyle = 255,
-      BlemishesOpacity = 0.0,
-      FacialHairStyle = 255,
-      FacialHairOpacity = 0.0,
-      FacialHairFirstColor = 0,
-      FacialHairSecondColor = 0,
-      EyebrowsStyle = 255,
-      EyebrowsOpacity = 0.0,
-      EyebrowsFirstColor = 0,
-      EyebrowsSecondColor = 0,
-      AgeingStyle = 255,
-      AgeingOpacity = 0.0,
-      MakeupStyle = 255,
-      MakeupOpacity = 0.0,
-      MakeupFirstColor = 0,
-      MakeupSecondColor = 0,
-      BlushStyle = 255,
-      BlushOpacity = 0.0,
-      BlushFirstColor = 0,
-      BlushSecondColor = 0,
-      ComplexionStyle = 255,
-      ComplexionOpacity = 0.0,
-      SunDamageStyle = 255,
-      SunDamageOpacity = 0.0,
-      LipstickStyle = 255,
-      LipstickOpacity = 0.0,
-      LipstickFirstColor = 0,
-      LipstickSecondColor = 0,
-      MolesStyle = 255,
-      MolesOpacity = 0.0,
-      ChestHairStyle = 255,
-      ChestHairOpacity = 0.0,
-      ChestHairFirstColor = 0,
-      ChestHairSecondColor = 0,
-      BodyBlemishesStyle = 255,
-      BodyBlemishesOpacity = 0.0,
-      AddBodyBlemishesStyle = 255,
-      AddBodyBlemishesOpacity = 0.0,
-      EyeColor = 0,
-    }
-  end
-
-  return SID
-
-end
-
-function ssv_nat_CreateVehicle()
-
-end
-
-function ssv_nat_CreateObject()
-
-end
-
 RegisterNetEvent('ssv:RecievePlayerPos')
 AddEventHandler('ssv:RecievePlayerPos', function(px, py, pz)
   local PlayerID = tonumber(source)
@@ -199,12 +36,14 @@ AddEventHandler('ssv:MainServerPedLoop', function()
 
           if BoolCloseToPl == true then
             if peddata.IsInVeh then
-              TriggerEvent('ssv:SpawnPedInVeh', pedid, peddata, ClosestPlId)
+              TriggerEvent('ssv:SpawnPedInVeh', pedid, ClosestPlId)
             else
-              TriggerEvent('ssv:SpawnPed', pedid, peddata, ClosestPlId)
+              TriggerEvent('ssv:SpawnPed', pedid, ClosestPlId)
             end
-          else
-            TriggerEvent('ssv:MainTaskHandler', pedid)
+          end
+
+          if peddata.OwnerClientNetID == 0 then
+            TriggerEvent('ssv:SetTaskOwnershipNotSpawned', pedid)
           end
 
         end
@@ -214,28 +53,41 @@ AddEventHandler('ssv:MainServerPedLoop', function()
   end)
 end)
 
-AddEventHandler('ssv:MainTaskHandler', function(pedid)
-  local isOverride = false
-  local Objective = nil
-  local ObjectiveData = nil
-  local PathfindingData = nil
-  if ssv_PedList[pedid].OverrideObjective ~= 'none' then
-    isOverride = true
-    Objective = ssv_PedList[pedid].OverrideObjective
-    ObjectiveData = ssv_PedList[pedid].OverrideObjectiveData
-    PathfindingData = ssv_PedList[pedid].OverridePathfindingData
-  else
-    Objective = ssv_PedList[pedid].CurrObjective
-    ObjectiveData = ssv_PedList[pedid].CurrObjectiveData
-    PathfindingData = ssv_PedList[pedid].CurrPathfindingData
+AddEventHandler('ssv:SetTaskOwnershipNotSpawned', function(pedid)
+  local prevOwner = ssv_PedList[pedid].OwnerClientNetID
+
+  local pedx = ssv_PedList[pedid].x
+  local pedy = ssv_PedList[pedid].y
+  local pedz = ssv_PedList[pedid].z
+  local ClosestPlId = 0
+  local ClosestPlDist = 999999.9
+
+  for plid, pldata in pairs(ssv_PlayerList) do
+    local plx = pldata.x
+    local ply = pldata.y
+    local plz = pldata.z
+    local pldist = ssh_VectorDistance(pedx, pedy, pedz, plx, ply, plz)
+    if pldist < ClosestPlDist then
+      ClosestPlId = plid
+      ClosestPlDist = pldist
+    end
   end
 
-  if Objective ~= 'idle' and ObjectiveData.task ~= 'Ignore' then
-    TriggerEvent('ssv:nat:' .. Objective, pedid, ObjectiveData, PathfindingData, isOverride)
+  if prevOwner ~= ClosestPlId then
+    ssv_PedList[pedid].OwnerClientNetID = ClosestPlId
+
+    local peddata = ssv_PedList[pedid]
+    TriggerClientEvent('scl:RecievePed', ClosestPlId, pedid, peddata)
+
+    if prevOwner ~= 0 then
+      TriggerClientEvent('scl:RemovePed', prevOwner, pedid)
+    end
   end
 end)
 
-AddEventHandler('ssv:SpawnPed', function (pedid, peddata, plid)
+AddEventHandler('ssv:SpawnPed', function (pedid, plid)
+  local prevOwner = ssv_PedList[pedid].OwnerClientNetID
+
   ssv_PedList[pedid].IsSpawnedBool = true
   ssv_PedList[pedid].OwnerClientNetID = plid
 
@@ -247,22 +99,81 @@ AddEventHandler('ssv:SpawnPed', function (pedid, peddata, plid)
 
   local newpeddata = ssv_PedList[pedid]
   TriggerClientEvent('scl:SpawnPed', plid, pedid, newpeddata)
+  if prevOwner ~= plid and prevOwner ~= 0 then
+    TriggerClientEvent('scl:RemovePed', prevOwner, pedid)
+  end
 end)
 
 AddEventHandler('ssv:SpawnPedInVeh', function(pedid, plid)
+  local VehSID = ssv_PedList[pedid].VehSID
+
+  if ssv_PedList[pedid].IsSpawnedBool and ssv_VehList[VehSID].IsSpawnedBool then
+    TriggerEvent('ssv:SetPedInVeh', pedid, VehSID, plid)
+  elseif ssv_PedList[pedid].IsSpawnedBool and not ssv_VehList[VehSID].IsSpawnedBool then
+    TriggerEvent('ssv:SetExistingPedInVeh', pedid, VehSID, plid)
+  elseif ssv_VehList[VehSID].IsSpawnedBool and not ssv_PedList[pedid].IsSpawnedBool then
+    TriggerEvent('ssv:SpawnPedInExistingVeh', pedid, VehSID, plid)
+  else
+    TriggerEvent('ssv:SpawnPedAndVeh', pedid, VehSID, plid)
+  end
+end)
+
+AddEventHandler('ssv:SetPedInVeh', function(pedid, VehSID, plid)
+  local PedOwner = ssv_PedList[pedid].OwnerClientNetID
+  local VehOwner = ssv_VehList[VehSID].OwnerClientNetID
+  if VehOwner ~= PedOwner then
+    TriggerClientEvent('scl:RemoveVehOwnership', VehOwner, VehSID)
+    ssv_VehList[VehSID].OwnerClientNetID = PedOwner
+  end
+
+  local vehdata = ssv_VehList[VehSID]
+  TriggerClientEvent('scl:SetPedInVeh', PedOwner, pedid, vehid, vehdata)
+end)
+
+AddEventHandler('ssv:SetExistingPedInVeh', function(pedid, VehSID, plid)
+  ssv_VehList[VehSID].IsSpawnedBool = true
+  ssv_VehList[VehSID].OwnerClientNetID = plid
+
+  local newvehdata = ssv_VehList[VehSID]
+  TriggerClientEvent('scl:SetExistingPedInVeh', plid, pedid, VehSID, newvehdata)
+end)
+
+AddEventHandler('ssv:SpawnPedInExistingVeh', function(pedid, VehSID, plid)
+  local prevOwner = ssv_PedList[pedid].OwnerClientNetID
+  ssv_PedList[pedid].IsSpawnedBool = true
+  ssv_PedList[pedid].OwnerClientNetID = plid
+  local VehOwner = ssv_VehList[VehSID].OwnerClientNetID
+  if VehOwner ~= plid then
+    TriggerClientEvent('scl:RemoveVehOwnership', VehOwner, VehSID)
+    ssv_VehList[VehSID].OwnerClientNetID = plid
+  end
+
+  local newpeddata = ssv_PedList[pedid]
+  local vehdata = ssv_VehList[VehSID]
+  TriggerClientEvent('scl:SpawnPedInExistingVeh', plid, pedid, newpeddata, VehSID, vehdata)
+  if prevOwner ~= plid then
+    TriggerClientEvent('scl:RemovePed', prevOwner, pedid)
+  end
+end)
+
+AddEventHandler('ssv:SpawnPedAndVeh', function(pedid, VehSID, plid)
+  local prevOwner = ssv_PedList[pedid].OwnerClientNetID
   ssv_PedList[pedid].IsSpawnedBool = true
   ssv_PedList[pedid].OwnerClientNetID = plid
 
-  local vehid = newpeddata.VehSID
-  local vehdata = nil --get the appropriate vehdata from ssv_VehList
-
   local newpeddata = ssv_PedList[pedid]
-  TriggerClientEvent('scl:SpawnPedInVeh', plid, pedid, newpeddata, vehid, vehdata)
+  local vehid = newpeddata.VehSID
+  local vehdata = ssv_VehList[vehid]
+
+  TriggerClientEvent('scl:SpawnPedAndVeh', plid, pedid, newpeddata, vehid, vehdata)
+  if prevOwner ~= plid then
+    TriggerClientEvent('scl:RemovePed', prevOwner, pedid)
+  end
 end)
+
 
 RegisterNetEvent('ssv:RecieveEntityControlFromClient')
 AddEventHandler('ssv:RecieveEntityControlFromClient', function(pedid, peddata)
-
   ssv_PedList[pedid] = peddata
 
   if ssv_PedList[pedid].OverrideObjective ~= 'none' then
@@ -305,7 +216,6 @@ end)
 
 RegisterNetEvent('ssv:DespawnPed')
 AddEventHandler('ssv:DespawnPed', function(pedid, peddata)
-
   local PedNetID = peddata.PedNetID
   local ped = NetworkGetEntityFromNetworkId(PedNetID)
   DeleteEntity(ped)
@@ -315,4 +225,115 @@ AddEventHandler('ssv:DespawnPed', function(pedid, peddata)
   ssv_PedList[pedid].IsSpawnedBool = false
   ssv_PedList[pedid].OwnerClientNetID = 0
   ssv_PedList[pedid].PedNetID = 0
+
+  TriggerEvent('ssv:SetTaskOwnershipNotSpawned', pedid)
+
+end)
+
+-- Vehicle Part
+
+AddEventHandler('ssv:MainServerVehLoop', function()
+  CreateThread(function()
+    while true do
+      for vehid, vehdata in pairs(ssv_VehList) do
+        if (not vehdata.IsSpawnedBool) then
+
+          local vehx = vehdata.x
+          local vehy = vehdata.y
+          local vehz = vehdata.z
+          local BoolCloseToPl = false
+          local ClosestPlId = 0
+          local ClosestPlDist = 999999.9
+
+          for plid, pldata in pairs(ssv_PlayerList) do
+            local plx = pldata.x
+            local ply = pldata.y
+            local plz = pldata.z
+            local pldist = ssh_VectorDistance(vehx, vehy, vehz, plx, ply, plz)
+            if pldist < SpawnRange then
+              BoolCloseToPl = true
+              if pldist < ClosestPlDist then
+                ClosestPlId = plid
+                ClosestPlDist = pldist
+              end
+            end
+          end
+
+          if BoolCloseToPl == true then
+            local PedInVeh = false
+            for seat, PedSID in pairs(vehdata.Passengers) do
+              if PedSID ~= 0 then
+                PedInVeh = true
+                break
+              end
+            end
+            if not vehdata.DriverIsSerpentPed and not PedInVeh then
+              TriggerEvent('ssv:SpawnVeh', vehid, ClosestPlId)
+            end
+          end
+
+        end
+      end
+      Wait(500)
+    end
+  end)
+end)
+
+AddEventHandler('ssv:SpawnVeh', function (vehid, plid)
+  ssv_VehList[vehid].IsSpawnedBool = true
+  ssv_VehList[vehid].OwnerClientNetID = plid
+
+  local newvehdata = ssv_VehList[vehid]
+  TriggerClientEvent('scl:SpawnVeh', plid, vehid, newvehdata)
+end)
+
+RegisterNetEvent('ssv:RecieveVehicleControlFromClient')
+AddEventHandler('ssv:RecieveVehicleControlFromClient', function(vehid, vehdata)
+
+  ssv_VehList[vehid] = vehdata
+
+  local data = ssv_VehList[vehid]
+
+  local vehx = data.x
+  local vehy = data.y
+  local vehz = data.z
+  local BoolCloseToPl = false
+  local ClosestPlId = 0
+  local ClosestPlDist = 999999.9
+
+  for plid, pldata in pairs(ssv_PlayerList) do
+    local plx = pldata.x
+    local ply = pldata.y
+    local plz = pldata.z
+    local pldist = ssh_VectorDistance(vehx, vehy, vehz, plx, ply, plz)
+    if pldist < DespawnRange then
+      BoolCloseToPl = true
+      if pldist < ClosestPlDist then
+        ClosestPlId = plid
+        ClosestPlDist = pldist
+      end
+    end
+  end
+
+  if BoolCloseToPl == true then
+    ssv_VehList[vehid].OwnerClientNetID = ClosestPlId
+    local newvehdata = ssv_VehList[vehid]
+    TriggerClientEvent('scl:RecieveVehOwnership', ClosestPlId, vehid, newvehdata)
+  else
+    TriggerEvent('ssv:DespawnVeh', vehid, data)
+  end
+end)
+
+RegisterNetEvent('ssv:DespawnVeh')
+AddEventHandler('ssv:DespawnVeh', function(vehid, vehdata)
+
+  local VehNetID = vehdata.VehNetID
+  local veh = NetworkGetEntityFromNetworkId(VehNetID)
+  DeleteEntity(veh)
+
+  ssv_VehList[vehid] = vehdata
+
+  ssv_VehList[vehid].IsSpawnedBool = false
+  ssv_VehList[vehid].OwnerClientNetID = 0
+  ssv_VehList[vehid].VehNetID = 0
 end)

@@ -9,6 +9,7 @@ shared_scripts {
   'Common/commonfct_shared.lua',
   'Config/config_shared.lua',
   'Def/def_shared.lua',
+  'NodeConfig/nodes_sh.lua',
 }
 
 server_scripts {
@@ -16,9 +17,10 @@ server_scripts {
   'Config/config_sv.lua',
   'Def/def_sv.lua',
   'Main/main_sv.lua',
+  'Natives/EntityCreationFct_sv.lua',
   'Natives/Handler/*.lua',
+  'Natives/Serpent/*.lua',
   'Natives/Server/*.lua',
-  'NodeConfig/nodes_sv.lua',
   'Pathfinding/paths_sv.lua',
   'Sync/sync_sv.lua',
   'Startup/startup_sv.lua',
@@ -39,8 +41,12 @@ server_exports {
   'ssv_nat_CreatePed',
   'ssv_nat_CreateVehicle',
   'ssv_nat_CreateObject',
+  'ssv_nat_DeletePed',
+  'ssv_nat_DeleteVehicle',
+  'ssv_nat_DeleteObject',
   'ssv_nat_GetClosestNodeId',
   'ssv_nat_GetNodeData',
-  'ssv_nat_TaskFollowNavMeshToCoord',
+  'ssv_nat_IsPedInSerpentVehicle',
+  'ssv_nat_TaskEnterVehicle',
   'ssv_nat_TaskGoStraightToCoord',
 }
