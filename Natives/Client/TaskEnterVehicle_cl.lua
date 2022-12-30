@@ -25,7 +25,7 @@ AddEventHandler('scl:nat:res:TaskEnterVehicle', function(SID, PedNetID, VehSID, 
     TriggerServerEvent('ssv:SyncPedData', PedSID, '', 'VehSID', VehicleSID)
     if seat == -1 then
       TriggerServerEvent('ssv:SyncVehData', VehSID, '', 'DriverIsSerpentPed', true)
-      TriggerServerEvent('ssv:SyncVehData', VehSID, '', 'DriverPedSID', PedSID)
+      TriggerServerEvent('ssv:SyncVehData', VehSID, 'Passenger', -1, PedSID)
     else
       TriggerServerEvent('ssv:SyncVehData', VehSID, 'Passenger', seat, PedSID)
     end
@@ -66,7 +66,7 @@ AddEventHandler('scl:nat:res:TaskEnterVehicle:PedExists', function(SID, PedNetID
     TriggerServerEvent('ssv:RecievePedData', PedSID, '', 'VehSID', VehSID)
     if seat == -1 then
       TriggerServerEvent('ssv:RecieveVehData', VehSID, '', 'DriverIsSerpentPed', true)
-      TriggerServerEvent('ssv:RecieveVehData', VehSID, '', 'DriverPedSID', PedSID)
+      TriggerServerEvent('ssv:RecieveVehData', VehSID, 'Passenger', -1, PedSID)
     else
       TriggerServerEvent('ssv:RecieveVehData', VehSID, 'Passenger', seat, PedSID)
     end

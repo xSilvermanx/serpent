@@ -9,12 +9,14 @@ function ssv_nat_TaskEnterVehicle(SID, tVehSID, ttimeout, tseatIndex, tspeed, tf
       speed = tspeed,
       flag = tflag,
     }
-    local OwnerID = ssv_PedList[SID].OwnerClientNetID
-    local NextObjective = 'TaskEnterVehicle'
-    local NextObjectiveData = ssv_PedList[SID].NextObjectiveData
-    TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'NextObjective', 'NextObjective', NextObjective)
-    TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'NextObjective', 'NextObjectiveData', NextObjectiveData)
-    TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'NextObjective', 'NextPathfindingData', {})
+    if ssv_PedList[SID].IsSpawnedBool then
+      local OwnerID = ssv_PedList[SID].OwnerClientNetID
+      local NextObjective = 'TaskEnterVehicle'
+      local NextObjectiveData = ssv_PedList[SID].NextObjectiveData
+      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'NextObjective', 'NextObjective', NextObjective)
+      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'NextObjective', 'NextObjectiveData', NextObjectiveData)
+      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'NextObjective', 'NextPathfindingData', {})
+    end
   elseif ObjType == "Override" then
     ssv_PedList[SID].OverrideObjective = 'TaskEnterVehicle'
     ssv_PedList[SID].OverrideObjectiveData = {
@@ -25,12 +27,14 @@ function ssv_nat_TaskEnterVehicle(SID, tVehSID, ttimeout, tseatIndex, tspeed, tf
       speed = tspeed,
       flag = tflag,
     }
-    local OwnerID = ssv_PedList[SID].OwnerClientNetID
-    local OverrideObjective = 'TaskEnterVehicle'
-    local OverrideObjectiveData = ssv_PedList[SID].OverrideObjectiveData
-    TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'OverrideObjective', 'OverrideObjective', OverrideObjective)
-    TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'OverrideObjective', 'OverrideObjectiveData', OverrideObjectiveData)
-    TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'OverrideObjective', 'OverridePathfindingData', {})
+    if ssv_PedList[SID].IsSpawnedBool then
+      local OwnerID = ssv_PedList[SID].OwnerClientNetID
+      local OverrideObjective = 'TaskEnterVehicle'
+      local OverrideObjectiveData = ssv_PedList[SID].OverrideObjectiveData
+      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'OverrideObjective', 'OverrideObjective', OverrideObjective)
+      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'OverrideObjective', 'OverrideObjectiveData', OverrideObjectiveData)
+      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'OverrideObjective', 'OverridePathfindingData', {})
+    end
   else
     ssv_PedList[SID].CurrObjective = 'TaskEnterVehicle'
     ssv_PedList[SID].CurrObjectiveData = {
@@ -41,12 +45,14 @@ function ssv_nat_TaskEnterVehicle(SID, tVehSID, ttimeout, tseatIndex, tspeed, tf
       speed = tspeed,
       flag = tflag,
     }
-    local OwnerID = ssv_PedList[SID].OwnerClientNetID
-    local CurrObjective = 'TaskEnterVehicle'
-    local CurrObjectiveData = ssv_PedList[SID].CurrObjectiveData
-    TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'CurrObjective', 'CurrObjective', CurrObjective)
-    TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'CurrObjective', 'CurrObjectiveData', CurrObjectiveData)
-    TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'CurrObjective', 'CurrPathfindingData', {})
+    if ssv_PedList[SID].IsSpawnedBool then
+      local OwnerID = ssv_PedList[SID].OwnerClientNetID
+      local CurrObjective = 'TaskEnterVehicle'
+      local CurrObjectiveData = ssv_PedList[SID].CurrObjectiveData
+      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'CurrObjective', 'CurrObjective', CurrObjective)
+      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'CurrObjective', 'CurrObjectiveData', CurrObjectiveData)
+      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'CurrObjective', 'CurrPathfindingData', {})
+    end
   end
 end
 
@@ -78,10 +84,14 @@ AddEventHandler('ssv:nat:TaskEnterVehicle', function(SID, ObjectiveData, Pathfin
     if task == 'Init' then
       if isOverride then
         ssv_PedList[SID].OverrideObjectiveData.task = 'Continue'
-        TriggerClientEvent('scl:RecievePedData', ssv_PedList[SID].OwnerClientNetID, SID, 'OverrideObjectiveData', 'task', 'Continue')
+        if ssv_PedList[SID].IsSpawnedBool then
+          TriggerClientEvent('scl:RecievePedData', ssv_PedList[SID].OwnerClientNetID, SID, 'OverrideObjectiveData', 'task', 'Continue')
+        end
       else
         ssv_PedList[SID].CurrObjectiveData.task = 'Continue'
-        TriggerClientEvent('scl:RecievePedData', ssv_PedList[SID].OwnerClientNetID, SID, 'CurrObjectiveData', 'task', 'Continue')
+        if ssv_PedList[SID].IsSpawnedBool then
+          TriggerClientEvent('scl:RecievePedData', ssv_PedList[SID].OwnerClientNetID, SID, 'CurrObjectiveData', 'task', 'Continue')
+        end
       end
     end
   end

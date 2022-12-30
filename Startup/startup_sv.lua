@@ -59,7 +59,7 @@ TriggerEvent('ssv:Startup')
       print('Pos', vehdata.x, vehdata.y, vehdata.z)
       print('Heading', vehdata.heading)
       print('Driver is Serpent Ped', vehdata.DriverIsSerpentPed)
-      print('Driver Ped SID', vehdata.DriverPedSID)
+      print('Driver Ped SID', vehdata.Passengers[-1])
       print('---')
     end
     print('----------------')

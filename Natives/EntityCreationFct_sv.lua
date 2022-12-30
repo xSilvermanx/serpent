@@ -182,8 +182,8 @@ function ssv_nat_CreateVehicle(modelHash, posx, posy, posz, vehheading)
     VehNetID = 0,
     ModelHash = modelHash,
     DriverIsSerpentPed = false,
-    DriverPedSID = 0,
     Passengers = {
+      [-1] = 0,
       [0] = 0,
       [1] = 0,
       [2] = 0,

@@ -14,9 +14,9 @@ AddEventHandler('ssv:nat:res:TaskEnterVehicle:Init', function(SID, VehSID, timeo
     ssv_PedList[SID].VehSID = VehSID
     if seatIndex == -1 then
       ssv_VehList[VehSID].DriverIsSerpentPed = true
-      ssv_VehList[VehSID].DriverPedSID = SID
+      ssv_VehList[VehSID].Passengers[-1] = SID
     else
-      ssv_VehList[VehSID].Passengers[seat] = SID
+      ssv_VehList[VehSID].Passengers[seatIndex] = SID
     end
   else
     ssv_PedList[SID].heading = ssh_getGameHeadingFromPoints(posx, posy, tarx, tary)
@@ -56,9 +56,9 @@ AddEventHandler('ssv:nat:res:TaskEnterVehicle:Continue', function(SID, VehSID, t
     ssv_PedList[SID].VehSID = VehSID
     if seatIndex == -1 then
       ssv_VehList[VehSID].DriverIsSerpentPed = true
-      ssv_VehList[VehSID].DriverPedSID = SID
+      ssv_VehList[VehSID].Passengers[-1] = SID
     else
-      ssv_VehList[VehSID].Passengers[seat] = SID
+      ssv_VehList[VehSID].Passengers[seatIndex] = SID
     end
   else
     local nx = 1
