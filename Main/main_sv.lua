@@ -47,6 +47,7 @@ AddEventHandler('ssv:MainServerPedLoop', function()
   end)
 end)
 
+RegisterNetEvent('ssv:MainTaskHandler')
 AddEventHandler('ssv:MainTaskHandler', function(pedid)
   local isOverride = false
   local Objective = nil
@@ -57,6 +58,11 @@ AddEventHandler('ssv:MainTaskHandler', function(pedid)
     Objective = ssv_PedList[pedid].OverrideObjective
     ObjectiveData = ssv_PedList[pedid].OverrideObjectiveData
     PathfindingData = ssv_PedList[pedid].OverridePathfindingData
+    if ObjectiveData.task == 'Init' then
+      if ssv_PedList[pedid].CurrObjectiveData then
+        ssv_PedList[pedid].CurrObjectiveData = 'Init'
+      end
+    end
   else
     Objective = ssv_PedList[pedid].CurrObjective
     ObjectiveData = ssv_PedList[pedid].CurrObjectiveData
@@ -88,74 +94,6 @@ AddEventHandler('ssv:SpawnPed', function (pedid, plid)
     TriggerClientEvent('scl:RemovePed', prevOwner, pedid)
   end
 end)
-
-AddEventHandler('ssv:SpawnPedInVeh', function(pedid, plid)
-  local VehSID = ssv_PedList[pedid].VehSID
-
-  if ssv_PedList[pedid].IsSpawnedBool and ssv_VehList[VehSID].IsSpawnedBool then
-    TriggerEvent('ssv:SetPedInVeh', pedid, VehSID, plid)
-  elseif ssv_PedList[pedid].IsSpawnedBool and not ssv_VehList[VehSID].IsSpawnedBool then
-    TriggerEvent('ssv:SetExistingPedInVeh', pedid, VehSID, plid)
-  elseif ssv_VehList[VehSID].IsSpawnedBool and not ssv_PedList[pedid].IsSpawnedBool then
-    TriggerEvent('ssv:SpawnPedInExistingVeh', pedid, VehSID, plid)
-  else
-    TriggerEvent('ssv:SpawnPedAndVeh', pedid, VehSID, plid)
-  end
-end)
-
-AddEventHandler('ssv:SetPedInVeh', function(pedid, VehSID, plid)
-  local PedOwner = ssv_PedList[pedid].OwnerClientNetID
-  local VehOwner = ssv_VehList[VehSID].OwnerClientNetID
-  if VehOwner ~= PedOwner then
-    TriggerClientEvent('scl:RemoveVehOwnership', VehOwner, VehSID)
-    ssv_VehList[VehSID].OwnerClientNetID = PedOwner
-  end
-
-  local vehdata = ssv_VehList[VehSID]
-  TriggerClientEvent('scl:SetPedInVeh', PedOwner, pedid, vehid, vehdata)
-end)
-
-AddEventHandler('ssv:SetExistingPedInVeh', function(pedid, VehSID, plid)
-  ssv_VehList[VehSID].IsSpawnedBool = true
-  ssv_VehList[VehSID].OwnerClientNetID = plid
-
-  local newvehdata = ssv_VehList[VehSID]
-  TriggerClientEvent('scl:SetExistingPedInVeh', plid, pedid, VehSID, newvehdata)
-end)
-
-AddEventHandler('ssv:SpawnPedInExistingVeh', function(pedid, VehSID, plid)
-  local prevOwner = ssv_PedList[pedid].OwnerClientNetID
-  ssv_PedList[pedid].IsSpawnedBool = true
-  ssv_PedList[pedid].OwnerClientNetID = plid
-  local VehOwner = ssv_VehList[VehSID].OwnerClientNetID
-  if VehOwner ~= plid then
-    TriggerClientEvent('scl:RemoveVehOwnership', VehOwner, VehSID)
-    ssv_VehList[VehSID].OwnerClientNetID = plid
-  end
-
-  local newpeddata = ssv_PedList[pedid]
-  local vehdata = ssv_VehList[VehSID]
-  TriggerClientEvent('scl:SpawnPedInExistingVeh', plid, pedid, newpeddata, VehSID, vehdata)
-  if prevOwner ~= 0 and prevOwner ~= plid then
-    TriggerClientEvent('scl:RemovePed', prevOwner, pedid)
-  end
-end)
-
-AddEventHandler('ssv:SpawnPedAndVeh', function(pedid, VehSID, plid)
-  local prevOwner = ssv_PedList[pedid].OwnerClientNetID
-  ssv_PedList[pedid].IsSpawnedBool = true
-  ssv_PedList[pedid].OwnerClientNetID = plid
-
-  local newpeddata = ssv_PedList[pedid]
-  local vehid = newpeddata.VehSID
-  local vehdata = ssv_VehList[vehid]
-
-  TriggerClientEvent('scl:SpawnPedAndVeh', plid, pedid, newpeddata, vehid, vehdata)
-  if prevOwner ~= 0 and prevOwner ~= plid then
-    TriggerClientEvent('scl:RemovePed', prevOwner, pedid)
-  end
-end)
-
 
 RegisterNetEvent('ssv:RecieveEntityControlFromClient')
 AddEventHandler('ssv:RecieveEntityControlFromClient', function(pedid, peddata)
@@ -246,6 +184,12 @@ AddEventHandler('ssv:MainServerVehLoop', function()
 
           if BoolCloseToPl == true then
             TriggerEvent('ssv:SpawnVeh', vehid, ClosestPlId)
+          else
+            for i, passenger in pairs(vehdata.Passengers) do
+              if passenger ~= 0 and not ssv_PedList[passenger].IsSpawnedBool then
+                TriggerEvent('ssv:MainTaskHandler', passenger)
+              end
+            end
           end
 
         end
@@ -255,6 +199,7 @@ AddEventHandler('ssv:MainServerVehLoop', function()
   end)
 end)
 
+RegisterNetEvent('ssv:SpawnVeh')
 AddEventHandler('ssv:SpawnVeh', function (vehid, plid)
   ssv_VehList[vehid].IsSpawnedBool = true
   ssv_VehList[vehid].OwnerClientNetID = plid
@@ -263,25 +208,28 @@ AddEventHandler('ssv:SpawnVeh', function (vehid, plid)
   local PedInVeh = false
   local PassengerData = {}
   for i, passenger in pairs(newvehdata.Passengers) do
-    if passenger ~= 0 and not scl_PedList[passenger].IsSpawnedBool then
+    if passenger ~= 0 then
       PedInVeh = true
-      local prevOwner = ssv_PedList[pedid].OwnerClientNetID
+      if not ssv_PedList[passenger].IsSpawnedBool then
 
-      ssv_PedList[pedid].IsSpawnedBool = true
-      ssv_PedList[pedid].OwnerClientNetID = plid
-    
-      if ssv_PedList[pedid].OverrideObjective ~= 'none' then
-        if ssv_PedList[pedid].OverrideObjectiveData.task ~= 'Ignore' then
-          ssv_PedList[pedid].OverrideObjectiveData.task = 'Init'
+        local prevOwner = ssv_PedList[passenger].OwnerClientNetID
+
+        ssv_PedList[passenger].IsSpawnedBool = true
+        ssv_PedList[passenger].OwnerClientNetID = plid
+      
+        if ssv_PedList[passenger].OverrideObjective ~= 'none' then
+          if ssv_PedList[passenger].OverrideObjectiveData.task ~= 'Ignore' then
+            ssv_PedList[passenger].OverrideObjectiveData.task = 'Init'
+          end
+        elseif ssv_PedList[passenger].CurrObjectiveData.task ~= 'Ignore' then
+          ssv_PedList[passenger].CurrObjectiveData.task = 'Init'
         end
-      elseif ssv_PedList[pedid].CurrObjectiveData.task ~= 'Ignore' then
-        ssv_PedList[pedid].CurrObjectiveData.task = 'Init'
+      
+        if prevOwner ~= 0 and prevOwner ~= plid then
+          TriggerClientEvent('scl:RemovePed', prevOwner, plid)
+        end
       end
-    
-      PassengerData[passenger] = ssv_PedList[pedid]
-      if prevOwner ~= 0 and prevOwner ~= plid then
-        TriggerClientEvent('scl:RemovePed', prevOwner, pedid)
-      end
+      PassengerData[passenger] = ssv_PedList[passenger]
     end
   end
   TriggerClientEvent('scl:SpawnVeh', plid, vehid, newvehdata, PedInVeh, PassengerData)
@@ -289,12 +237,12 @@ end)
 
 RegisterNetEvent('ssv:RecieveVehicleControlFromClient')
 AddEventHandler('ssv:RecieveVehicleControlFromClient', function(vehid, vehdata, PedInVeh, PassengerData)
-
+  local PID = tonumber(source)
   ssv_VehList[vehid] = vehdata
 
   if PedInVeh then
     for i, passenger in pairs(vehdata.Passengers) do
-      if vehdata.OwnerClientNetID == PassengerData[passenger].OwnerClientNetID then
+      if passenger ~= 0 and vehdata.OwnerClientNetID == PassengerData[passenger].OwnerClientNetID then
         ssv_PedList[passenger] = PassengerData[passenger]
       end
     end
@@ -329,10 +277,16 @@ AddEventHandler('ssv:RecieveVehicleControlFromClient', function(vehid, vehdata, 
     TriggerClientEvent('scl:RecieveVehOwnership', ClosestPlId, vehid, newvehdata)
     if PedInVeh then
       for i, passenger in pairs(vehdata.Passengers) do
-        if vehdata.OwnerClientNetID == PassengerData[passenger].OwnerClientNetID then
-          ssv_PedList[passenger].OwnerClientNetID = ClosestPlId
-          local newpeddata = ssv_PedList[passenger]
-          TriggerClientEvent('scl:RecievePedOwnership', ClosestPlId, passenger, newpeddata)
+        if passenger ~= 0 then
+          local OldOwner = ssv_PedList[passenger].OwnerClientNetID
+          if ClosestPlId ~= OldOwner then
+            if PID ~= OldOwner then
+              TriggerClientEvent('scl:RemovePedOwnership', ssv_PedList[passenger].OwnerClientNetID, passenger)
+            end  
+            ssv_PedList[passenger].OwnerClientNetID = ClosestPlId
+            local newpeddata = ssv_PedList[passenger]
+            TriggerClientEvent('scl:RecievePedOwnership', ClosestPlId, passenger, newpeddata)
+          end
         end
       end
     end
@@ -340,7 +294,7 @@ AddEventHandler('ssv:RecieveVehicleControlFromClient', function(vehid, vehdata, 
     TriggerEvent('ssv:DespawnVeh', vehid, data)
     if PedInVeh then
       for i, passenger in pairs(vehdata.Passengers) do
-        if vehdata.OwnerClientNetID == PassengerData[passenger].OwnerClientNetID then
+        if passenger ~= 0 then
           TriggerEvent('ssv:DespawnPed', passenger, PassengerData[passenger])
         end
       end

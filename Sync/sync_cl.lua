@@ -32,12 +32,17 @@ AddEventHandler('scl:RemovePed', function(pedid)
   scl_PedList[pedid] = nil
 end)
 
+RegisterNetEvent('scl:RemovePedOwnership')
+AddEventHandler('scl:RemovePedOwnership', function(pedid)
+  scl_pedList[pedid] = nil
+end)
+
 -- Vehicle Part
 
 RegisterNetEvent('scl:RecieveVehData')
 AddEventHandler('scl:RecieveVehData', function(vehid, type, key, value)
-  if type == 'Component' then
-
+  if type == 'Passenger' then
+    scl_VehList[vehid].Passengers[key] = value
   elseif type == 'Prop' then
 
   else

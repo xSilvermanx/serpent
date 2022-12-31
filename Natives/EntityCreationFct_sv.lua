@@ -246,8 +246,19 @@ function ssv_nat_CreateObject()
 end
 
 function ssv_nat_DeletePed(pedid)
-  local OwnerID = ssv_PedList[pedid].OwnerClientNetID
-  TriggerClientEvent('scl:RemovePed', OwnerID, pedid)
+  if ssv_PedList[pedid].IsSpawnedBool then
+    local OwnerID = ssv_PedList[pedid].OwnerClientNetID
+    TriggerClientEvent('scl:RemovePed', OwnerID, pedid)
+  end
+  if ssv_PedList[pedid].IsInVeh then
+    local VehSID = ssv_PedList[pedid].VehSID
+    local seat = ssv_FindPedSeatInSerpentVehicle(pedid)
+
+    TriggerEvent('ssv:SyncVehData', VehSID, 'Passenger', seat, 0)
+    if seat == -1 then
+      TriggerEvent('ssv:SyncVehData', VehSID, '', 'DriverIsSerpentPed', false)
+    end
+  end
   ssv_PedList[pedid] = nil
 end
 
@@ -255,6 +266,12 @@ function ssv_nat_DeleteVehicle(vehid)
   if ssv_VehList[vehid].IsSpawnedBool then
     local OwnerID = ssv_VehList[vehid].OwnerClientNetID
     TriggerClientEvent('scl:RemoveVeh', OwnerID, vehid)
+  end
+  for i, passenger in pairs(ssv_VehList[vehid].Passengers) do
+    if passenger ~= 0 then
+      TriggerEvent('ssv:SyncPedData', passenger, '', "IsInVeh", false)
+      TriggerEvent('ssv:SyncPedData', passenger, '', "VehSID", 0)
+    end
   end
   ssv_VehList[vehid] = nil
 end

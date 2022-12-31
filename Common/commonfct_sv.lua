@@ -36,3 +36,15 @@ AddEventHandler('ssv:FinishTask', function(SID, isOverride, isSuccess) --impleme
     end
   end
 end)
+
+function ssv_FindPedSeatInSerpentVehicle(pedid)
+  local seat = -1
+  local VehSID = ssv_PedList[pedid].VehSID
+  for i, passenger in pairs(ssv_VehList[VehSID].Passengers) do
+    if passenger == pedid then
+        seat = i
+        break
+    end
+  end
+  return seat
+end

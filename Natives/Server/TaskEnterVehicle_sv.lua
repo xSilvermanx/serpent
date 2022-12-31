@@ -10,14 +10,7 @@ AddEventHandler('ssv:nat:res:TaskEnterVehicle:Init', function(SID, VehSID, timeo
   local distance = ssh_VectorDistance(posx, posy, posz, tarx, tary, tarz)
 
   if flag == 3 or flag == 16 or distance < 2.0 then
-    ssv_PedList[SID].IsInVeh = true
-    ssv_PedList[SID].VehSID = VehSID
-    if seatIndex == -1 then
-      ssv_VehList[VehSID].DriverIsSerpentPed = true
-      ssv_VehList[VehSID].Passengers[-1] = SID
-    else
-      ssv_VehList[VehSID].Passengers[seatIndex] = SID
-    end
+    ssv_native_SetPedIntoVehicle(SID, VehSID, seatIndex)
   else
     ssv_PedList[SID].heading = ssh_getGameHeadingFromPoints(posx, posy, tarx, tary)
 
@@ -52,32 +45,25 @@ AddEventHandler('ssv:nat:res:TaskEnterVehicle:Continue', function(SID, VehSID, t
   local distance = ssh_VectorDistance(posx, posy, posz, tarx, tary, tarz)
 
   if flag == 3 or flag == 16 or distance < 2.0 then
-    ssv_PedList[SID].IsInVeh = true
-    ssv_PedList[SID].VehSID = VehSID
-    if seatIndex == -1 then
-      ssv_VehList[VehSID].DriverIsSerpentPed = true
-      ssv_VehList[VehSID].Passengers[-1] = SID
-    else
-      ssv_VehList[VehSID].Passengers[seatIndex] = SID
-    end
+    ssv_native_SetPedIntoVehicle(SID, VehSID, seatIndex)
   else
-    local nx = 1
-    local ny = 0
-    local nz = 0
+    -- subject to change: Build in a way to check whether the car moved.
+    ssv_PedList[SID].heading = ssh_getGameHeadingFromPoints(posx, posy, tarx, tary)
 
-    if isOverride then
-      nx = ssv_PedList[SID].OverridePathfindingData['nx']
-      ny = ssv_PedList[SID].OverridePathfindingData['ny']
-      nz = ssv_PedList[SID].OverridePathfindingData['nz']
-    else
-      nx = ssv_PedList[SID].CurrPathfindingData['nx']
-      ny = ssv_PedList[SID].CurrPathfindingData['ny']
-      nz = ssv_PedList[SID].CurrPathfindingData['nz']
-    end
+    local nx, ny, nz = ssh_getNormalisedVector(posx, posy, posz, tarx, tary, tarz)
 
     ssv_PedList[SID].x = posx + speed*nx/2
     ssv_PedList[SID].y = posy + speed*ny/2
     ssv_PedList[SID].z = posz + speed*nz/2
-  end
 
+    if isOverride then
+      ssv_PedList[SID].OverridePathfindingData['nx'] = nx
+      ssv_PedList[SID].OverridePathfindingData['ny'] = ny
+      ssv_PedList[SID].OverridePathfindingData['nz'] = nz
+    else
+      ssv_PedList[SID].CurrPathfindingData['nx'] = nx
+      ssv_PedList[SID].CurrPathfindingData['ny'] = ny
+      ssv_PedList[SID].CurrPathfindingData['nz'] = nz
+    end
+  end
 end)

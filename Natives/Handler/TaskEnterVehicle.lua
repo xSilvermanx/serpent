@@ -58,25 +58,14 @@ end
 
 RegisterNetEvent('ssv:nat:TaskEnterVehicle') -- implement timeout
 AddEventHandler('ssv:nat:TaskEnterVehicle', function(SID, ObjectiveData, PathfindingData, isOverride)
-
   local x = ssv_PedList[SID].x
   local y = ssv_PedList[SID].y
   local z = ssv_PedList[SID].z
 
   if ssv_native_IsPedInSerpentVehicle(SID, ObjectiveData.VehSID) then
     TriggerEvent('ssv:FinishTask', SID, isOverride, true)
-    if ssv_PedList[SID].IsSpawnedBool ~= ssv_VehList[SID].IsSpawnedBool then
-      local OwnerID = 0
-      if ssv_PedList[SID].IsSpawnedBool then
-        OwnerID = ssv_PedList[SID].OwnerClientNetID
-        TriggerEvent('ssv:SpawnPedInVeh', SID, OwnerID)
-      else
-        OwnerID = ssv_VehList[SID].OwnerClientNetID
-        TriggerEvent('ssv:SpawnPedInVeh', SID, OwnerID)
-      end
-    end
   else
-
+    
     local task = ObjectiveData.task
 
     TriggerEvent('ssv:nat:TaskEnterVehicle:' .. task, SID, ObjectiveData.VehSID, ObjectiveData.timeout, ObjectiveData.seatIndex, ObjectiveData.speed, ObjectiveData.flag, isOverride)
@@ -103,7 +92,7 @@ AddEventHandler('ssv:nat:TaskEnterVehicle:Init', function(SID, VehSID, timeout, 
     local ped = NetworkGetEntityFromNetworkId(PedNetID)
     local OwnerID = NetworkGetEntityOwner(ped)
     ssv_PedList[SID].ScriptOwnerNetID = OwnerID
-    local VehNetID = ssv_VehList[SID].VehNetID
+    local VehNetID = ssv_VehList[VehSID].VehNetID
     TriggerClientEvent('scl:nat:res:TaskEnterVehicle', OwnerID, SID, PedNetID, VehSID, VehNetID, timeout, seatIndex, speed, flag, isOverride)
   elseif ssv_PedList[SID].IsSpawnedBool and not ssv_VehList[VehSID].IsSpawnedBool then
     local PedNetID = ssv_PedList[SID].PedNetID
@@ -124,19 +113,23 @@ AddEventHandler('ssv:nat:TaskEnterVehicle:Continue', function(SID, VehSID, timeo
     local PedNetID = ssv_PedList[SID].PedNetID
     local ped = NetworkGetEntityFromNetworkId(PedNetID)
     local OwnerID = NetworkGetEntityOwner(ped)
+    local VehNetID = ssv_VehList[VehSID].VehNetID
     if ssv_PedList[SID].ScriptOwnerNetID ~= OwnerID then
       ssv_PedList[SID].ScriptOwnerNetID = OwnerID
-      local VehNetID = ssv_VehList[SID].VehNetID
       TriggerClientEvent('scl:nat:res:TaskEnterVehicle', OwnerID, SID, PedNetID, VehSID, VehNetID, timeout, seatIndex, speed, flag, isOverride)
+    else
+      TriggerClientEvent('scl:nat:res:TaskEnterVehicle:Continue', OwnerID, SID, PedNetID, VehSID, VehNetID, timeout, seatIndex, speed, flag, isOverride)
     end
   elseif ssv_PedList[SID].IsSpawnedBool and not ssv_VehList[VehSID].IsSpawnedBool then
     local PedNetID = ssv_PedList[SID].PedNetID
     local ped = NetworkGetEntityFromNetworkId(PedNetID)
     local OwnerID = NetworkGetEntityOwner(ped)
+    local vehdata = ssv_VehList[VehSID]
     if ssv_PedList[SID].ScriptOwnerNetID ~= OwnerID then
       ssv_PedList[SID].ScriptOwnerNetID = OwnerID
-      local vehdata = ssv_VehList[VehSID]
       TriggerClientEvent('scl:nat:res:TaskEnterVehicle:PedExists', OwnerID, SID, PedNetID, VehSID, vehdata, timeout, seatIndex, speed, flag, isOverride)
+    else
+      TriggerClientEvent('scl:nat:res:TaskEnterVehicle:PedExists:Continue', OwnerID, SID, PedNetID, VehSID, vehdata, timeout, seatIndex, speed, flag, isOverride)
     end
   elseif not ssv_PedList[SID].IsSpawnedBool and ssv_VehList[VehSID].IsSpawnedBool then
     TriggerEvent('ssv:nat:res:TaskEnterVehicle:Continue', SID, VehSID, timeout, seatIndex, speed, flag, isOverride)

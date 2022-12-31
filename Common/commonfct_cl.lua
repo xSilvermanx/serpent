@@ -1,4 +1,6 @@
 function scl_SpawnVeh(vehid, vehdata)
+    scl_VehList[vehid] = vehdata
+
     local x = vehdata.x
     local y = vehdata.y
     local z = vehdata.z
@@ -13,11 +15,10 @@ function scl_SpawnVeh(vehid, vehdata)
       RequestModel(vehdata.ModelHash)
       Wait(50)
     end
-  
+    
+    print('Creating the vehicle')
     local veh = CreateVehicle(vehdata.ModelHash, Pos.x, Pos.y, Pos.z, vehdata.heading, true, true)
     local VehNetID = PedToNet(veh)
-
-    scl_VehList[vehid] = vehdata
   
     scl_VehList[vehid].VehNetID = VehNetID
     TriggerServerEvent('ssv:RecieveVehData', vehid, '', 'VehNetID', VehNetID)
@@ -27,10 +28,22 @@ end
 
 function scl_SpawnPed(pedid, peddata, seatindex)
     local PedNetID = 0
+    scl_PedList[pedid] = peddata
+    
     if peddata.IsInVeh then
         local VehNetID = scl_VehList[peddata.VehSID].VehNetID
         local veh = NetToVeh(VehNetID)
-      
+        local seat = seatindex
+
+        if seatindex == -2 then
+            for i, passenger in pairs(scl_VehList[peddata.VehSID].Passengers) do
+                if passenger == pedid then
+                    seat = i
+                    break
+                end
+            end
+        end
+
         RequestModel(peddata.ModelHash)
       
         while not HasModelLoaded(peddata.ModelHash) do
@@ -38,7 +51,8 @@ function scl_SpawnPed(pedid, peddata, seatindex)
           Wait(50)
         end
       
-        local ped = CreatePedInsideVehicle(veh, peddata.PedType, peddata.ModelHash, seatindex, true, true)
+        local ped = CreatePedInsideVehicle(veh, peddata.PedType, peddata.ModelHash, seat, true, true)
+        PedNetID = PedToNet(ped)
     else
         local x = peddata.x
         local y = peddata.y
@@ -75,7 +89,6 @@ function scl_SpawnPed(pedid, peddata, seatindex)
         local ped = CreatePed(peddata.PedType, peddata.ModelHash, x, y, z-1.0, peddata.heading, true, true)
         PedNetID = PedToNet(ped)
     end
-    scl_PedList[pedid] = peddata
 
     scl_PedList[pedid].PedNetID = PedNetID
     TriggerServerEvent('ssv:RecievePedData', pedid, '', 'PedNetID', PedNetID)
@@ -85,6 +98,8 @@ end
 
 function scl_ApplyAllPedProperties(pedid, peddata)
     scl_ApplyPedBehaviorFlags(pedid, peddata)
+    local PedNetID = peddata.PedNetID
+    local ped = NetToPed(PedNetID)
 
     SetEntityHealth(ped, peddata.PedHealth)
     SetPedArmour(ped, peddata.PedArmor)
@@ -104,6 +119,9 @@ function scl_ApplyAllVehProperties(vehid, vehdata)
 end
 
 function scl_ApplyPedBehaviorFlags(pedid, peddata)
+    local PedNetID = peddata.PedNetID
+    local ped = NetToPed(PedNetID)
+    
     SetBlockingOfNonTemporaryEvents(ped, peddata.BlockNonTemporaryEvents)
     SetPedRelationshipGroupHash(ped, GetHashKey(peddata.PedRelationshipGroup))
 

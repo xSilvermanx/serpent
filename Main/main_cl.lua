@@ -25,7 +25,7 @@ AddEventHandler('scl:MainClientPedLoop', function()
           if ssh_VectorDistance(pedx, pedy, pedz, plx, ply, plz) > DespawnRange then
             TriggerEvent('scl:DespawnPed', pedid)
           else
-            TriggerEvent('scl:MainTaskHandler', pedid)
+            TriggerServerEvent('ssv:MainTaskHandler', pedid)
           end
         end
       end
@@ -34,39 +34,19 @@ AddEventHandler('scl:MainClientPedLoop', function()
   end)
 end)
 
-AddEventHandler('scl:MainTaskHandler', function(pedid)
-  local isOverride = false
-  local Objective = nil
-  local ObjectiveData = nil
-  local PathfindingData = nil
-  if scl_PedList[pedid].OverrideObjective ~= 'none' then
-    isOverride = true
-    Objective = scl_PedList[pedid].OverrideObjective
-    ObjectiveData = scl_PedList[pedid].OverrideObjectiveData
-    PathfindingData = scl_PedList[pedid].OverridePathfindingData
-  else
-    Objective = scl_PedList[pedid].CurrObjective
-    ObjectiveData = scl_PedList[pedid].CurrObjectiveData
-    PathfindingData = scl_PedList[pedid].CurrPathfindingData
-  end
-
-  if Objective ~= 'idle' and ObjectiveData.task ~= 'Ignore' then
-    TriggerServerEvent('ssv:nat:' .. Objective, pedid, ObjectiveData, PathfindingData, isOverride)
-  end
-end)
-
 RegisterNetEvent('scl:SpawnPed')
 AddEventHandler('scl:SpawnPed', function(pedid, peddata)
 
   local PedSpawned = false
-  PedSpawned = scl_SpawnPed(pedid, peddata, 0)
+
+  PedSpawned = scl_SpawnPed(pedid, peddata, -2)
+
   while not PedSpawned do
     Wait(20)
   end
-
-  scl_ApplyAllPedProperties(pedid, peddata)
-  -- code common function for these natives
   
+  scl_ApplyAllPedProperties(pedid, peddata)
+
 end)
 
 RegisterNetEvent('scl:RecievePedOwnership')
@@ -116,6 +96,12 @@ AddEventHandler('scl:MainClientVehLoop', function()
 
         if ssh_VectorDistance(vehx, vehy, vehz, plx, ply, plz) > DespawnRange then
           TriggerEvent('scl:DespawnVeh', vehid)
+        else
+          for i, passenger in pairs(vehdata.Passengers) do
+            if passenger ~= 0 then
+              TriggerServerEvent('ssv:MainTaskHandler', passenger)
+            end
+          end
         end
       end
       Wait(500)
@@ -126,27 +112,26 @@ end)
 
 RegisterNetEvent('scl:SpawnVeh')
 AddEventHandler('scl:SpawnVeh', function(vehid, vehdata, PedInVeh, PassengerData)
-
     local VehicleSpawned = false
     VehicleSpawned = scl_SpawnVeh(vehid, vehdata)
-
-    if PedInVeh then
-      while not VehicleSpawned do
-        Wait(20)
-      end
-      scl_ApplyAllVehProperties(vehid, vehdata)
-      for i, passenger in pairs(scl_VehList[vehid].Passengers) do
-        if passenger ~= 0 then
-          if not PassengerData[passenger].IsSpawnedBool then
-            local PedSpawned = false
-            PedSpawned = scl_SpawnPed(passenger, PassengerData[passenger], i)
-            while not PedSpawned do
-              Wait(20)
-            end
-            scl_ApplyAllPedProperties(passenger, PassengerData[passenger])
-          else
-            TriggerEvent('scl:SetPedInVeh', passenger, vehid, vehdata)
+    
+    while not VehicleSpawned do
+      Wait(20)
+    end
+    scl_ApplyAllVehProperties(vehid, vehdata)
+    for i, passenger in pairs(scl_VehList[vehid].Passengers) do
+      if passenger ~= 0 then
+        if PassengerData[passenger].PedNetID == 0 then
+          local PedSpawned = false
+          PedSpawned = scl_SpawnPed(passenger, PassengerData[passenger], i)
+          while not PedSpawned do
+            Wait(20)
           end
+          scl_ApplyAllPedProperties(passenger, PassengerData[passenger])
+        else
+          local PedNetID = scl_PedList[passenger].PedNetID
+          local VehNetID = scl_VehList[vehid].VehNetID
+          TriggerEvent('scl:nat:res:SetPedIntoVehicle', PedNetID, VehNetID, i)
         end
       end
     end
@@ -157,10 +142,12 @@ AddEventHandler('scl:DespawnVeh', function(vehid)
   local PedInVeh = false
   local PassengerData = {}
   for i, passenger in pairs(vehdata.Passengers) do
-    if passenger ~= 0 and scl_PedList[passenger] and not scl_PedList[passenger].IsSpawnedBool then
+    if passenger ~= 0 then
       PedInVeh = true
-      PassengerData[passenger] = scl_PedList[pedid]
-      scl_PedList[passenger] = nil
+      PassengerData[passenger] = scl_PedList[passenger]
+      if scl_PedList[passenger] then
+        scl_PedList[passenger] = nil
+      end
     end
   end
 

@@ -47,6 +47,7 @@ server_exports {
   'ssv_nat_GetClosestNodeId',
   'ssv_nat_GetNodeData',
   'ssv_nat_IsPedInSerpentVehicle',
+  'ssv_nat_SetPedIntoVehicle',
   'ssv_nat_TaskEnterVehicle',
   'ssv_nat_TaskGoStraightToCoord',
 }

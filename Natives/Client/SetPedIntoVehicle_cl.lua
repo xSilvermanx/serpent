@@ -1,0 +1,6 @@
+RegisterNetEvent('scl:nat:res:SetPedIntoVehicle')
+AddEventHandler('scl:nat:res:SetPedIntoVehicle', function(PedNetID, VehNetID, seat)
+    local ped = NetToPed(PedNetID)
+    local veh = NetToVeh(VehNetID)
+    SetPedIntoVehicle(ped, veh, seat)
+end)
