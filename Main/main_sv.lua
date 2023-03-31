@@ -77,6 +77,7 @@ end)
 AddEventHandler('ssv:SpawnPed', function (pedid, plid)
   local prevOwner = ssv_PedList[pedid].OwnerClientNetID
 
+  ssv_PedList[pedid].JustSpawnedBool = true
   ssv_PedList[pedid].IsSpawnedBool = true
   ssv_PedList[pedid].OwnerClientNetID = plid
 
@@ -187,6 +188,10 @@ AddEventHandler('ssv:MainServerVehLoop', function()
           else
             for i, passenger in pairs(vehdata.Passengers) do
               if passenger ~= 0 and not ssv_PedList[passenger].IsSpawnedBool then
+                ssv_PedList[passenger].x = vehx
+                ssv_PedList[passenger].y = vehy
+                ssv_PedList[passenger].z = vehz
+                ssv_PedList[passenger].heading = vehh
                 TriggerEvent('ssv:MainTaskHandler', passenger)
               end
             end
@@ -201,6 +206,7 @@ end)
 
 RegisterNetEvent('ssv:SpawnVeh')
 AddEventHandler('ssv:SpawnVeh', function (vehid, plid)
+  ssv_VehList[vehid].JustSpawnedBool = true
   ssv_VehList[vehid].IsSpawnedBool = true
   ssv_VehList[vehid].OwnerClientNetID = plid
 
@@ -214,6 +220,7 @@ AddEventHandler('ssv:SpawnVeh', function (vehid, plid)
 
         local prevOwner = ssv_PedList[passenger].OwnerClientNetID
 
+        ssv_PedList[passenger].JustSpawnedBool = true
         ssv_PedList[passenger].IsSpawnedBool = true
         ssv_PedList[passenger].OwnerClientNetID = plid
       
@@ -244,6 +251,13 @@ AddEventHandler('ssv:RecieveVehicleControlFromClient', function(vehid, vehdata, 
     for i, passenger in pairs(vehdata.Passengers) do
       if passenger ~= 0 and vehdata.OwnerClientNetID == PassengerData[passenger].OwnerClientNetID then
         ssv_PedList[passenger] = PassengerData[passenger]
+        if ssv_PedList[passenger].OverrideObjective ~= 'none' then
+          if ssv_PedList[passenger].OverrideObjectiveData.task ~= 'Ignore' then
+            ssv_PedList[passenger].OverrideObjectiveData.task = 'Init'
+          end
+        elseif ssv_PedList[passenger].CurrObjectiveData.task ~= 'Ignore' then
+          ssv_PedList[passenger].CurrObjectiveData.task = 'Init'
+        end
       end
     end
   end

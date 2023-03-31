@@ -1,79 +1,224 @@
--- WHEN UNCOMMENTING THIS, BE SURE TO CHANGE FXMANIFEST TO INCLUDE nodes_sv.lua CLIENTSIDE! THIS IS NOT DONE TO PRESERVE PERFORMANCE IN NORMAL GAMEPLAY!
+local PathThreads = {}
 
---[[local list_show_Markers = {}
-local list_show_lines = {}
+RegisterNetEvent('scl:CreatePathBetweenTwoPointsForServer')
+AddEventHandler('scl:CreatePathBetweenTwoPointsForServer', function(SID, i, Startposition, Endposition, AName, Ax, Ay, Az, BName, Bx, By, Bz, Task, isOverride)
+    
+    table.insert(PathThreads, 1)
+    local tCount = #PathThreads
+    local tCountNow = tCount
 
-CreateThread(function()
-  local range = 40000.0
+    while tCount > 1 and tCountNow > tCount-1 do
+        tCountNow = #PathThreads
+        Wait(10)
+    end
 
-  while true do
-    list_show_Markers = {}
-    local playerped = GetPlayerPed(-1)
-    local plc = GetEntityCoords(playerped, true)
-    for name, marker in pairs(ListNodes) do
-      if Vdist2(marker.x, marker.y, marker.z, plc.x, plc.y, plc.z) < range then
-        table.insert(list_show_Markers, marker)
-        for j, path in ipairs(marker.paths) do
-          local Line = {}
-          local dist = 0.3
-          local sr = 255
-          local sg = 255
-          local sb = 255
-          if path.NoVeh then
-            sg = 0
-          end
-          if path.AbsNoVeh then
-            sb = 0
-          end
-          if path.NoPed then
-            sr = 0
-          end
-          Line["r"] = sr
-          Line["g"] = sg
-          Line["b"] = sb
-          local angle = ssh_getGameHeadingFromPoints(marker.x, marker.y, ListNodes[path.id].x, ListNodes[path.id].y) - 90.0
+    local Ablip = AddBlipForCoord(Ax, Ay, Az)
+    SetBlipRoute(Ablip, true)
+    SetNewWaypoint(Bx, By)
+    
 
-          ssx = marker.x + dist * math.cos(angle)
-          ssy = marker.y - dist * math.sin(angle)
-          sfx = ListNodes[path.id].x + dist * math.cos(angle)
-          sfy = ListNodes[path.id].y - dist * math.sin(angle)
+    --[[local startzone = GetZoneAtCoords(Ax, Ay, Az)
+    local startzonename = GetNameOfZone(Ax, Ay, Az)
+    print(startzone, startzonename)
 
-          Line["sx"] = ssx
-          Line["sy"] = ssy
-          Line["sz"] = marker.z
-          Line["fx"] = sfx
-          Line["fy"] = sfy
-          Line["fz"] = ListNodes[path.id].z
+    local endzone = GetZoneAtCoords(Bx, By, Bz)
+    local endzonename = GetNameOfZone(Bx, By, Bz)
+    print(endzone, endzonename)
 
-          table.insert(list_show_lines, Line)
+    SetZoneEnabled(startzone, true)
+    SetZoneEnabled(endzone, true)
+
+    local centerx = (Bx + Ax)/2
+    local centery = (Ay + By)/2
+    local radius = math.abs(Bx-Ax)
+    if math.abs(By-Ay) > radius then
+        radius = math.abs(By-Ay)
+    end
+
+    AddNavmeshRequiredRegion(centerx, centery, radius)
+
+    ClearGpsMultiRoute()
+    StartGpsMultiRoute(6, false, true)
+    AddPointToGpsMultiRoute(Startposition.x, Startposition.y, Startposition.z)
+    AddPointToGpsMultiRoute(Ax, Ay, Az)
+    AddPointToGpsMultiRoute(Bx, By, Bz)
+    AddPointToGpsMultiRoute(Endposition.x, Endposition.y, Endposition.z)
+    SetGpsMultiRouteRender(true)
+
+    local _ = RequestPathsPreferAccurateBoundingstruct(Ax, Ay, Bx, By)
+
+    local _, _, _, _ = GenerateDirectionsToCoord(Startposition.x, Startposition.y, Startposition.z, 0)
+    local _, _, _, _ = GenerateDirectionsToCoord(Ax, Ay, Az, 0)
+    local _, _, _, _ = GenerateDirectionsToCoord(Bx, By, Bz, 0)
+    local _, _, _, _ = GenerateDirectionsToCoord(Endposition.x, Endposition.y, Endposition.z, 0)
+    
+    local retval = false
+    retval = AreNodesLoadedForArea(Ax, Ay, Bx, By)
+    local k = 0
+    print('Requested', retval)
+    --[[while not retval do
+        print('Waiting for return')
+        k = k + 1
+        Wait(10)
+        if k > 100 then
+            print('Aborted')
         end
-      end
+    end]]
+
+    print('Triggered:')
+    print('SID', SID)
+    print('i', i)
+    print('Task', Task)
+    
+    print('Given start position', Startposition.x, Startposition.y, Startposition.z)
+    local _, startpositiontemp, starth = GetClosestVehicleNodeWithHeading(Startposition.x, Startposition.y, Startposition.z, 1, 3.0, 0)
+    local startposition = {x = startpositiontemp.x, y = startpositiontemp.y, z = startpositiontemp.z, heading = starth}
+    print('Movement start', startposition.x, startposition.y, startposition.z)
+
+    print('Given end position', Endposition.x, Endposition.y, Endposition.z)
+    local _, endpositiontemp, endh = GetClosestVehicleNodeWithHeading(Endposition.x, Endposition.y, Endposition.z, 1, 3.0, 0)
+    local endposition = {x = endpositiontemp.x, y = endpositiontemp.y, z = endpositiontemp.z, heading = endh}
+    print('Movement end', endposition.x, endposition.y, endposition.z)
+
+    print('End', BName)
+    print('End Coordinates', Bx, By, Bz)
+    local _, EndPosition, _ = GetClosestVehicleNodeWithHeading(Bx, By, Bz, 1, 3.0, 0)
+    local _, MainEndPosition, _ = GetClosestVehicleNodeWithHeading(Bx, By, Bz, 0, 3.0, 0)
+    print('End Node', EndPosition.x, EndPosition.y, EndPosition.z)
+    print('Main End Node', MainEndPosition.x, MainEndPosition.y, MainEndPosition.z)
+
+    local ListOfReturnNodes = {}
+    print('Start', AName)
+    print('Start Coordinates', Ax, Ay, Az)
+    local _, position, heading = GetClosestVehicleNodeWithHeading(Ax, Ay, Az, 1, 3.0, 0)
+    local _, MainPosition, _ = GetClosestVehicleNodeWithHeading(Ax, Ay, Az, 0, 3.0, 0)
+    local NewNode = {}
+    print('Start Node', position.x, position.y, position.z)
+    print('Main Start Node', MainPosition.x, MainPosition.y, MainPosition.z)
+
+
+    local steps = 20
+    local nodeType = 1
+    if EndPosition == MainEndPosition and position == MainPosition then
+        steps = 40
+        nodeType = 0
+        print('Task is on main roads')
+    else
+        print('Task is not on main roads')
     end
-    Wait(2000)
-  end
+    print('---')
+
+
+    table.insert(ListOfReturnNodes, {x = position.x, y = position.y, z = position.z, heading = heading})
+    
+    local x = position.x
+    local y = position.y
+    local z = position.z
+    local m = 0
+    local breakcounter = 0
+    local StartNodeAlreadyAddedBool = false
+    local EndNodeAlreadyAddedBool = false
+    print('First distance calculation values', x, y, z)
+    if ssh_VectorDistance(x, y, z, startposition.x, startposition.y, startposition.z) < 0.1 then
+        print('Startnode was found')
+        StartNodeAlreadyAddedBool = true
+    end
+    if ssh_VectorDistance(EndPosition.x, EndPosition.y, EndPosition.z, endposition.x, endposition.y, endposition.z) < 0.1 then
+        print('Endnode was found')
+        EndNodeAlreadyAddedBool = true
+    end
+    distance = ssh_VectorDistance(x, y, z, EndPosition.x, EndPosition.y, EndPosition.z)
+    print('First distance', distance)
+    print('---')
+    while distance > 1.0 do
+        m = m + 1
+        print('While loop iteration', m)
+        local newx = 0
+        local newy = 0
+        local newz = 0
+        local h = 0
+        local newdistance = 999999.9
+        local NewNodeFound = false
+        local NodeAlreadyAddedBool = false
+        for n = 1, steps do
+            print('for-loop iteration', n)
+            local _, newpos, newhead = GetNthClosestVehicleNodeWithHeading(x, y, z, n, nodeType, 3.0, 2.5)
+            print('Found position', newpos.x, newpos.y, newpos.z)
+            newdistance = ssh_VectorDistance(newpos.x, newpos.y, newpos.z, EndPosition.x, EndPosition.y, EndPosition.z)
+            print('Distance to End Node', newdistance)
+            if newdistance < distance then
+                NewNodeFound = true
+                print('Adding the node')
+                NodeAlreadyAddedBool = false
+                newx = newpos.x
+                newy = newpos.y
+                newz = newpos.z
+                h = newhead
+                distance = newdistance
+            end
+            if not StartNodeAlreadyAddedBool and ssh_VectorDistance(newpos.x, newpos.y, newpos.z, startposition.x, startposition.y, startposition.z) < 20.0 then
+                print('Found Start node')
+                StartNodeAlreadyAddedBool = true
+                table.insert(ListOfReturnNodes, startposition)
+                NodeAlreadyAddedBool = true
+            end
+            if not EndNodeAlreadyAddedBool and ssh_VectorDistance(newpos.x, newpos.y, newpos.z, endposition.x, endposition.y, endposition.z) < 20.0 then
+                print('Found End Node')
+                EndNodeAlreadyAddedBool = true
+                table.insert(ListOfReturnNodes, endposition)
+                NodeAlreadyAddedBool = true
+            end
+            print('---')
+        end
+        
+        print('Finished for-loop')
+        if NewNodeFound then
+            breakcounter = 0
+            x = newx
+            y = newy
+            z = newz
+        else
+            breakcounter = breakcounter + 1
+        end
+        print('Final node position', x, y, z)
+
+        if not NodeAlreadyAddedBool then
+            print('Added node to list')
+            table.insert(ListOfReturnNodes, {x = newx, y = newy, z = newz, heading = h})
+        end
+        
+        distance = ssh_VectorDistance(x, y, z, EndPosition.x, EndPosition.y, EndPosition.z)
+        print('New distance check', distance)
+        print('---------')
+        if breakcounter > 10 then
+            print('Breakcounter triggered')
+            print('SID, Pathfinding-part, while-iteration', SID, i, m)
+            print('Startposition')
+            print(startposition.x, startposition.y, startposition.z)
+            print('Endposition')
+            print(endposition.x, endposition.y, endposition.z)
+            break
+        end
+        Wait(0)
+    end
+    
+    print('Results:')
+    print(i)
+    for n, node in ipairs(ListOfReturnNodes) do
+        print(n, node.x, node.y, node.z, node.heading)
+        local blip = AddBlipForCoord(node.x, node.y, node.z)
+        local blipname = i .. "-" .. n
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentString(blipname)
+        EndTextCommandSetBlipName(blip)
+        SetBlipColour(blip, i)
+    end
+    print('---')
+
+    TriggerServerEvent('ssv:RecievePathBetweenTwoPoints', SID, Task, i, ListOfReturnNodes, isOverride)
+
+    --[[SetZoneEnabled(startzone, false)
+    SetZoneEnabled(endzone, false)]]
+
+    table.remove(PathThreads)
 end)
-
-CreateThread(function()
-  while true do
-    for i, marker in ipairs(list_show_Markers) do
-      DrawMarker(0, marker.x, marker.y, marker.z, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 255, 0, 0, 255, false, false, 2, false, nil, nil, false)
-      local onScreen, _x, _y = GetScreenCoordFromWorldCoord(marker.x, marker.y, marker.z + 1.0)
-			local px,py,pz = table.unpack(GetEntityCoords(GetPlayerPed(-1), false))
-      local dist = GetDistanceBetweenCoords(px,py,pz, marker.x, marker.y, marker.z + 1.0, 1)
-			local scale = ((1/math.sqrt(dist))*2)*(1/GetGameplayCamFov())*100
-      if onScreen then
-        SetTextScale(0.0*scale, 0.3*scale)
-        SetTextProportional(1)
-        SetTextCentre(true)
-
-        BeginTextCommandDisplayText("STRING")
-        AddTextComponentString(marker.id)
-        EndTextCommandDisplayText(_x, _y)
-      end
-    end
-    for j, line in ipairs(list_show_lines) do
-      DrawLine(line.sx, line.sy, line.sz, line.fx, line.fy, line.fz, line.r, line.g, line.b, 255)
-    end
-    Wait(0)
-  end
-end)]]

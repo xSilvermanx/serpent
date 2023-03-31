@@ -1,37 +1,38 @@
 local PedThreads = {}
 local VehThreads = {}
 
-function ssv_nat_CreatePed(pedType, modelHash, posx, posy, posz, pedheading)
+function ssv_nat_CreatePed(pedType, PedmodelHash, pedposx, pedposy, pedposz, pedheading)
 
-  local Owner = GetInvokingResource()
+  local PedOwner = GetInvokingResource()
 
-  local SID = 1
+  local PedSID = 1
 
   table.insert(PedThreads, 1)
-  local tCount = #PedThreads
-  local tCountNow = tCount
+  local tPedCount = #PedThreads
+  local tPedCountNow = tPedCount
 
-  while tCount > 1 and tCountNow > tCount-1 do
-    tCountNow = table.getn(PedThreads)
+  while tPedCount > 1 and tPedCountNow > tPedCount-1 do
+    tPedCountNow = #PedThreads
   end
 
-  while ssv_PedList[SID] ~= nil do
-    SID = SID + 1
+  while ssv_PedList[PedSID] ~= nil do
+    PedSID = PedSID + 1
   end
 
-  ssv_PedList[SID] = {
-    PedSID = SID,
-    OwningRes = Owner,
-    x = posx,
-    y = posy,
-    z = posz,
+  ssv_PedList[PedSID] = {
+    PedSID = PedSID,
+    OwningRes = PedOwner,
+    x = pedposx,
+    y = pedposy,
+    z = pedposz,
     heading = pedheading,
+    JustSpawnedBool = false,
     IsSpawnedBool = false,
     ScriptOwnerNetID = 0, -- FiveM Networking Ownership
     OwnerClientNetID = 0, -- Serpent Ownership
     PedNetID = 0,
     PedType = pedType,
-    ModelHash = modelHash,
+    ModelHash = PedmodelHash,
     PedVisualData = {
       Components = {
         {0, 0, 0},
@@ -74,8 +75,8 @@ function ssv_nat_CreatePed(pedType, modelHash, posx, posy, posz, pedheading)
 
   table.remove(PedThreads)
 
-  if modelhash == FreemodeHashM or modelhash == FreemodeHashF then
-    ssv_PedList[SID].PedVisualData.Inheritance = {
+  if PedmodelHash == FreemodeHashM or PedmodelHash == FreemodeHashF then
+    ssv_PedList[PedSID].PedVisualData.Inheritance = {
       MotherShapeID = 0,
       FatherShapeID = 0,
       MotherSkinID = 0,
@@ -83,7 +84,7 @@ function ssv_nat_CreatePed(pedType, modelHash, posx, posy, posz, pedheading)
       shapeMix = 0.0,
       skinMix = 0.0,
     }
-    ssv_PedList[SID].PedVisualData.FaceFeatures = {
+    ssv_PedList[PedSID].PedVisualData.FaceFeatures = {
       NoseWidth = 0.0,
       NosePeakHeight = 0.0,
       NosePeakLength = 0.0,
@@ -105,7 +106,7 @@ function ssv_nat_CreatePed(pedType, modelHash, posx, posy, posz, pedheading)
       ChimpHole = 0.0,
       NeckThickness = 0.0,
     }
-    ssv_PedList[SID].PedVisualData.Appearance = {
+    ssv_PedList[PedSID].PedVisualData.Appearance = {
       HairColor = 0,
       HairHighlightColor = 0,
       BlemishesStyle = 255,
@@ -150,37 +151,38 @@ function ssv_nat_CreatePed(pedType, modelHash, posx, posy, posz, pedheading)
     }
   end
 
-  return SID
+  return PedSID
 end
 
-function ssv_nat_CreateVehicle(modelHash, posx, posy, posz, vehheading)
-  local Owner = GetInvokingResource()
+function ssv_nat_CreateVehicle(VehmodelHash, vehposx, vehposy, vehposz, vehheading)
+  local VehOwner = GetInvokingResource()
 
-  local SID = 1
+  local VehSID = 1
 
   table.insert(VehThreads, 1)
-  local tCount = #VehThreads
-  local tCountNow = tCount
+  local tVehCount = #VehThreads
+  local tVehCountNow = tVehCount
 
-  while tCount > 1 and tCountNow > tCount-1 do
-    tCountNow = table.getn(VehThreads)
+  while tVehCount > 1 and tVehCountNow > tVehCount-1 do
+    tVehCountNow = #VehThreads
   end
 
-  while ssv_VehList[SID] ~= nil do
-    SID = SID + 1
+  while ssv_VehList[VehSID] ~= nil do
+    VehSID = VehSID + 1
   end
 
-  ssv_VehList[SID] = {
-    VehSID = SID,
-    OwningRes = Owner,
-    x = posx,
-    y = posy,
-    z = posz,
+  ssv_VehList[VehSID] = {
+    VehSID = VehSID,
+    OwningRes = VehOwner,
+    x = vehposx,
+    y = vehposy,
+    z = vehposz,
     heading = vehheading,
+    JustSpawnedBool = false,
     IsSpawnedBool = false,
     OwnerClientNetID = 0, -- Serpent Ownership
     VehNetID = 0,
-    ModelHash = modelHash,
+    ModelHash = VehmodelHash,
     DriverIsSerpentPed = false,
     Passengers = {
       [-1] = 0,
@@ -238,7 +240,7 @@ function ssv_nat_CreateVehicle(modelHash, posx, posy, posz, vehheading)
 
   table.remove(VehThreads)
 
-  return SID
+  return VehSID
 end
 
 function ssv_nat_CreateObject()

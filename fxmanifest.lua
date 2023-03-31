@@ -9,7 +9,6 @@ shared_scripts {
   'Common/commonfct_shared.lua',
   'Config/config_shared.lua',
   'Def/def_shared.lua',
-  'NodeConfig/nodes_sh.lua',
 }
 
 server_scripts {
@@ -21,6 +20,7 @@ server_scripts {
   'Natives/Handler/*.lua',
   'Natives/Serpent/*.lua',
   'Natives/Server/*.lua',
+  'NodeConfig/nodes_sv.lua',
   'Pathfinding/paths_sv.lua',
   'Sync/sync_sv.lua',
   'Startup/startup_sv.lua',
@@ -50,4 +50,5 @@ server_exports {
   'ssv_nat_SetPedIntoVehicle',
   'ssv_nat_TaskEnterVehicle',
   'ssv_nat_TaskGoStraightToCoord',
+  'ssv_nat_TaskVehicleDriveToCoord',
 }

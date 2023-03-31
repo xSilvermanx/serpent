@@ -1,12 +1,17 @@
 function scl_SpawnVeh(vehid, vehdata)
+    
     scl_VehList[vehid] = vehdata
 
     local x = vehdata.x
     local y = vehdata.y
     local z = vehdata.z
-  
-    local _, Pos = GetClosestVehicleNode(x, y, z, 1, 3.0, 0) -- include heading when spawning the vehicle so that it always faced the right direction
-  
+
+    local retval, Pos = GetClosestVehicleNode(x, y, z, 1, 3.0, 0) -- include heading when spawning the vehicle so that it always faced the right direction
+    
+    if not retval then -- temp fix attempt
+        Pos = {x = x, y = y, z = z}
+    end
+    
     --make sure that selected coordinates are free for entity to spawn
   
     RequestModel(vehdata.ModelHash)
@@ -16,10 +21,9 @@ function scl_SpawnVeh(vehid, vehdata)
       Wait(50)
     end
     
-    print('Creating the vehicle')
-    local veh = CreateVehicle(vehdata.ModelHash, Pos.x, Pos.y, Pos.z, vehdata.heading, true, true)
-    local VehNetID = PedToNet(veh)
-  
+    local veh = CreateVehicle(vehdata.ModelHash, Pos.x, Pos.y, Pos.z, vehdata.heading, true, false)    
+    local VehNetID = VehToNet(veh)
+
     scl_VehList[vehid].VehNetID = VehNetID
     TriggerServerEvent('ssv:RecieveVehData', vehid, '', 'VehNetID', VehNetID)
 
@@ -86,7 +90,7 @@ function scl_SpawnPed(pedid, peddata, seatindex)
             Wait(50)
         end
 
-        local ped = CreatePed(peddata.PedType, peddata.ModelHash, x, y, z-1.0, peddata.heading, true, true)
+        local ped = CreatePed(peddata.PedType, peddata.ModelHash, x, y, z-1.0, peddata.heading, true, false)
         PedNetID = PedToNet(ped)
     end
 

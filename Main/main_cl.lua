@@ -6,26 +6,31 @@ AddEventHandler('scl:MainClientPedLoop', function()
       TriggerServerEvent('ssv:RecievePlayerPos', plx, ply, plz)
 
       for pedid, peddata in pairs(scl_PedList) do
-        if not scl_PedList[pedid].IsInVeh then
-          local PedNetID = peddata.PedNetID
-          local ped = NetToPed(PedNetID)
+        if scl_PedList[pedid].JustSpawnedBool then
+          scl_PedList[pedid].JustSpawnedBool = false
+          TriggerServerEvent('ssv:RecievePedData', pedid, "", "JustSpawnedBool", false)
+        else
+          if not scl_PedList[pedid].IsInVeh then
+            local PedNetID = scl_PedList[pedid].PedNetID
+            local ped = NetToPed(PedNetID)
 
-          local pedx, pedy, pedz = table.unpack(GetEntityCoords(ped))
-          local pedh = GetEntityHeading(ped)
+            local pedx, pedy, pedz = table.unpack(GetEntityCoords(ped))
+            local pedh = GetEntityHeading(ped)
 
-          scl_PedList[pedid].x = pedx
-          scl_PedList[pedid].y = pedy
-          scl_PedList[pedid].z = pedz
-          scl_PedList[pedid].heading = pedh
-          TriggerServerEvent('ssv:RecievePedData', pedid, 'Position', 'x', pedx)
-          TriggerServerEvent('ssv:RecievePedData', pedid, 'Position', 'y', pedy)
-          TriggerServerEvent('ssv:RecievePedData', pedid, 'Position', 'z', pedz)
-          TriggerServerEvent('ssv:RecievePedData', pedid, 'Heading', 'heading', pedh)
+            scl_PedList[pedid].x = pedx
+            scl_PedList[pedid].y = pedy
+            scl_PedList[pedid].z = pedz
+            scl_PedList[pedid].heading = pedh
+            TriggerServerEvent('ssv:RecievePedData', pedid, 'Position', 'x', pedx)
+            TriggerServerEvent('ssv:RecievePedData', pedid, 'Position', 'y', pedy)
+            TriggerServerEvent('ssv:RecievePedData', pedid, 'Position', 'z', pedz)
+            TriggerServerEvent('ssv:RecievePedData', pedid, 'Heading', 'heading', pedh)
 
-          if ssh_VectorDistance(pedx, pedy, pedz, plx, ply, plz) > DespawnRange then
-            TriggerEvent('scl:DespawnPed', pedid)
-          else
-            TriggerServerEvent('ssv:MainTaskHandler', pedid)
+            if ssh_VectorDistance(pedx, pedy, pedz, plx, ply, plz) > DespawnRange then
+              TriggerEvent('scl:DespawnPed', pedid)
+            else
+              TriggerServerEvent('ssv:MainTaskHandler', pedid)
+            end
           end
         end
       end
@@ -79,27 +84,36 @@ AddEventHandler('scl:MainClientVehLoop', function()
       TriggerServerEvent('ssv:RecievePlayerPos', plx, ply, plz)
 
       for vehid, vehdata in pairs(scl_VehList) do
-        local VehNetID = vehdata.VehNetID
-        local veh = NetToVeh(VehNetID)
-
-        local vehx, vehy, vehz = table.unpack(GetEntityCoords(veh))
-        local vehh = GetEntityHeading(veh)
-
-        scl_VehList[vehid].x = vehx
-        scl_VehList[vehid].y = vehy
-        scl_VehList[vehid].z = vehz
-        scl_VehList[vehid].heading = vehh
-        TriggerServerEvent('ssv:RecieveVehData', vehid, 'Position', 'x', vehx)
-        TriggerServerEvent('ssv:RecieveVehData', vehid, 'Position', 'y', vehy)
-        TriggerServerEvent('ssv:RecieveVehData', vehid, 'Position', 'z', vehz)
-        TriggerServerEvent('ssv:RecieveVehData', vehid, 'Heading', 'heading', vehh)
-
-        if ssh_VectorDistance(vehx, vehy, vehz, plx, ply, plz) > DespawnRange then
-          TriggerEvent('scl:DespawnVeh', vehid)
+        if scl_VehList[vehid].JustSpawnedBool then
+          scl_VehList[vehid].JustSpawnedBool = false
+          TriggerServerEvent('ssv:RecieveVehData', vehid, "", "JustSpawnedBool", false)
         else
-          for i, passenger in pairs(vehdata.Passengers) do
-            if passenger ~= 0 then
-              TriggerServerEvent('ssv:MainTaskHandler', passenger)
+          local VehNetID = scl_VehList[vehid].VehNetID
+          local veh = NetToVeh(VehNetID)
+
+          local vehx, vehy, vehz = table.unpack(GetEntityCoords(veh))
+          local vehh = GetEntityHeading(veh)
+
+          scl_VehList[vehid].x = vehx
+          scl_VehList[vehid].y = vehy
+          scl_VehList[vehid].z = vehz
+          scl_VehList[vehid].heading = vehh
+          TriggerServerEvent('ssv:RecieveVehData', vehid, 'Position', 'x', vehx)
+          TriggerServerEvent('ssv:RecieveVehData', vehid, 'Position', 'y', vehy)
+          TriggerServerEvent('ssv:RecieveVehData', vehid, 'Position', 'z', vehz)
+          TriggerServerEvent('ssv:RecieveVehData', vehid, 'Heading', 'heading', vehh)
+
+          if ssh_VectorDistance(vehx, vehy, vehz, plx, ply, plz) > DespawnRange then
+            TriggerEvent('scl:DespawnVeh', vehid)
+          else
+            for i, passenger in pairs(vehdata.Passengers) do
+              if passenger ~= 0 then
+                TriggerServerEvent('ssv:SyncPedData', passenger, 'Position', 'x', vehx)
+                TriggerServerEvent('ssv:SyncPedData', passenger, 'Position', 'y', vehy)
+                TriggerServerEvent('ssv:SyncPedData', passenger, 'Position', 'z', vehz)
+                TriggerServerEvent('ssv:SyncPedData', passenger, 'Heading', 'heading', vehh)
+                TriggerServerEvent('ssv:MainTaskHandler', passenger)
+              end
             end
           end
         end
@@ -107,7 +121,6 @@ AddEventHandler('scl:MainClientVehLoop', function()
       Wait(500)
     end
   end)
-
 end)
 
 RegisterNetEvent('scl:SpawnVeh')
