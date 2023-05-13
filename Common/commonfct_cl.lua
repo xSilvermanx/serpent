@@ -131,3 +131,9 @@ function scl_ApplyPedBehaviorFlags(pedid, peddata)
 
     return true
 end
+
+function Notify(text)
+    SetNotificationTextEntry("STRING")
+    AddTextComponentString(text)
+    DrawNotification(true, false)
+end

@@ -1,4 +1,4 @@
-function ssv_native_SetPedIntoVehicle(SID, VehSID, seat)
+function ssv_nat_SetPedIntoVehicle(SID, VehSID, seat)
     TriggerEvent('ssv:SyncPedData', SID, '', 'IsInVeh', true)
     TriggerEvent('ssv:SyncPedData', SID, '', 'VehSID', VehSID)
     if seat == -1 then
@@ -22,5 +22,5 @@ end
 
 --[[RegisterNetEvent('ssv:nat:res:SetPedIntoVehicle:Helper')
 AddEventHandler('ssv:nat:res:SetPedIntoVehicle:Helper', function(SID, VehSID, seat)
-    ssv_native_SetPedIntoVehicle(SID, VehSID, seat)
+    ssv_nat_SetPedIntoVehicle(SID, VehSID, seat)
 end)]]

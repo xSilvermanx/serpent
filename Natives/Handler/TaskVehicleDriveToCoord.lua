@@ -64,7 +64,6 @@ end
 
 RegisterNetEvent('ssv:nat:TaskVehicleDriveToCoord')
 AddEventHandler('ssv:nat:TaskVehicleDriveToCoord', function(SID, ObjectiveData, PathfindingData, isOverride)
-    print('I have started')
     local x = ssv_PedList[SID].x
     local y = ssv_PedList[SID].y
     local z = ssv_PedList[SID].z
@@ -73,10 +72,9 @@ AddEventHandler('ssv:nat:TaskVehicleDriveToCoord', function(SID, ObjectiveData, 
     local tary = ObjectiveData.y
     local tarz = ObjectiveData.z
     local distance = ssh_VectorDistance(x, y, z, tarx, tary, tarz)
-    if distance <= 3*ObjectiveData.stopRange then
+    if (distance <= 3*ObjectiveData.stopRange and ssv_PedList[SID].IsSpawnedBool) or (distance <= 10*ObjectiveData.stopRange and not ssv_PedList[SID].IsSpawnedBool) then
         TriggerEvent('ssv:FinishTask', SID, isOverride, true)
     else
-        print('Triggering first task')
         local task = ObjectiveData.task
         TriggerEvent('ssv:nat:TaskVehicleDriveToCoord:' .. task, SID, ObjectiveData, PathfindingData, isOverride)
         if task == 'Init' then
@@ -96,7 +94,6 @@ AddEventHandler('ssv:nat:TaskVehicleDriveToCoord', function(SID, ObjectiveData, 
 end)
 
 AddEventHandler('ssv:nat:TaskVehicleDriveToCoord:Init', function(SID, ObjectiveData, PathfindingData, isOverride)
-    print('Triggered init')
     if ssv_PedList[SID].IsSpawnedBool and ssv_VehList[ObjectiveData.VehSID].IsSpawnedBool then
         local PedNetID = ssv_PedList[SID].PedNetID
         local ped = NetworkGetEntityFromNetworkId(PedNetID)
@@ -106,7 +103,6 @@ AddEventHandler('ssv:nat:TaskVehicleDriveToCoord:Init', function(SID, ObjectiveD
         ssv_PedList[SID].ScriptOwnerNetID = OwnerID
         TriggerClientEvent('scl:nat:res:TaskVehicleDriveToCoord:Init', OwnerID, SID, PedData, VehData, ObjectiveData, PathfindingData, isOverride)
     elseif not (ssv_PedList[SID].IsSpawnedBool or ssv_VehList[ObjectiveData.VehSID].IsSpawnedBool) then
-        print('Nothing spawned')
         TriggerEvent('ssv:nat:res:TaskVehicleDriveToCoord:Init', SID, ObjectiveData, PathfindingData, isOverride)
     end
 end)

@@ -48,3 +48,4 @@ function ssv_FindPedSeatInSerpentVehicle(pedid)
   end
   return seat
 end
+

@@ -10,7 +10,7 @@ AddEventHandler('ssv:nat:res:TaskEnterVehicle:Init', function(SID, VehSID, timeo
   local distance = ssh_VectorDistance(posx, posy, posz, tarx, tary, tarz)
 
   if flag == 3 or flag == 16 or distance < 2.0 then
-    ssv_native_SetPedIntoVehicle(SID, VehSID, seatIndex)
+    ssv_nat_SetPedIntoVehicle(SID, VehSID, seatIndex)
   else
     ssv_PedList[SID].heading = ssh_getGameHeadingFromPoints(posx, posy, tarx, tary)
 
@@ -45,7 +45,7 @@ AddEventHandler('ssv:nat:res:TaskEnterVehicle:Continue', function(SID, VehSID, t
   local distance = ssh_VectorDistance(posx, posy, posz, tarx, tary, tarz)
 
   if flag == 3 or flag == 16 or distance < 2.0 then
-    ssv_native_SetPedIntoVehicle(SID, VehSID, seatIndex)
+    ssv_nat_SetPedIntoVehicle(SID, VehSID, seatIndex)
   else
     -- subject to change: Build in a way to check whether the car moved.
     ssv_PedList[SID].heading = ssh_getGameHeadingFromPoints(posx, posy, tarx, tary)

@@ -5,6 +5,12 @@ author 'multiple'
 description '[Serpent] Server Platform for Entity Management - Dev Resource'
 version '0.1'
 
+client_scripts { -- temp
+  'NodeConfig/nodes_sv.lua',
+  'NodeConfig/nodes_display.lua',
+  'newnodes.txt',
+}
+
 shared_scripts {
   'Common/commonfct_shared.lua',
   'Config/config_shared.lua',
@@ -20,6 +26,7 @@ server_scripts {
   'Natives/Handler/*.lua',
   'Natives/Serpent/*.lua',
   'Natives/Server/*.lua',
+  'NodeConfig/nodes_creation_sv.lua',
   'NodeConfig/nodes_sv.lua',
   'Pathfinding/paths_sv.lua',
   'Sync/sync_sv.lua',

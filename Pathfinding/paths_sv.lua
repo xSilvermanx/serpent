@@ -107,20 +107,6 @@ function ssv_nat_GetNodeData(Id)
   return Data
 end
 
-RegisterNetEvent('ssv:RecievePathBetweenTwoPoints')
-AddEventHandler('ssv:RecievePathBetweenTwoPoints', function(SID, Task, i, ListOfReturnNodes, isOverride)
-  if Task == "TaskVehicleDriveToCoord" then
-    if isOverride then
-      ssv_PedList[SID].OverridePathfindingData['PrecisePathMeta'][i] = true
-      ssv_PedList[SID].OverridePathfindingData['PrecisePath'][i] = ListOfReturnNodes
-    else
-      ssv_PedList[SID].CurrPathfindingData['PrecisePathMeta'][i] = true
-      ssv_PedList[SID].CurrPathfindingData['PrecisePath'][i] = ListOfReturnNodes
-    end
-  --elseif Task == "NewTask" then --create new if-clause for every task or reuse same layout as "TaskVehicleDriveToCoord"
-  end
-end)
-
 --[[CreateThread(function()
 
   local bool1, node1 = ssv_nat_GetClosestNodeId(-459.79, 5878.41, 33.25)

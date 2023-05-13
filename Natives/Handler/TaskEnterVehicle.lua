@@ -62,7 +62,7 @@ AddEventHandler('ssv:nat:TaskEnterVehicle', function(SID, ObjectiveData, Pathfin
   local y = ssv_PedList[SID].y
   local z = ssv_PedList[SID].z
 
-  if ssv_native_IsPedInSerpentVehicle(SID, ObjectiveData.VehSID) then
+  if ssv_nat_IsPedInSerpentVehicle(SID, ObjectiveData.VehSID) then
     TriggerEvent('ssv:FinishTask', SID, isOverride, true)
   else
     
