@@ -15,8 +15,7 @@ AddEventHandler('scl:nat:res:TaskVehicleDriveToCoord:Init', function(SID, PedDat
     -- todo: Speed == -2 -> Speeding reasonably on any given street (Factor 2 or 2.5 of the given speed limit)
 end)
 
-
---[[RegisterNetEvent('CreateBlips')
+RegisterNetEvent('CreateBlips')
 AddEventHandler('CreateBlips', function(Path, sx, sy, sz, ex, ey, ez, vehx, vehy, vehz, tarx, tary, tarz)
     local startblip = AddBlipForCoord(sx, sy, sz)
     BeginTextCommandSetBlipName("STRING")
@@ -49,4 +48,4 @@ AddEventHandler('CreateBlips', function(Path, sx, sy, sz, ex, ey, ez, vehx, vehy
         end
     end
 
-end)]]
+end)
