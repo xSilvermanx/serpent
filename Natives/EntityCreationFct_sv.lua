@@ -179,6 +179,7 @@ function ssv_nat_CreateVehicle(VehmodelHash, vehposx, vehposy, vehposz, vehheadi
     y = vehposy,
     z = vehposz,
     heading = vehheading,
+    currspeed = 0.0,
     JustSpawnedBool = false,
     IsSpawnedBool = false,
     OwnerClientNetID = 0, -- Serpent Ownership

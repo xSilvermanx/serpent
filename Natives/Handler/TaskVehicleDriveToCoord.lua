@@ -75,8 +75,10 @@ AddEventHandler('ssv:nat:TaskVehicleDriveToCoord', function(SID, ObjectiveData, 
     
     ssv_nat_PedUseExactSpawnCoordinates(SID, false)
     ssv_nat_VehUseExactSpawnCoordinates(ssv_PedList[SID].VehSID, false)
+    ssv_VehList[ssv_PedList[SID].VehSID].currspeed = 20.0
 
     if (distance <= 3*ObjectiveData.stopRange and ssv_PedList[SID].IsSpawnedBool) or (distance <= 10*ObjectiveData.stopRange and not ssv_PedList[SID].IsSpawnedBool) then
+        ssv_VehList[ssv_PedList[SID].VehSID].currspeed = 0.0
         TriggerEvent('ssv:FinishTask', SID, isOverride, true)
     else
         local task = ObjectiveData.task
