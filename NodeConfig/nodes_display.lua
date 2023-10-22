@@ -6,7 +6,7 @@ AddEventHandler('AddNodeForBlip', function(name, x, y, z)
     EndTextCommandSetBlipName(blip)
 end)
 
-function getCurrentCount(zone)
+--[[function getCurrentCount(zone)
     local count = 1
 
     for name, entry in pairs(ListNodes) do
@@ -55,4 +55,4 @@ CreateThread(function()
         SetPedDensityMultiplierThisFrame(0.0)
         SetVehicleDensityMultiplierThisFrame(0.0)
     end
-end)
+end)]]

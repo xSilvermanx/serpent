@@ -6,7 +6,6 @@ description '[Serpent] Server Platform for Entity Management - Dev Resource'
 version '0.1'
 
 client_scripts { -- temp
-  'NodeConfig/nodes_sv.lua',
   'NodeConfig/nodes_display.lua',
   'newnodes.txt',
 }
@@ -15,6 +14,7 @@ shared_scripts {
   'Common/commonfct_shared.lua',
   'Config/config_shared.lua',
   'Def/def_shared.lua',
+  'NodeConfig/nodes_sv.lua',
 }
 
 server_scripts {
