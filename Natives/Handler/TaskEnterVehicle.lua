@@ -62,6 +62,8 @@ AddEventHandler('ssv:nat:TaskEnterVehicle', function(SID, ObjectiveData, Pathfin
   local y = ssv_PedList[SID].y
   local z = ssv_PedList[SID].z
 
+  ssv_nat_PedUseExactSpawnCoordinates(SID, false)
+
   if ssv_nat_IsPedInSerpentVehicle(SID, ObjectiveData.VehSID) then
     TriggerEvent('ssv:FinishTask', SID, isOverride, true)
   else

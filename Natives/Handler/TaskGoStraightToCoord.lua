@@ -71,6 +71,8 @@ AddEventHandler('ssv:nat:TaskGoStraightToCoord', function(SID, ObjectiveData, Pa
 
   local task = ObjectiveData.task
 
+  ssv_nat_PedUseExactSpawnCoordinates(SID, false)
+
   TriggerEvent('ssv:nat:TaskGoStraightToCoord:' .. task, SID, ObjectiveData.x, ObjectiveData.y, ObjectiveData.z, ObjectiveData.speed, ObjectiveData.timeout, ObjectiveData.targetHeading, ObjectiveData.distancetoSlide, isOverride)
 
 

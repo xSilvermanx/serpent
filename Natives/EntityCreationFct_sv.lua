@@ -71,6 +71,7 @@ function ssv_nat_CreatePed(pedType, PedmodelHash, pedposx, pedposy, pedposz, ped
     PedHealth = 100,
     PedArmor = 0,
     BlockNonTemporaryEvents = true,
+    UseExactSpawnCoordinates = false,
   }
 
   table.remove(PedThreads)
@@ -235,7 +236,7 @@ function ssv_nat_CreateVehicle(VehmodelHash, vehposx, vehposy, vehposz, vehheadi
     },
     ConvertibleRoofClosed = true,
     HasDriftTyres = false,
-
+    UseExactSpawnCoordinates = false,
   }
 
   table.remove(VehThreads)

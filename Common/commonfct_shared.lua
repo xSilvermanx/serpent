@@ -71,3 +71,14 @@ function ssh_mphTomps(speed)
   newspeed = speed / 2.237
   return newspeed
 end
+
+-- Calculates position x1, y1, z1 as the offset of a specified position x0, y0, z0 with regards to its heading.
+-- dx defines an offset to the right (negative: left), dx to the front (negative: back), dz upwards (negative: downwards).
+function ssh_OffsetPosition(x0, y0, z0, heading, dx, dy, dz)
+  local heading = heading * math.pi/180
+  local x1 = x0 + math.cos(heading) * dx - math.sin(heading)*dy
+  local y1 = y0 + math.sin(heading) * dx + math.cos(heading)*dy
+  local z1 = z0 + dz
+
+  return x1, y1, z1
+end

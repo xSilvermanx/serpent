@@ -5,15 +5,32 @@ function scl_SpawnVeh(vehid, vehdata)
     local x = vehdata.x
     local y = vehdata.y
     local z = vehdata.z
+    local Pos = {x = x, y = y, z = z}
 
-    local retval, Pos = GetClosestVehicleNode(x, y, z, 1, 3.0, 0) -- include heading when spawning the vehicle so that it always faced the right direction
-    
-    if not retval then -- temp fix attempt
-        Pos = {x = x, y = y, z = z}
+    if not scl_VehList[vehid].UseExactSpawnCoordinates then
+        local retval, Pos1 = GetClosestVehicleNode(x, y, z, 1, 3.0, 0)
+        Pos = Pos1
+
+        if not retval then
+            Pos = {x = x, y = y, z = z}
+        else
+            local x1, y1, z1 = ssh_OffsetPosition(Pos.x, Pos.y, Pos.z, vehdata.heading, 3, 0, 0)
+            Pos = {x = x1, y = y1, z = z1}
+
+            local rayHandle = StartShapeTestRay(Pos.x, Pos.y, Pos.z+5.0, Pos.x, Pos.y, Pos.z-5.0, 30, 0, 0)
+            local _, hit, _, _, _ = GetShapeTestResult(rayHandle)
+
+            if hit == 1 then
+                Pos = {x = Pos1.x, y = Pos1.y, z = Pos1.z}
+                local rayHandle = StartShapeTestRay(Pos.x, Pos.y, Pos.z+5.0, Pos.x, Pos.y, Pos.z-5.0, 30, 0, 0)
+                local _, hit, _, _, entityHit = GetShapeTestResult(rayHandle)
+                if hit == 1 then
+                    Pos = {x = x, y = y, z = z}
+                end
+            end
+        end
     end
     
-    --make sure that selected coordinates are free for entity to spawn
-  
     RequestModel(vehdata.ModelHash)
   
     while not HasModelLoaded(vehdata.ModelHash) do
@@ -66,18 +83,20 @@ function scl_SpawnPed(pedid, peddata, seatindex)
             isOverride = true
         end
 
-        local retval, r = GetSafeCoordForPed(peddata.x, peddata.y, peddata.z, false, 16)
-        local rx, ry, rz = table.unpack(r)
-        if retval and ssh_VectorDistance(x, y, z, rx, ry, rz) < 22.0 then
-            x = rx
-            y = ry
-            z = rz
-        else
-            retval, r = GetPointOnRoadSide(peddata.x, peddata.y, peddata.z, 0)
+        if not scl_PedList[pedid].UseExactSpawnCoordinates then
+            local retval, r = GetSafeCoordForPed(peddata.x, peddata.y, peddata.z, false, 16)
+            local rx, ry, rz = table.unpack(r)
             if retval and ssh_VectorDistance(x, y, z, rx, ry, rz) < 22.0 then
-            x = rx
-            y = ry
-            z = rz
+                x = rx
+                y = ry
+                z = rz
+            else
+                retval, r = GetPointOnRoadSide(peddata.x, peddata.y, peddata.z, 0)
+                if retval and ssh_VectorDistance(x, y, z, rx, ry, rz) < 22.0 then
+                x = rx
+                y = ry
+                z = rz
+                end
             end
         end
 

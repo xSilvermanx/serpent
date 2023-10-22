@@ -72,6 +72,10 @@ AddEventHandler('ssv:nat:TaskVehicleDriveToCoord', function(SID, ObjectiveData, 
     local tary = ObjectiveData.y
     local tarz = ObjectiveData.z
     local distance = ssh_VectorDistance(x, y, z, tarx, tary, tarz)
+    
+    ssv_nat_PedUseExactSpawnCoordinates(SID, false)
+    ssv_nat_VehUseExactSpawnCoordinates(ssv_PedList[SID].VehSID, false)
+
     if (distance <= 3*ObjectiveData.stopRange and ssv_PedList[SID].IsSpawnedBool) or (distance <= 10*ObjectiveData.stopRange and not ssv_PedList[SID].IsSpawnedBool) then
         TriggerEvent('ssv:FinishTask', SID, isOverride, true)
     else

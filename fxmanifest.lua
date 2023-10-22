@@ -53,8 +53,10 @@ server_exports {
   'ssv_nat_GetClosestNodeId',
   'ssv_nat_GetNodeData',
   'ssv_nat_IsPedInSerpentVehicle',
+  'ssv_nat_PedUseExactSpawnCoordinates',
   'ssv_nat_SetPedIntoVehicle',
   'ssv_nat_TaskEnterVehicle',
   'ssv_nat_TaskGoStraightToCoord',
   'ssv_nat_TaskVehicleDriveToCoord',
+  'ssv_nat_VehUseExactSpawnCoordinates',
 }
