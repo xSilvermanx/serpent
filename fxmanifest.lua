@@ -14,7 +14,7 @@ shared_scripts {
   'Common/commonfct_shared.lua',
   'Config/config_shared.lua',
   'Def/def_shared.lua',
-  'NodeConfig/nodes_sv.lua',
+  'NodeConfig/nodes_sh.lua',
 }
 
 server_scripts {
@@ -27,7 +27,6 @@ server_scripts {
   'Natives/Serpent/*.lua',
   'Natives/Server/*.lua',
   'NodeConfig/nodes_creation_sv.lua',
-  'NodeConfig/nodes_sv.lua',
   'Pathfinding/paths_sv.lua',
   'Sync/sync_sv.lua',
   'Startup/startup_sv.lua',

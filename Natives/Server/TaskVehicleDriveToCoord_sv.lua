@@ -25,7 +25,7 @@ AddEventHandler('ssv:nat:res:TaskVehicleDriveToCoord:Init', function(SID, Object
     elseif speed == -2 then
         for i, entry in ListNodes[Path(#Path)].paths do
             if entry[1] == Path[#Path-1] then
-                startpathoverridedistance = entry[2]*2
+                startpathoverridedistance = entry[2]*entry[3]
                 break
             end
         end
@@ -55,7 +55,7 @@ AddEventHandler('ssv:nat:res:TaskVehicleDriveToCoord:Init', function(SID, Object
     elseif speed == -2 then
         for i, entry in ListNodes[Path[#Path]].paths do
             if entry[1] == Path[#Path-1] then
-                endpathoverridedistance = entry[2]*2
+                endpathoverridedistance = entry[2]*entry[3]
                 break
             end
         end
@@ -73,7 +73,7 @@ AddEventHandler('ssv:nat:res:TaskVehicleDriveToCoord:Init', function(SID, Object
         end
     end
 
-    TriggerClientEvent('CreateBlips', -1, Path, sx, sy, sz, ex, ey, ez, vehx, vehy, vehz, tarx, tary, tarz)
+    --TriggerClientEvent('CreateBlips', -1, Path, sx, sy, sz, ex, ey, ez, vehx, vehy, vehz, tarx, tary, tarz)
 
     table.insert(Path, "START")
     table.insert(Path, 1, "GOAL")
@@ -81,18 +81,139 @@ AddEventHandler('ssv:nat:res:TaskVehicleDriveToCoord:Init', function(SID, Object
     for i, entry in ipairs(Path) do
         print(i, entry)
     end
+
     print('Length of Path', #Path)
 
     if isOverride then
         ssv_PedList[SID].OverridePathfindingData['Path'] = Path
-        ssv_PedList[SID].OverridePathfindingData['CurrentNode'] = #Path - 1
+        ssv_PedList[SID].OverridePathfindingData['CurrentNode'] = #Path-1
     else
         ssv_PedList[SID].CurrPathfindingData['Path'] = Path
-        ssv_PedList[SID].CurrPathfindingData['CurrentNode'] = #Path - 1
+        ssv_PedList[SID].CurrPathfindingData['CurrentNode'] = #Path-1
     end
-
+    
+    TriggerEvent('ssv:nat:res:TaskVehicleDriveToCoord:Continue')
 end)
 
-AddEventHandler('ssv:nat:res:TaskVehicleDriveToCoord:Continue', function(SID, ObjectiveData, PathfindingData, isOverride)
+AddEventHandler('ssv:nat:res:TaskVehicleDriveToCoord:Continue', function(SID, ObjectiveData, PathfindingData, isOverride)  
 
+    if not PathfindingData or not PathfindingData['Path'] then
+        return
+    end
+
+    local posx = ssv_PedList[SID].x
+    local posy = ssv_PedList[SID].y
+    local posz = ssv_PedList[SID].z
+
+    local nxttarx = 0
+    local nxttary = 0
+    local nxttarz = 0
+    local speed = ObjectiveData.speed
+
+    if PathfindingData['Path'][PathfindingData['CurrentNode']] == "STARTHELPER" then
+        nxttarx = PathfindingData['STARTHELPER'][1]
+        nxttary = PathfindingData['STARTHELPER'][2]
+        nxttarz = PathfindingData['STARTHELPER'][3]
+    elseif PathfindingData['Path'][PathfindingData['CurrentNode']] == "ENDHELPER" then
+        nxttarx = PathfindingData['ENDHELPER'][1]
+        nxttary = PathfindingData['ENDHELPER'][2]
+        nxttarz = PathfindingData['ENDHELPER'][3]
+    elseif PathfindingData['Path'][PathfindingData['CurrentNode']] == "GOAL" then
+        nxttarx = ObjectiveData.x
+        nxttary = ObjectiveData.y
+        nxttarz = ObjectiveData.z
+    else
+        nxttarx = ListNodes[PathfindingData['Path'][PathfindingData['CurrentNode']]].x
+        nxttary = ListNodes[PathfindingData['Path'][PathfindingData['CurrentNode']]].y
+        nxttarz = ListNodes[PathfindingData['Path'][PathfindingData['CurrentNode']]].z
+    end
+
+    if speed == -1 or speed == -2 then      
+        local speedingvalue = 2.0
+
+        if PathfindingData['Path'][PathfindingData['CurrentNode']] == "STARTHELPER" then
+            speed = 30.0
+        elseif PathfindingData['Path'][PathfindingData['CurrentNode']] == "ENDHELPER" then
+            speed = 30.0
+        elseif PathfindingData['Path'][PathfindingData['CurrentNode']] == "GOAL" then
+            speed = 30.0
+        elseif not PathfindingData['Path'][PathfindingData['CurrentNode']+1] or PathfindingData['Path'][PathfindingData['CurrentNode']+1] == "START" then
+            speed = 30.0
+        else
+            local OldNode = PathfindingData['Path'][PathfindingData['CurrentNode']+1]
+            for i, path in ipairs(ListNodes[OldNode].paths) do
+                if path[1] == PathfindingData['Path'][PathfindingData['CurrentNode']] then
+                    speed = path[2]
+                    speedingvalue = path[3]
+                    break
+                end
+            end
+            speed = 25.0
+        end
+        
+        if speed == -2 then
+            speed = speed * speedingvalue
+        end
+        if speed == 25.0 or speed == 50.0 then
+            print('Invalid speed detected for values:')
+            print('CurrentNode', PathfindingData['Path'][PathfindingData['CurrentNode']])
+            print('OldNode', PathfindingData['Path'][PathfindingData['CurrentNode']+1])
+            print('CurrPos', posx, posy, posz)
+            print('CurrTarget', nxttarx, nxttary, nxttarz)
+        end
+    end
+
+    speed = ssh_mphTomps(speed)
+
+    local currdistance = ssh_VectorDistance(posx, posy, posz, nxttarx, nxttary, nxttarz)
+    local distancecheckbool = false
+
+    if currdistance < 2*speed then
+        distancecheckbool = true
+        if currdistance < speed then
+            return
+        end
+    end
+  
+    --[[print("Driving to next coordinate: ")
+    print(PathfindingData['Path'][PathfindingData['CurrentNode'] ])
+    print(nxttarx)
+    print(nxttary)
+    print(nxttarz)
+    print('---')]]
+
+    local heading = ssh_getGameHeadingFromPoints(posx, posy, nxttarx, nxttary)
+    ssv_PedList[SID].heading = heading
+    ssv_VehList[ObjectiveData.VehSID].heading = heading
+
+    local nx, ny, nz = ssh_getNormalisedVector(posx, posy, posz, nxttarx, nxttary, nxttarz)
+      
+    local newposx = posx + speed*nx/2
+    local newposy = posy + speed*ny/2
+    local newposz = posz + speed*nz/2
+    
+    ssv_PedList[SID].x = newposx
+    ssv_PedList[SID].y = newposy
+    ssv_PedList[SID].z = newposz
+
+    ssv_VehList[ObjectiveData.VehSID].x = newposx
+    ssv_VehList[ObjectiveData.VehSID].y = newposy
+    ssv_VehList[ObjectiveData.VehSID].z = newposz
+
+    if isOverride then
+      ssv_PedList[SID].OverridePathfindingData['nx'] = nx
+      ssv_PedList[SID].OverridePathfindingData['ny'] = ny
+      ssv_PedList[SID].OverridePathfindingData['nz'] = nz
+    else
+      ssv_PedList[SID].CurrPathfindingData['nx'] = nx
+      ssv_PedList[SID].CurrPathfindingData['ny'] = ny
+      ssv_PedList[SID].CurrPathfindingData['nz'] = nz
+    end
+
+    -- update Ped AND vehicle position
+    -- check for passengers and update their position too!
+
+    if distancecheckbool then
+        ssv_PedList[SID].CurrPathfindingData['CurrentNode'] = ssv_PedList[SID].CurrPathfindingData['CurrentNode']-1
+    end
 end)

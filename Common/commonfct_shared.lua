@@ -67,3 +67,7 @@ function ssh_GetPositionOnLineClosestToPoint(x0, y0, z0, x1, y1, z1, x2, y2, z2)
   return rx, ry, rz, r, d
 end
 
+function ssh_mphTomps(speed)
+  newspeed = speed / 2.237
+  return newspeed
+end

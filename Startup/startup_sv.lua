@@ -47,7 +47,7 @@ end
 print('Length of Path', #path)
 end)]]
 
---[[CreateThread(function()
+CreateThread(function()
   while true do
     for pedid, peddata in pairs(ssv_PedList) do
       print('SID', peddata.PedSID)
@@ -77,4 +77,4 @@ end)]]
     print('---------------------------------------------')
     Wait(1000)
   end
-end)]]
+end)
