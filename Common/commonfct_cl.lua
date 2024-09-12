@@ -127,8 +127,13 @@ function scl_ApplyAllPedProperties(pedid, peddata)
     SetEntityHealth(ped, peddata.PedHealth)
     SetPedArmour(ped, peddata.PedArmor)
       
-    if peddata.ModelHash == FreemodeHashM or peddata.ModelHash == FreemodeHashF then
+    if (peddata.ModelHash == FreemodeHashM or peddata.ModelHash == FreemodeHashF) and not RandomLooks then
         -- code inheritance, facefeatures and appearance. Copy most from 'Charspawner' script
+    end
+
+    if RandomLooks then
+        -- get all appearance data and save it to the list
+        RandomLooks = false
     end
 
     -- code components and props. Copy most from 'Charspawner' script

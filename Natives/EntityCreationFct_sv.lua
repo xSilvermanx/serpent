@@ -33,6 +33,7 @@ function ssv_nat_CreatePed(pedType, PedmodelHash, pedposx, pedposy, pedposz, ped
     PedNetID = 0,
     PedType = pedType,
     ModelHash = PedmodelHash,
+    RandomLooks = true,
     PedVisualData = {
       Components = {
         {0, 0, 0},
