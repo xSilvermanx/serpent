@@ -38,7 +38,8 @@ function AStar(Start, Goal)
     table.remove(PriorityList, NextIndex)
 
     for i, NextLocation in ipairs(ListNodes[CurrentLocation].paths) do
-      local NewCost = CostSoFarList[CurrentLocation] + CostFunction(ListNodes[CurrentLocation], ListNodes[NextLocation[1]])
+      local speed = NextLocation[2]
+      local NewCost = CostSoFarList[CurrentLocation] + CostFunction(ListNodes[CurrentLocation], ListNodes[NextLocation[1]], speed)
       if not CostSoFarList[NextLocation[1]] or NewCost < CostSoFarList[NextLocation[1]] then
         CostSoFarList[NextLocation[1]] = NewCost
         local NewPriority = NewCost + HeuristicFunction(ListNodes[Goal], ListNodes[NextLocation[1]])
@@ -57,8 +58,6 @@ function AStar(Start, Goal)
         ClosedList[NextLocation[1]] = CurrentLocation
       end
     end
-
-    Wait(0)
   end
 
   local PathCurrLocation = Goal
@@ -69,21 +68,20 @@ function AStar(Start, Goal)
     Wait(0)
   end
   table.insert(Path, Start)
-
   return(Path)
 end
 
-function CostFunction(CurrentLocation, NextLocation) --to determine the costs between two neighboring functions. That means that NextLocation has to be one node inside CurrentLocation.paths
+function CostFunction(CurrentLocation, NextLocation, speed) --to determine the costs between two neighboring functions. That means that NextLocation has to be one node inside CurrentLocation.paths
 
-  return ( math.sqrt ( math.pow ( NextLocation.x - CurrentLocation.x, 2 ) + math.pow ( NextLocation.y - CurrentLocation.y, 2 ) + math.pow ( NextLocation.z - CurrentLocation.z, 2 ) ) )
+  return ( math.sqrt ( math.pow ( NextLocation.x - CurrentLocation.x, 2 ) + math.pow ( NextLocation.y - CurrentLocation.y, 2 ) + math.pow ( NextLocation.z - CurrentLocation.z, 2 ) ) / speed)
 end
 
 function HeuristicFunction(NodeA, NodeB) -- to determine the costs between two nodes. Mostly used with NodeB the end-node. No node can be sure to be a part of NodeX.paths
 
-  return ( math.sqrt ( math.pow ( NodeA.x - NodeB.x, 2 ) + math.pow ( NodeA.y - NodeB.y, 2 ) + math.pow ( NodeA.z - NodeB.z, 2 ) ) )
+  return ( math.sqrt ( math.pow ( NodeA.x - NodeB.x, 2 ) + math.pow ( NodeA.y - NodeB.y, 2 ) + math.pow ( NodeA.z - NodeB.z, 2 ) ) / 60 )
 end
 
-function ssv_nat_GetClosestNodeId(x, y, z)
+function ssh_nat_GetClosestNodeId(x, y, z)
   local Id = nil
   local Found = false
   local ClosestDist = 9999999999.9
@@ -102,7 +100,7 @@ function ssv_nat_GetClosestNodeId(x, y, z)
   return Found, Id
 end
 
-function ssv_nat_GetNodeData(Id)
+function ssh_nat_GetNodeData(Id)
   local Data = ListNodes[Id]
   return Data
 end

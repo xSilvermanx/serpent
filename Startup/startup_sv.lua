@@ -38,16 +38,17 @@ end)
 
 TriggerEvent('ssv:Startup')
 
---[[CreateThread(function()
-local path = AStar("PALETO-2", "CHIANSKI-1")
+CreateThread(function()
+print('Starting')
+local path = AStar("PALETO-2", "DOWNT-14")
 
 for i, entry in ipairs(path) do
   print(i, entry)
 end
-print('Length of Path', #path)
-end)]]
 
-CreateThread(function()
+end)
+
+--[[CreateThread(function()
   while true do
     for pedid, peddata in pairs(ssv_PedList) do
       print('SID', peddata.PedSID)
@@ -77,4 +78,4 @@ CreateThread(function()
     print('---------------------------------------------')
     Wait(1000)
   end
-end)
+end)]]

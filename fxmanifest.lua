@@ -15,6 +15,7 @@ shared_scripts {
   'Config/config_shared.lua',
   'Def/def_shared.lua',
   'NodeConfig/nodes_sh.lua',
+  'Pathfinding/paths_sh.lua',
 }
 
 server_scripts {
@@ -27,9 +28,7 @@ server_scripts {
   'Natives/Serpent/*.lua',
   'Natives/Server/*.lua',
   'NodeConfig/nodes_creation_sv.lua',
-  'Pathfinding/paths_sv.lua',
   'Sync/sync_sv.lua',
-  'Startup/startup_sv.lua',
 }
 
 client_scripts {
@@ -40,6 +39,13 @@ client_scripts {
   'Natives/Client/*.lua',
   'Pathfinding/paths_cl.lua',
   'Sync/sync_cl.lua',
+}
+
+server_scripts{
+  'Startup/startup_sv.lua',
+}
+
+client_scripts{
   'Startup/startup_cl.lua',
 }
 
@@ -50,8 +56,6 @@ server_exports {
   'ssv_nat_DeletePed',
   'ssv_nat_DeleteVehicle',
   'ssv_nat_DeleteObject',
-  'ssv_nat_GetClosestNodeId',
-  'ssv_nat_GetNodeData',
   'ssv_nat_IsPedInSerpentVehicle',
   'ssv_nat_PedUseExactSpawnCoordinates',
   'ssv_nat_SetPedIntoVehicle',
@@ -59,4 +63,16 @@ server_exports {
   'ssv_nat_TaskGoStraightToCoord',
   'ssv_nat_TaskVehicleDriveToCoord',
   'ssv_nat_VehUseExactSpawnCoordinates',
+}
+
+-- Shared Exports
+
+server_exports {
+  'ssh_nat_GetNodeData',
+  'ssh_nat_GetClosestNodeId',
+}
+
+client_exports {
+  'ssh_nat_GetNodeData',
+  'ssh_nat_GetClosestNodeId',
 }
