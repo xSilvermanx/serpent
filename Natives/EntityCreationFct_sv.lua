@@ -36,25 +36,10 @@ function ssv_nat_CreatePed(pedType, PedmodelHash, pedposx, pedposy, pedposz, ped
     RandomLooks = true,
     PedVisualData = {
       Components = {
-        {0, 0, 0},
-        {1, 0, 0},
-        {2, 0, 0},
-        {3, 0, 0},
-        {4, 0, 0},
-        {5, 0, 0},
-        {6, 0, 0},
-        {7, 0, 0},
-        {8, 0, 0},
-        {9, 0, 0},
-        {10, 0, 0},
-        {11, 0, 0},
+
       },
       Props = {
-        {0, 0, 0},
-        {1, 0, 0},
-        {2, 0, 0},
-        {6, 0, 0},
-        {7, 0, 0},
+
       },
     },
     CurrObjective = "idle",
@@ -79,14 +64,18 @@ function ssv_nat_CreatePed(pedType, PedmodelHash, pedposx, pedposy, pedposz, ped
 
   if PedmodelHash == FreemodeHashM or PedmodelHash == FreemodeHashF then
     ssv_PedList[PedSID].PedVisualData.Inheritance = {
-      MotherShapeID = 0,
-      FatherShapeID = 0,
-      MotherSkinID = 0,
-      FatherSkinID = 0,
+      FirstShapeID = 0,
+      SecondShapeID = 0,
+      ThirdShapeID = 0,
+      FirstSkinID = 0,
+      SecondSkinID = 0,
+      ThirdSkinID = 0,
       shapeMix = 0.0,
       skinMix = 0.0,
+      thirdMix = 0.0,
+      isParentBool = false,
     }
-    ssv_PedList[PedSID].PedVisualData.FaceFeatures = {
+    ssv_PedList[PedSID].PedVisualData.FaceFeature = {
       NoseWidth = 0.0,
       NosePeakHeight = 0.0,
       NosePeakLength = 0.0,
@@ -183,6 +172,7 @@ function ssv_nat_CreateVehicle(VehmodelHash, vehposx, vehposy, vehposz, vehheadi
     currspeed = 0.0,
     JustSpawnedBool = false,
     IsSpawnedBool = false,
+    ScriptOwnerNetID = 0, -- FiveM Networking Ownership
     OwnerClientNetID = 0, -- Serpent Ownership
     VehNetID = 0,
     ModelHash = VehmodelHash,
@@ -197,46 +187,102 @@ function ssv_nat_CreateVehicle(VehmodelHash, vehposx, vehposy, vehposz, vehheadi
       [5] = 0,
       [6] = 0,
     },
+    RandomSpawn = true,
     VehicleMods = {
       Tuning = {
 
       },
-      Color = {
-
-      },
+      CustomWheel = false,
+      CustomWheelHydraulics = false,
+      WheelType = 0,
       Extras = {
 
       },
     },
+    Color = {
+      IsColorCombination = false,
+      PrimaryColorCustom = false,
+      SecondaryColorCustom = false,
+      ColorCombination = -1,
+      PrimaryColor = 0,
+      SecondaryColor = 0,
+      DashboardColor = 0,
+      ExtraColors = {},
+      InteriorColor = 0,
+      ModColor1 = {},
+      ModColor2 = {},
+      NeonLightsEnabled = {},
+      NeonLightsColor = {},
+      TyreSmokeColor = {},
+      XenonLightsColor = 255,
+      Livery = -1,
+      RoofLivery = -1,
+    },
+    Lights = {
+      HeadlightsState = 0, -- 0 = off, 1 = on, 2 = highbeams
+      Searchlight = false, -- false = not existent, 'Off' = Turned off, 'On' = Turned on
+      Siren = false,
+      IndicatorLeft = false,
+      IndicatorRight = false,
+      InteriorLight = false,
+    },
     VehicleEngineHealth = 1000,
-    VehicleLockStatus = 1,
-    VehicleLightsStatus = {
-
-    },
+    VehicleBodyHealth = 1000,
+    VehiclePetrolTankHealth = 1000,
+    VehicleFuelLevel = 100.0,
     VehicleDirtLevel = 0.0,
-    WindowStatus = { --check IsVehicleWindowIntact() and RollDownWindows()
+    WindowStatus = { -- 'Up', 'Down', 'Smashed'
+      [0] = 'Up',
+      [1] = 'Up',
+      [2] = 'Up',
+      [3] = 'Up',
+      [4] = 'Up',
+      [5] = 'Up',
+      [6] = 'Up',
+      [7] = 'Up',
+    },
+    WindowTint = 0,
+    Hydraulics = { -- not implemented yet
 
     },
-    DoorsStatus = {
+    CheckedDoors = false,
+    ExistingDoors = {
 
     },
-    Deformation = { --check GetVehicleDeformationAtPos()
+    DoorCanBreak = {
 
     },
-    TyreDamage = { -- if false, no damage, else set either 'flat' or 'gone'. Numbers refer to wheelID as in native IsVehicleTyreBurst()
-      [0] = false,
-      [1] = false,
-      [2] = false,
-      [3] = false,
-      [4] = false,
-      [5] = false,
-      [45] = false,
-      [47] = false,
-    },
-    Attachments = {
+    DoorsStatus = { -- "Closed", "Open", "Loose", "Broken"
 
     },
-    ConvertibleRoofClosed = true,
+    DoorLockStatus = 0,
+    Deformation = { --not implemented yet, check GetVehicleDeformationAtPos()
+
+    },
+    CheckedTyres = false,
+    TyreInvincible = false,
+    ExistingTyres = {
+
+    },
+    TyreDamage = { -- false, 'Flat', 'Destroyed'
+
+    },
+    TyreHealth = {
+
+    },
+    WheelsCanBreak = false, -- use ExistingTyres for wheels
+    WheelsCanBreakBlow = false,
+    WheelsCanDeform = false,
+    WheelDamage = {  -- false, 'Broken'
+
+    },
+    WheelHealth = {
+
+    },
+    Attachments = { -- not implmented yet. Has to do with attaching entities to each other - used either very generally or specially for tow trucks, trailers and the likes. Probably generally.
+
+    },
+    ConvertibleRoof = false, -- false, 'Open', 'Closed', 'Fixed'
     HasDriftTyres = false,
     UseExactSpawnCoordinates = false,
   }

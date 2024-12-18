@@ -5,11 +5,6 @@ author 'multiple'
 description '[Serpent] Server Platform for Entity Management - Dev Resource'
 version '0.1'
 
-client_scripts { -- temp
-  'NodeConfig/nodes_display.lua',
-  'newnodes.txt',
-}
-
 shared_scripts {
   'Common/commonfct_shared.lua',
   'Config/config_shared.lua',
@@ -19,8 +14,10 @@ shared_scripts {
 }
 
 server_scripts {
+  'Admin/admin_sv.lua',
   'Common/commonfct_sv.lua',
   'Config/config_sv.lua',
+  'Debug/debug_sv.lua',
   'Def/def_sv.lua',
   'Main/main_sv.lua',
   'Natives/EntityCreationFct_sv.lua',
@@ -32,13 +29,16 @@ server_scripts {
 }
 
 client_scripts {
+  'Admin/admin_cl.lua',
   'Common/commonfct_cl.lua',
   'Config/config_cl.lua',
+  'Debug/debug_cl.lua',
   'Def/def_cl.lua',
   'Main/main_cl.lua',
   'Natives/Client/*.lua',
   'Pathfinding/paths_cl.lua',
   'Sync/sync_cl.lua',
+  'newnodes.txt',
 }
 
 server_scripts{
@@ -56,9 +56,20 @@ server_exports {
   'ssv_nat_DeletePed',
   'ssv_nat_DeleteVehicle',
   'ssv_nat_DeleteObject',
+  'ssv_nat_GetSerpentPedData',
+  'ssv_nat_GetSerpentVehData',
   'ssv_nat_IsPedInSerpentVehicle',
   'ssv_nat_PedUseExactSpawnCoordinates',
+  'ssv_nat_SetPedComponentVariation',
+  'ssv_nat_SetPedEyeColor',
+  'ssv_nat_SetPedFaceFeature',
+  'ssv_nat_SetPedHairTint',
+  'ssv_nat_SetPedHeadBlendData',
+  'ssv_nat_SetPedHeadOverlay',
+  'ssv_nat_SetPedHeadOverlayColor',
   'ssv_nat_SetPedIntoVehicle',
+  'ssv_nat_SetPedPropIndex',
+  'ssv_nat_SetVehicleDoorCanBreak',
   'ssv_nat_TaskEnterVehicle',
   'ssv_nat_TaskGoStraightToCoord',
   'ssv_nat_TaskVehicleDriveToCoord',

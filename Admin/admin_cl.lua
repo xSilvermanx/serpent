@@ -1,65 +1,4 @@
-AddEventHandler('AddNodeForBlip', function(name, x, y, z)
-    local blip = AddBlipForCoord(x, y, z)
-    local zone = GetNameOfZone(x, y, z)
-    BeginTextCommandSetBlipName("STRING")
-    AddTextComponentString(zone)
-    EndTextCommandSetBlipName(blip)
-end)
-
-function getCurrentCount(zone)
-    local count = 1
-
-    for name, entry in pairs(ListNodes) do
-        if string.find(name, zone) then
-            count = count + 1
-        end
-    end
-
-    return count
-end
-
-RegisterCommand('CreateNode', function(source, args)
-    local coords = GetEntityCoords(PlayerPedId())
-    local zone = GetNameOfZone(coords)
-    local number = getCurrentCount(zone)
-    local name = zone .. "-" .. number
-    Notify('Creating Node ' .. name .. ' at ' .. coords.x .. ", " .. coords.y .. ", " .. coords.z .. ".")
-    local infotable = {
-        x=coords.x,
-        y=coords.y,
-        z=coords.z,
-        paths = {
-            {},
-        },
-    }
-    ListNodes[name] = infotable
-    TriggerEvent('AddNodeForBlip', name, coords.x, coords.y, coords.z)
-    TriggerServerEvent('AddNode', name, coords)
-end)
-
-RegisterKeyMapping('CreateNode', 'Create Node', 'Keyboard', 'e')
-
-CreateThread(function()
-    while true do
-        Wait(0)
-        SetPedDensityMultiplierThisFrame(0.0)
-        SetVehicleDensityMultiplierThisFrame(0.0)
-    end
-end)
-
-CreateThread(function()
-    print('Starting')
-    local path = AStar("PALETO-2", "DOWNT-14")
-    
-    for i, entry in ipairs(path) do
-      print(i, entry)
-      local data = ssh_nat_GetNodeData(entry)
-      TriggerEvent('AddNodeForBlip', entry, data.x, data.y, data.z)
-    end
-    print('Length of Path', #path)
-end)
-
-local list_show_nodes = {}
+--[[local list_show_nodes = {}
 CreateThread(function()
     local range = 200000.0
     while true do
@@ -70,11 +9,11 @@ CreateThread(function()
             if Vdist2(plc.x, plc.y, plc.z, coord.x, coord.y, coord.z) < range then
                 local pathdata = {}
                 for i, line in ipairs(coord.paths) do
-                    if line[1] then
-                        newx = ListNodes[line[1]].x
-                        newy = ListNodes[line[1]].y
-                        newz = ListNodes[line[1]].z
-                        heading = ssh_getGameHeadingFromPoints(coord.x, coord.y, newx, newy)
+                    if line[1] then]]
+                        --newx = ListNodes[line[1]].x
+                        --newy = ListNodes[line[1]].y
+                        --newz = ListNodes[line[1]].z
+                        --[[heading = ssh_getGameHeadingFromPoints(coord.x, coord.y, newx, newy)
                         c0x, c0y, c0z = ssh_OffsetPosition(coord.x, coord.y, coord.z, heading, 0.5, 0.0, 0.0)
                         c1x, c1y, c1z = ssh_OffsetPosition(newx, newy, newz, heading, 0.5, 0.0, 0.0)
                         local onepathdata = {c0x, c0y, c0z, c1x, c1y, c1z}
@@ -115,3 +54,17 @@ CreateThread(function()
         Wait(0)
     end
 end)
+
+--[[CreateThread(function()
+  while true do
+    for pedid, peddata in pairs(scl_PedList) do
+      print('SID', peddata.PedSID)
+      print('Pos', peddata.x, peddata.y, peddata.z)
+      print('Heading', peddata.heading)
+      print('Current Task', peddata.CurrObjective)
+      print('---')
+    end
+    print('----------------')
+    Wait(1000)
+  end
+end)]]

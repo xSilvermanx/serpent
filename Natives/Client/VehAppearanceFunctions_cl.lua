@@ -1,0 +1,5 @@
+RegisterNetEvent('scl:nat:res:SetVehicleDoorCanBreak')
+AddEventHandler('scl:nat:res:SetVehicleDoorCanBreak', function(VehNetID, doorIndex, isBreakable)
+    local veh = NetToVeh(VehNetID)
+    SetVehicleDoorCanBreak(veh, doorIndex, isBreakable)
+end)

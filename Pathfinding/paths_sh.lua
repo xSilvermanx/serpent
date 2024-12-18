@@ -104,18 +104,3 @@ function ssh_nat_GetNodeData(Id)
   local Data = ListNodes[Id]
   return Data
 end
-
---[[CreateThread(function()
-
-  local bool1, node1 = ssv_nat_GetClosestNodeId(-459.79, 5878.41, 33.25)
-  local bool2, node2 = ssv_nat_GetClosestNodeId(219.32, 6572.94, 31.89)
-
-  print(bool1, node1)
-  print(bool2, node2)
-
-  Path = AStar(node1, node2)
-  for i, entry in ipairs(Path) do
-    print(entry)
-  end
-  print(#Path)
-end)]]

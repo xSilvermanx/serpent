@@ -1,15 +1,15 @@
 RegisterNetEvent('ssv:RecievePedData')
 AddEventHandler('ssv:RecievePedData', function(pedid, type, key, value)
   if type == 'Component' then
-
+    ssv_PedList[pedid].PedVisualData.Components[key] = value
   elseif type == 'Prop' then
-
+    ssv_PedList[pedid].PedVisualData.Props[key] = value
   elseif type == 'Inheritance' then
-
+    ssv_PedList[pedid].PedVisualData[type][key] = value
   elseif type == 'FaceFeature' then
-
+    ssv_PedList[pedid].PedVisualData[type][key] = value
   elseif type == 'Appearance' then
-
+    ssv_PedList[pedid].PedVisualData[type][key] = value
   elseif type == 'CurrPathfindingData' or type == 'OverridePathfindingData' or type == 'NextPathfindingData' or type == 'CurrObjectiveData' or type == 'OverrideObjectiveData' or type == 'NextObjectiveData' then
     ssv_PedList[pedid][type][key] = value
   else
@@ -31,8 +31,16 @@ RegisterNetEvent('ssv:RecieveVehData')
 AddEventHandler('ssv:RecieveVehData', function(vehid, type, key, value)
   if type == 'Passenger' then
     ssv_VehList[vehid].Passengers[key] = value
-  elseif type == 'Prop' then
-
+  elseif type == 'TuningInit' or type == 'Wheel' then
+    ssv_VehList[vehid].VehicleMods[key] = value
+  elseif type == 'Tuning' then
+    ssv_VehList[vehid].VehicleMods.Tuning[key] = value
+  elseif type == 'VehicleExtra' then
+    ssv_VehList[vehid].VehicleMods.Extras[key] = value
+  elseif type == 'ExistingTyres' or type == 'ExistingDoors' then
+    ssv_VehList[vehid][type] = value
+  elseif type == 'TyreHealth' or type == 'TyreDamage' or type == 'Color' or type == 'Lights' or type == 'WindowStatus' or type == 'DoorCanBreak' then
+    ssv_VehList[vehid][type][key] = value
   else
     ssv_VehList[vehid][key] = value
   end

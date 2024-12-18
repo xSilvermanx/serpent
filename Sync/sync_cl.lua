@@ -1,15 +1,15 @@
 RegisterNetEvent('scl:RecievePedData')
 AddEventHandler('scl:RecievePedData', function(pedid, type, key, value)
   if type == 'Component' then
-
+    scl_PedList[pedid].PedVisualData.Components[key] = value
   elseif type == 'Prop' then
-
+    scl_PedList[pedid].PedVisualData.Props[key] = value
   elseif type == 'Inheritance' then
-
+    scl_PedList[pedid].PedVisualData[type][key] = value
   elseif type == 'FaceFeature' then
-
+    scl_PedList[pedid].PedVisualData[type][key] = value
   elseif type == 'Appearance' then
-
+    scl_PedList[pedid].PedVisualData[type][key] = value
   elseif type == 'CurrPathfindingData' or type == 'OverridePathfindingData' or type == 'NextPathfindingData' or type == 'CurrObjectiveData' or type == 'OverrideObjectiveData' or type == 'NextObjectiveData' then
     scl_PedList[pedid][type][key] = value
   else
@@ -43,8 +43,16 @@ RegisterNetEvent('scl:RecieveVehData')
 AddEventHandler('scl:RecieveVehData', function(vehid, type, key, value)
   if type == 'Passenger' then
     scl_VehList[vehid].Passengers[key] = value
-  elseif type == 'Prop' then
-
+  elseif type == 'TuningInit' or type == 'Wheel' then
+    scl_VehList[vehid].VehicleMods[key] = value
+  elseif type == 'Tuning' then
+    scl_VehList[vehid].VehicleMods.Tuning[key] = value
+  elseif type == 'VehicleExtra' then
+    scl_VehList[vehid].VehicleMods.Extras[key] = value
+  elseif type == 'ExistingTyres' or type == 'ExistingDoors' then
+    scl_VehList[vehid][type] = value
+  elseif type == 'TyreHealth' or type == 'TyreDamage' or type == 'Color' or type == 'Lights' or type == 'WindowStatus' or type == 'DoorCanBreak' then
+    scl_VehList[vehid][type][key] = value
   else
     scl_VehList[vehid][key] = value
   end
