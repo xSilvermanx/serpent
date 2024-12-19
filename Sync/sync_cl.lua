@@ -51,7 +51,9 @@ AddEventHandler('scl:RecieveVehData', function(vehid, type, key, value)
     scl_VehList[vehid].VehicleMods.Extras[key] = value
   elseif type == 'ExistingTyres' or type == 'ExistingDoors' then
     scl_VehList[vehid][type] = value
-  elseif type == 'TyreHealth' or type == 'TyreDamage' or type == 'Color' or type == 'Lights' or type == 'WindowStatus' or type == 'DoorCanBreak' then
+  elseif type == 'NeonLightsEnabled' then
+    ssv_VehList[vehid].Color[type][key] = value
+  elseif type == 'TyreHealth' or type == 'TyreDamage' or type == 'Color' or type == 'Lights' or type == 'WindowStatus' or type == 'DoorCanBreak' or type == 'DoorsStatus' or type == 'WheelDamage' or type == 'WheelHealth' then
     scl_VehList[vehid][type][key] = value
   else
     scl_VehList[vehid][key] = value

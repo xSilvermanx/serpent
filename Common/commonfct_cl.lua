@@ -378,7 +378,7 @@ function scl_ApplyAllVehProperties(vehid, vehdata)
         TriggerServerEvent('ssv:SyncVehData', vehid, 'Color', 'DashboardColor', GetVehicleDashboardColor(veh))
         local pearlColorTemp, wheelColorTemp = GetVehicleExtraColours(veh)
         local ExtraColors = {pearlColor = pearlColorTemp, wheelColor = wheelColorTemp}
-        TriggerServerEvent('ssv:SyncVehData', vehid, 'Color', 'ExtraColors', ExtraColours)
+        TriggerServerEvent('ssv:SyncVehData', vehid, 'Color', 'ExtraColors', ExtraColors)
         TriggerServerEvent('ssv:SyncVehData', vehid, 'Color', 'InteriorColor', GetVehicleInteriorColor(veh))
         local paintTypeTemp, colorTemp, pearlescentColorTemp = GetVehicleModColor_1(veh)
         local ModColor1 = {paintType = paintTypeTemp, color = colorTemp, pearlescentColor = pearlescentColorTemp}
@@ -574,8 +574,13 @@ function scl_ApplyAllVehProperties(vehid, vehdata)
         SetVehicleLivery(veh, vehdata.Color.Livery)
         SetVehicleRoofLivery(veh, vehdata.Color.RoofLivery)
 
-        if vehdata.Searchlight == 'On' then
-            SetVehicleSearchlight(veh, true, true)
+        if DoesVehicleHaveSearchlight(veh) then
+            if vehdata.Searchlight == 'On' then
+                SetVehicleSearchlight(veh, true, true)
+            end
+        elseif vehdata.Searchlight == 'On' or vehdata.Searchlight == 'Off' then
+                TriggerServerEvent('ssv:SyncVehData', SID, 'Lights', 'Searchlight', false)
+            end
         end
 
         SetVehicleInteriorlight(veh, vehdata.Lights.InteriorLight)
@@ -584,10 +589,20 @@ function scl_ApplyAllVehProperties(vehid, vehdata)
 
         SetVehicleWindowTint(veh, vehdata.WindowTint)
 
-        if vehdata.ConvertibleRoof == 'Open' then
-            LowerConvertibleRoof(veh, true)
-        elseif vehdata.ConvertibleRoof == 'Closed' then
-            RaiseConvertibleRoof(veh, true)
+        if IsVehicleAConvertible(veh, false) then
+            if vehdata.ConvertibleRoof == 'Open' then
+                LowerConvertibleRoof(veh, true)
+            elseif vehdata.ConvertibleRoof == 'Closed' then
+                RaiseConvertibleRoof(veh, true)
+            end
+        else
+            if vehdata.ConvertibleRoof == 'Open' or vehdata.ConvertibleRoof == 'Closed' then
+                if IsVehicleAConvertible(veh, true) then
+                    TriggerServerEvent('ssv:SyncVehData', SID, '', 'ConvertibleRoof', 'Fixed')
+                else
+                    TriggerServerEvent('ssv:SyncVehData', SID, '', 'ConvertibleRoof', false)
+                end
+            end
         end
 
         for i, Window in pairs(WindowStatus) do
