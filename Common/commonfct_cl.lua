@@ -579,8 +579,7 @@ function scl_ApplyAllVehProperties(vehid, vehdata)
                 SetVehicleSearchlight(veh, true, true)
             end
         elseif vehdata.Searchlight == 'On' or vehdata.Searchlight == 'Off' then
-                TriggerServerEvent('ssv:SyncVehData', SID, 'Lights', 'Searchlight', false)
-            end
+            TriggerServerEvent('ssv:SyncVehData', SID, 'Lights', 'Searchlight', false)
         end
 
         SetVehicleInteriorlight(veh, vehdata.Lights.InteriorLight)

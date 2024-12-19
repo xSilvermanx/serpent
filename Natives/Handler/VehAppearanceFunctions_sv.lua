@@ -35,10 +35,6 @@ GetVehiclePetrolTankHealth
 GetVehicleDirtLevel
 ]]
 
---[[
-SetVehicleColour -- Combination of GetVehicleColourCombination, GetVehicleCustomPrimaryColour, GetVehicleCustomSecondaryColour, GetVehicleColours and the "Is"-functions
-]]
-
 -- ColourCombination(colorCombination)
 -- CustomPrimaryColour(r1, g1, b1)
 -- CustomSecondaryColour(r2, g2, b2)
@@ -280,7 +276,7 @@ function ssv_nat_SetVehicleSearchlight(SID, toggle, canBeUsedByAI)
         local veh = NetworkGetEntityFromNetworkId(VehNetID)
         local VehOwnerID = NetworkGetEntityOwner(veh)
         TriggerServerEvent('ssv:SyncVehData', SID, '', 'ScriptOwnerNetID', VehOwnerID)
-        TriggerClientEvent('scl:nat:res:SetVehicleSearchlight', ssv_VehList[SID].ScriptOwnerNetID, ssv_VehList[SID].VehNetID, toggle, canBeUsedByAI)
+        TriggerClientEvent('scl:nat:res:SetVehicleSearchlight', ssv_VehList[SID].ScriptOwnerNetID, SID, ssv_VehList[SID].VehNetID, toggle, canBeUsedByAI)
     end
 end
 
@@ -296,11 +292,11 @@ function ssv_nat_SetVehicleInteriorlight(SID, toggle)
     end
 end
 
-function ssv_nat_SetVehicleIndicatorLights(SID, turnSignal, boolean)
+function ssv_nat_SetVehicleIndicatorLights(SID, turnSignal, toggle)
     if turnSignal == 1 then
-        TriggerServerEvent('ssv:SyncVehData', SID, 'Lights', 'IndicatorLeft', boolean)
+        TriggerServerEvent('ssv:SyncVehData', SID, 'Lights', 'IndicatorLeft', toggle)
     elseif turnSignal == 0 then
-        TriggerServerEvent('ssv:SyncVehData', SID, 'Lights', 'IndicatorRight', boolean)
+        TriggerServerEvent('ssv:SyncVehData', SID, 'Lights', 'IndicatorRight', toggle)
     end
 
     if ssv_VehList[SID].IsSpawnedBool then
@@ -308,7 +304,7 @@ function ssv_nat_SetVehicleIndicatorLights(SID, turnSignal, boolean)
         local veh = NetworkGetEntityFromNetworkId(VehNetID)
         local VehOwnerID = NetworkGetEntityOwner(veh)
         TriggerServerEvent('ssv:SyncVehData', SID, '', 'ScriptOwnerNetID', VehOwnerID)
-        TriggerClientEvent('scl:nat:res:SetVehicleIndicatorLights', ssv_VehList[SID].ScriptOwnerNetID, ssv_VehList[SID].VehNetID, turnSignal, boolean)
+        TriggerClientEvent('scl:nat:res:SetVehicleIndicatorLights', ssv_VehList[SID].ScriptOwnerNetID, ssv_VehList[SID].VehNetID, turnSignal, toggle)
     end
 end
 
@@ -334,7 +330,7 @@ function ssv_nat_LowerConvertibleRoof(SID, instantlyLower)
         local veh = NetworkGetEntityFromNetworkId(VehNetID)
         local VehOwnerID = NetworkGetEntityOwner(veh)
         TriggerServerEvent('ssv:SyncVehData', SID, '', 'ScriptOwnerNetID', VehOwnerID)
-        TriggerClientEvent('scl:nat:res:LowerConvertibleRoof', ssv_VehList[SID].ScriptOwnerNetID, ssv_VehList[SID].VehNetID, instantlyLower)
+        TriggerClientEvent('scl:nat:res:LowerConvertibleRoof', ssv_VehList[SID].ScriptOwnerNetID, SID, ssv_VehList[SID].VehNetID, instantlyLower)
     end
 end
 
@@ -346,7 +342,7 @@ function ssv_nat_RaiseConvertibleRoof(SID, instantlyRaise)
         local veh = NetworkGetEntityFromNetworkId(VehNetID)
         local VehOwnerID = NetworkGetEntityOwner(veh)
         TriggerServerEvent('ssv:SyncVehData', SID, '', 'ScriptOwnerNetID', VehOwnerID)
-        TriggerClientEvent('scl:nat:res:RaiseConvertibleRoof', ssv_VehList[SID].ScriptOwnerNetID, ssv_VehList[SID].VehNetID, instantlyRaise)
+        TriggerClientEvent('scl:nat:res:RaiseConvertibleRoof', ssv_VehList[SID].ScriptOwnerNetID, SID, ssv_VehList[SID].VehNetID, instantlyRaise)
     end
 end
 
@@ -435,7 +431,7 @@ function ssv_nat_SetVehicleEngineHealth(SID, health)
         local veh = NetworkGetEntityFromNetworkId(VehNetID)
         local VehOwnerID = NetworkGetEntityOwner(veh)
         TriggerServerEvent('ssv:SyncVehData', SID, '', 'ScriptOwnerNetID', VehOwnerID)
-        TriggerClientEvent('scl:nat:res:', ssv_VehList[SID].ScriptOwnerNetID, ssv_VehList[SID].VehNetID, )
+        TriggerClientEvent('scl:nat:res:SetVehicleEngineHealth', ssv_VehList[SID].ScriptOwnerNetID, ssv_VehList[SID].VehNetID, health)
     end
 end
 
@@ -600,17 +596,5 @@ function ssv_nat_SetVehicleDoorCanBreak(SID, doorIndex, isBreakable)
         local VehOwnerID = NetworkGetEntityOwner(veh)
         TriggerServerEvent('ssv:SyncVehData', SID, '', 'ScriptOwnerNetID', VehOwnerID)
         TriggerClientEvent('scl:nat:res:SetVehicleDoorCanBreak', ssv_VehList[SID].ScriptOwnerNetID, ssv_VehList[SID].VehNetID, doorIndex, isBreakable)
-    end
-end
-
-function ssv_nat_(SID, )
-    TriggerServerEvent('ssv:SyncVehData', SID, '', , )
-
-    if ssv_VehList[SID].IsSpawnedBool then
-        local VehNetID = ssv_VehList[SID].VehNetID
-        local veh = NetworkGetEntityFromNetworkId(VehNetID)
-        local VehOwnerID = NetworkGetEntityOwner(veh)
-        TriggerServerEvent('ssv:SyncVehData', SID, '', 'ScriptOwnerNetID', VehOwnerID)
-        TriggerClientEvent('scl:nat:res:', ssv_VehList[SID].ScriptOwnerNetID, ssv_VehList[SID].VehNetID, )
     end
 end
