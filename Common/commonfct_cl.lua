@@ -126,7 +126,7 @@ function scl_ApplyAllPedProperties(pedid, peddata)
 
     SetEntityHealth(ped, peddata.PedHealth)
     SetPedArmour(ped, peddata.PedArmor)
-      
+    
     if (peddata.ModelHash == FreemodeHashM or peddata.ModelHash == FreemodeHashF) then
         if peddata.RandomLooks then
             local HeadBlendData = exports.hbw:GetHeadBlendData(ped)
@@ -271,7 +271,6 @@ function scl_ApplyAllPedProperties(pedid, peddata)
     end
 
     if peddata.RandomLooks then
-
         for i=0,11 do -- component loop
             local drawableVars = GetNumberOfPedDrawableVariations(ped, i)
             if drawableVars ~= 0 then
@@ -279,7 +278,6 @@ function scl_ApplyAllPedProperties(pedid, peddata)
                 TriggerServerEvent('ssv:SyncPedData', pedid, 'Component', i, component)
             end
         end
-
         for i=0,12 do -- prop loop
             local propVars = GetNumberOfPedPropDrawableVariations(ped, i)
             if propVars ~= 0 then
@@ -290,12 +288,10 @@ function scl_ApplyAllPedProperties(pedid, peddata)
 
         TriggerServerEvent('ssv:SyncPedData', pedid, '', 'RandomLooks', false)
     else
-
-        for i, component in ipairs(peddata.PedVisualData.Components) do
+        for i, component in pairs(peddata.PedVisualData.Components) do
             SetPedComponentVariation(ped, component[1], component[2], component[3], component[4])
         end
-
-        for i, prop in ipairs(peddata.PedVisualData.Props) do
+        for i, prop in pairs(peddata.PedVisualData.Props) do
             if prop[2] == 255 then
                 ClearPedProp(ped, prop[1])
             else
@@ -312,7 +308,7 @@ function scl_ApplyAllVehProperties(vehid, vehdata)
     local VehNetID = vehdata.VehNetID
     local veh = NetToVeh(VehNetID)
 
-    if not CheckedTyres then
+    if not vehdata.CheckedTyres then
         local tyrei = {0, 1, 2, 3, 4, 5, 6, 7, 8, 45, 47}
         local ExistingTyres = {}
         for i, number in ipairs(tyrei) do
@@ -322,9 +318,12 @@ function scl_ApplyAllVehProperties(vehid, vehdata)
         end
         TriggerServerEvent('ssv:SyncVehData', vehid, 'ExistingTyres', '', ExistingTyres)
         TriggerServerEvent('ssv:SyncVehData', vehid, '', 'CheckedTyres', true)
+        vehdata.ExistingTyres = ExistingTyres
+        vehdata.CheckedTyres = true
     end
 
-    if not CheckedDoors then
+    
+    if not vehdata.CheckedDoors then
         local doori = {0,1,2,3,4,5}
         local ExistingDoors = {}
         for i, number in ipairs(doori) do
@@ -334,6 +333,8 @@ function scl_ApplyAllVehProperties(vehid, vehdata)
         end
         TriggerServerEvent('ssv:SyncVehData', vehid, 'ExistingDoors', '', ExistingDoors)
         TriggerServerEvent('ssv:SyncVehData', vehid, '', 'CheckedDoors', true)
+        vehdata.ExistingDoors = ExistingDoors
+        vehdata.CheckedDoors = true
     end
 
     if vehdata.RandomSpawn then
@@ -348,7 +349,7 @@ function scl_ApplyAllVehProperties(vehid, vehdata)
         end
 
         local ColorCombination = GetVehicleColourCombination(veh)
-        if ColorCombination ~= -1 then
+        if ColorCombination ~= -1 and ColorCombination ~= 0 then
             TriggerServerEvent('ssv:SyncVehData', vehid, 'Color', 'IsColorCombination', true)
             TriggerServerEvent('ssv:SyncVehData', vehid, 'Color', 'ColorCombination', ColorCombination)
         else
@@ -481,7 +482,7 @@ function scl_ApplyAllVehProperties(vehid, vehdata)
 
         local DoorCanBreak = {}
         local DoorsStatus = {}
-        for i, doori in ipairs(ExistingDoors) do
+        for i, doori in ipairs(vehdata.ExistingDoors) do
             DoorCanBreak[doori] = true
             DoorsStatus[doori] = "Closed"
         end
@@ -497,7 +498,7 @@ function scl_ApplyAllVehProperties(vehid, vehdata)
         local TyreHealth = {}
         local WheelDamage = {}
         local WheelHealth = {}
-        for i, tyrei in ipairs(ExistingTyres) do
+        for i, tyrei in ipairs(vehdata.ExistingTyres) do
             TyreHealth[tyrei] = GetTyreHealth(veh, tyrei)
             if IsVehicleTyreBurst(veh, tyrei, true) then
                 TyreDamage[tyrei] = "Destroyed"
@@ -506,7 +507,7 @@ function scl_ApplyAllVehProperties(vehid, vehdata)
             else
                 TyreDamage[tyrei] = false
             end
-            WheelHealth[tyrei] = GetWheelHealth(veh, tyrei)
+            WheelHealth[tyrei] = GetVehicleWheelHealth(veh, tyrei)
             WheelDamage[tyrei] = false
         end
 
@@ -539,6 +540,11 @@ function scl_ApplyAllVehProperties(vehid, vehdata)
             SetVehicleExtra(veh, Extra, isOn)
         end
 
+
+        SetVehicleModColor_1(veh, vehdata.Color.ModColor1.paintType, vehdata.Color.ModColor1.color, vehdata.Color.ModColor1.pearlescentColor)
+        SetVehicleModColor_2(veh, vehdata.Color.ModColor2.paintType, vehdata.Color.ModColor2.color)
+        SetVehicleExtraColours(veh, vehdata.Color.ExtraColors.pearlColor, vehdata.Color.ExtraColors.wheelColor)
+
         if vehdata.Color.IsColorCombination then
             SetVehicleColourCombination(veh, vehdata.Color.ColorCombination)
         else
@@ -551,17 +557,14 @@ function scl_ApplyAllVehProperties(vehid, vehdata)
             elseif vehdata.Color.SecondaryColorCustom then
                 SetVehicleColours(veh, vehdata.Color.PrimaryColor, 0)
                 SetVehicleCustomSecondaryColour(veh, vehdata.Color.SecondaryColor.r, vehdata.Color.SecondaryColor.g, vehdata.Color.SecondaryColor.b)
-            else    
+            else
                 SetVehicleColours(veh, vehdata.Color.PrimaryColor, vehdata.Color.SecondaryColor)
             end            
         end
 
         SetVehicleDashboardColor(veh, vehdata.Color.DashboardColor)
-        SetVehicleExtraColours(veh, vehdata.Color.ExtraColors.pearlColor, vehdata.Color.ExtraColors.wheelColor)
         SetVehicleInteriorColor(veh, vehdata.Color.InteriorColor)
 
-        SetVehicleModColor_1(veh, vehdata.Color.ModColor1.paintType, vehdata.Color.ModColor1.color, vehdata.Color.ModColor1.pearlescentColor)
-        SetVehicleModColor_2(veh, vehdata.Color.ModColor2.paintType, vehdata.Color.ModColor2.color)
 
         for NeonPosition, isOn in pairs(vehdata.Color.NeonLightsEnabled) do
             SetVehicleNeonLightEnabled(veh, NeonPosition, isOn)
@@ -604,7 +607,7 @@ function scl_ApplyAllVehProperties(vehid, vehdata)
             end
         end
 
-        for i, Window in pairs(WindowStatus) do
+        for i, Window in pairs(vehdata.WindowStatus) do
             if Window == 'Up' then
                 RollUpWindow(veh, i)
             elseif Window == 'Down' then
