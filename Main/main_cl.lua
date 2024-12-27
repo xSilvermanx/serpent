@@ -13,7 +13,6 @@ AddEventHandler('scl:MainClientPedLoop', function()
           if not scl_PedList[pedid].IsInVeh then
             local PedNetID = scl_PedList[pedid].PedNetID
             local ped = NetToPed(PedNetID)
-
             local pedx, pedy, pedz = table.unpack(GetEntityCoords(ped))
             local pedh = GetEntityHeading(ped)
 
@@ -25,6 +24,10 @@ AddEventHandler('scl:MainClientPedLoop', function()
             TriggerServerEvent('ssv:RecievePedData', pedid, 'Position', 'y', pedy)
             TriggerServerEvent('ssv:RecievePedData', pedid, 'Position', 'z', pedz)
             TriggerServerEvent('ssv:RecievePedData', pedid, 'Heading', 'heading', pedh)
+            if scl_PedList[pedid].IsDead then
+              TriggerServerEvent('ssv:SyncPedData', pedid, '', 'DeadPitch', GetEntityPitch(ped))
+              TriggerServerEvent('ssv:SyncPedData', pedid, '', 'DeadRoll', GetEntityRoll(ped))
+            end
 
             if ssh_VectorDistance(pedx, pedy, pedz, plx, ply, plz) > DespawnRange then
               TriggerEvent('scl:DespawnPed', pedid)
@@ -49,8 +52,8 @@ AddEventHandler('scl:SpawnPed', function(pedid, peddata)
   while not PedSpawned do
     Wait(20)
   end
-  
-  scl_ApplyAllPedProperties(pedid, peddata)
+
+  scl_ApplyAllPedProperties(pedid, scl_PedList[pedid])
 
 end)
 
@@ -61,12 +64,15 @@ AddEventHandler('scl:RecievePedOwnership', function(pedid, peddata)
 
   local PedNetID = peddata.PedNetID
   local ped = NetToPed(PedNetID)
+  scl_PedEventList[ped] = pedid
+  TriggerServerEvent('ssv:SyncPedData', pedid, '', 'PedID', ped)
 
   scl_ApplyPedBehaviorFlags(pedid, peddata)
 end)
 
 AddEventHandler('scl:DespawnPed', function(pedid)
   local peddata = scl_PedList[pedid]
+  scl_PedEventList[peddata.PedID] = false
 
   TriggerServerEvent('ssv:RecieveEntityControlFromClient', pedid, peddata)
 
@@ -143,6 +149,9 @@ AddEventHandler('scl:SpawnVeh', function(vehid, vehdata, PedInVeh, PassengerData
           scl_ApplyAllPedProperties(passenger, PassengerData[passenger])
         else
           local PedNetID = scl_PedList[passenger].PedNetID
+          local ped = NetToPed(PedNetID)
+          scl_PedEventList[ped] = pedid
+          TriggerServerEvent('ssv:SyncPedData', passenger, '', 'PedID', ped)
           local VehNetID = scl_VehList[vehid].VehNetID
           TriggerEvent('scl:nat:res:SetPedIntoVehicle', PedNetID, VehNetID, i)
         end
@@ -159,11 +168,12 @@ AddEventHandler('scl:DespawnVeh', function(vehid)
       PedInVeh = true
       PassengerData[passenger] = scl_PedList[passenger]
       if scl_PedList[passenger] then
+        scl_PedEventList[scl_PedList[passenger].PedID] = false
         scl_PedList[passenger] = nil
       end
     end
   end
-
+  scl_VehEventList[vehdata.VehID] = false
   TriggerServerEvent('ssv:RecieveVehicleControlFromClient', vehid, vehdata, PedInVeh, PassengerData)
 
   scl_VehList[vehid] = nil
@@ -172,5 +182,9 @@ end)
 RegisterNetEvent('scl:RecieveVehOwnership')
 AddEventHandler('scl:RecieveVehOwnership', function(vehid, vehdata)
   scl_VehList[vehid] = vehdata
+  local VehNetID = vehdata.VehNetID
+  local veh = NetToVeh(VehNetID)
+  scl_VehEventList[veh] = vehid
+  TriggerServerEvent('ssv:SyncVehData', vehid, '', 'VehID', veh)
 end)
 

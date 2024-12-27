@@ -1,5 +1,6 @@
 RegisterNetEvent('ssv:RecievePedData')
 AddEventHandler('ssv:RecievePedData', function(pedid, type, key, value)
+  print(pedid, type, key, value)
   if type == 'Component' then
     ssv_PedList[pedid].PedVisualData.Components[key] = value
   elseif type == 'Prop' then

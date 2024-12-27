@@ -49,28 +49,30 @@ end)
 
 RegisterNetEvent('ssv:MainTaskHandler')
 AddEventHandler('ssv:MainTaskHandler', function(pedid)
-  local isOverride = false
-  local Objective = nil
-  local ObjectiveData = nil
-  local PathfindingData = nil
-  if ssv_PedList[pedid].OverrideObjective ~= 'none' then
-    isOverride = true
-    Objective = ssv_PedList[pedid].OverrideObjective
-    ObjectiveData = ssv_PedList[pedid].OverrideObjectiveData
-    PathfindingData = ssv_PedList[pedid].OverridePathfindingData
-    if ObjectiveData.task == 'Init' then
-      if ssv_PedList[pedid].CurrObjectiveData then
-        ssv_PedList[pedid].CurrObjectiveData = 'Init'
+  if not ssv_PedList[pedid].IsDead then
+    local isOverride = false
+    local Objective = nil
+    local ObjectiveData = nil
+    local PathfindingData = nil
+    if ssv_PedList[pedid].OverrideObjective ~= 'none' then
+      isOverride = true
+      Objective = ssv_PedList[pedid].OverrideObjective
+      ObjectiveData = ssv_PedList[pedid].OverrideObjectiveData
+      PathfindingData = ssv_PedList[pedid].OverridePathfindingData
+      if ObjectiveData.task == 'Init' then
+        if ssv_PedList[pedid].CurrObjectiveData then
+          ssv_PedList[pedid].CurrObjectiveData = 'Init'
+        end
       end
+    else
+      Objective = ssv_PedList[pedid].CurrObjective
+      ObjectiveData = ssv_PedList[pedid].CurrObjectiveData
+      PathfindingData = ssv_PedList[pedid].CurrPathfindingData
     end
-  else
-    Objective = ssv_PedList[pedid].CurrObjective
-    ObjectiveData = ssv_PedList[pedid].CurrObjectiveData
-    PathfindingData = ssv_PedList[pedid].CurrPathfindingData
-  end
 
-  if Objective ~= 'idle' and ObjectiveData.task ~= 'Ignore' then
-    TriggerEvent('ssv:nat:' .. Objective, pedid, ObjectiveData, PathfindingData, isOverride)
+    if Objective ~= 'idle' and ObjectiveData.task ~= 'Ignore' then
+      TriggerEvent('ssv:nat:' .. Objective, pedid, ObjectiveData, PathfindingData, isOverride)
+    end
   end
 end)
 
@@ -151,6 +153,7 @@ AddEventHandler('ssv:DespawnPed', function(pedid, peddata)
   ssv_PedList[pedid].IsSpawnedBool = false
   ssv_PedList[pedid].OwnerClientNetID = 0
   ssv_PedList[pedid].PedNetID = 0
+  ssv_PedList[pedid].PedID = 0
 
 end)
 
@@ -328,4 +331,5 @@ AddEventHandler('ssv:DespawnVeh', function(vehid, vehdata)
   ssv_VehList[vehid].IsSpawnedBool = false
   ssv_VehList[vehid].OwnerClientNetID = 0
   ssv_VehList[vehid].VehNetID = 0
+  ssv_VehList[vehid].VehID = 0
 end)

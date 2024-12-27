@@ -31,6 +31,7 @@ function ssv_nat_CreatePed(pedType, PedmodelHash, pedposx, pedposy, pedposz, ped
     ScriptOwnerNetID = 0, -- FiveM Networking Ownership
     OwnerClientNetID = 0, -- Serpent Ownership
     PedNetID = 0,
+    PedID = 0, -- used for PedEventList only on clientside
     PedType = pedType,
     ModelHash = PedmodelHash,
     RandomLooks = true,
@@ -56,6 +57,9 @@ function ssv_nat_CreatePed(pedType, PedmodelHash, pedposx, pedposy, pedposz, ped
     PedRelationshipGroup = "NO_RELATIONSHIP",
     PedHealth = 100,
     PedArmor = 0,
+    IsDead = false,
+    DeadPitch = 0.0,
+    DeadRoll = 0.0,
     BlockNonTemporaryEvents = true,
     UseExactSpawnCoordinates = false,
   }
@@ -175,6 +179,7 @@ function ssv_nat_CreateVehicle(VehmodelHash, vehposx, vehposy, vehposz, vehheadi
     ScriptOwnerNetID = 0, -- FiveM Networking Ownership
     OwnerClientNetID = 0, -- Serpent Ownership
     VehNetID = 0,
+    VehID = 0, -- used for VehEventList only clientside.
     ModelHash = VehmodelHash,
     DriverIsSerpentPed = false,
     Passengers = {
@@ -284,6 +289,8 @@ function ssv_nat_CreateVehicle(VehmodelHash, vehposx, vehposy, vehposz, vehheadi
     },
     ConvertibleRoof = false, -- false, 'Open', 'Closed', 'Fixed'
     HasDriftTyres = false,
+    IsUndrivable = false,
+    IsExploded = false,
     UseExactSpawnCoordinates = false,
   }
 

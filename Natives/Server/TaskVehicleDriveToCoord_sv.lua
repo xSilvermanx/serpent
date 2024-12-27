@@ -6,8 +6,8 @@ AddEventHandler('ssv:nat:res:TaskVehicleDriveToCoord:Init', function(SID, Object
     local tarx = ObjectiveData.x
     local tary = ObjectiveData.y
     local tarz = ObjectiveData.z
-    local _, startid = ssv_nat_GetClosestNodeId(vehx, vehy, vehz)
-    local _, endid = ssv_nat_GetClosestNodeId(tarx, tary, tarz)
+    local _, startid = ssh_nat_GetClosestNodeId(vehx, vehy, vehz)
+    local _, endid = ssh_nat_GetClosestNodeId(tarx, tary, tarz)
 
     local Path = AStar(startid, endid)
 

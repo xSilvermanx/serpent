@@ -43,12 +43,16 @@ function scl_SpawnVeh(vehid, vehdata)
 
     scl_VehList[vehid].VehNetID = VehNetID
     TriggerServerEvent('ssv:RecieveVehData', vehid, '', 'VehNetID', VehNetID)
+    scl_VehEventList[veh] = vehid
+    TriggerServerEvent('ssv:SyncVehData', vehid, '', 'VehID', veh)
 
     return true
 end
 
 function scl_SpawnPed(pedid, peddata, seatindex)
+    local isOverride = false
     local PedNetID = 0
+    local ped = 0
     scl_PedList[pedid] = peddata
     
     if peddata.IsInVeh then
@@ -72,7 +76,7 @@ function scl_SpawnPed(pedid, peddata, seatindex)
           Wait(50)
         end
       
-        local ped = CreatePedInsideVehicle(veh, peddata.PedType, peddata.ModelHash, seat, true, true)
+        ped = CreatePedInsideVehicle(veh, peddata.PedType, peddata.ModelHash, seat, true, true)
         PedNetID = PedToNet(ped)
     else
         local x = peddata.x
@@ -109,13 +113,14 @@ function scl_SpawnPed(pedid, peddata, seatindex)
             Wait(50)
         end
 
-        local ped = CreatePed(peddata.PedType, peddata.ModelHash, x, y, z-1.0, peddata.heading, true, false)
+        ped = CreatePed(peddata.PedType, peddata.ModelHash, x, y, z-1.0, peddata.heading, true, false)
         PedNetID = PedToNet(ped)
     end
 
     scl_PedList[pedid].PedNetID = PedNetID
     TriggerServerEvent('ssv:RecievePedData', pedid, '', 'PedNetID', PedNetID)
-
+    scl_PedEventList[ped] = pedid
+    TriggerServerEvent('ssv:SyncPedData', pedid, '', 'PedID', ped)
     return true
 end
 
@@ -124,8 +129,18 @@ function scl_ApplyAllPedProperties(pedid, peddata)
     local PedNetID = peddata.PedNetID
     local ped = NetToPed(PedNetID)
 
+    Wait(0)
+    if peddata.isDead then
+        DisablePedPainAudio(PedID, true)
+    end
+
     SetEntityHealth(ped, peddata.PedHealth)
     SetPedArmour(ped, peddata.PedArmor)
+
+    if peddata.isDead then
+        SetEntityCoordsNoOffset(ped, peddata.x, peddata.y, peddata.z, false, false, true)
+        SetEntityRotation(ped, peddata.DeadPitch, peddata.DeadRoll, peddata.Heading, 2, true)
+    end
     
     if (peddata.ModelHash == FreemodeHashM or peddata.ModelHash == FreemodeHashF) then
         if peddata.RandomLooks then
@@ -683,7 +698,12 @@ function scl_ApplyAllVehProperties(vehid, vehdata)
         end
 
         SetVehicleDirtLevel(veh, vehdata.VehicleDirtLevel)
+        SetVehicleUndriveable(veh, vehdata.IsUndrivable)
 
+        if vehdata.IsExploded then
+            NetworkExplodeVehicle(veh, false, true, 0)
+            StopEntityFire(veh)
+        end
         -- apply Hydraulics, Deformation
     end
     return true

@@ -17,7 +17,7 @@ AddEventHandler('scl:RecievePedData', function(pedid, type, key, value)
   end
 end)
 
-RegisterNetEvent('scl:RecievePed')
+RegisterNetEvent('scl:RecievePed') --unused?
 AddEventHandler('scl:RecievePed', function(pedid, peddata)
   scl_PedList[pedid] = peddata
 end)
@@ -26,6 +26,7 @@ RegisterNetEvent('scl:RemovePed')
 AddEventHandler('scl:RemovePed', function(pedid)
   if scl_PedList[pedid].IsSpawnedBool then
     local ped = NetToPed(scl_PedList[pedid].PedNetID)
+    scl_PedEventList[ped] = false
     SetEntityAsNoLongerNeeded(ped)
     TaskWanderStandard(ped, 10.0, 10)
   end
@@ -60,7 +61,7 @@ AddEventHandler('scl:RecieveVehData', function(vehid, type, key, value)
   end
 end)
 
-RegisterNetEvent('scl:RecieveVeh')
+RegisterNetEvent('scl:RecieveVeh')  --unused?
 AddEventHandler('scl:RecieveVeh', function(vehid, vehdata)
   scl_VehList[vehid] = vehdata
 end)
@@ -69,6 +70,7 @@ RegisterNetEvent('scl:RemoveVeh')
 AddEventHandler('scl:RemoveVeh', function(vehid)
   if scl_VehList[vehid].IsSpawnedBool then
     local veh = NetToVeh(scl_VehList[vehid].VehNetID)
+    scl_VehEventList[veh] = false
     SetEntityAsNoLongerNeeded(veh)
   end
   scl_VehList[vehid] = nil

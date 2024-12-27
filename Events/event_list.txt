@@ -1,0 +1,79 @@
+With the exception of very few functions all interactions between serpent and other resources happen serverside.
+Every clientside event should only transfer infos to the server.
+The server triggers appropriate serverside functions on other resources, which then relay back to the client ONLY on their side.
+The server should remain in control as much as possible, even if that control is only by proxy.
+Unless mentioned otherwise the events only fire AFTER the event has taken place. This is especially true for serpent events.
+
+--TODO
+Vehicle Damage to include tyres, windows, doors, bumpers
+
+
+List of clientside events
+- includes everything related to sync achieved through player actions
+
+--- Peds
+[i]PedDied
+[i]PedDamaged(Armor and Health) -- entity damaged
+PedPropKnockedOff
+PedBulletWound
+PedEnteredRandomVehicle
+PedFleeing
+PedGameTaskTriggered
+
+--- Vehicles
+[i]VehicleDestroyed
+[i]VehicleExploded
+[i]VehicleDamaged(Engine, Body, PetrolTank) -- entity damaged
+VehicleDoorKnockedOff
+VehicleTyreBlown
+VehicleTyreFlat
+VehicleTyreDamaged(Health)
+VehicleRandomPedEntered
+VehicleAppearanceDamage(Crashes, Bullets, ...)
+VehicleHeadlightsDamaged
+VehicleSearchlightDamaged
+VehicleSirenDamaged
+VehicleLightbarDamaged
+VehicleIndicatorsDamaged
+VehicleOutOfFuel
+VehicleDirtLevel
+VehicleWindowSmashed
+VehicleDoorUnhinged(currently no native to set this up that way)
+VehicleWheelBroken
+VehicleWheelDeformed
+VehicleWheelDamaged(Health)
+VehicleRandomVehicleAttached(Trailers, TowTrucks, Trucks)
+
+
+List of serverside events
+
+
+
+List of serpent events
+
+-- Ped
+
+TaskSet(Current, Next, Override)
+TaskStarted(Current only)
+CurrentTaskFinished
+-> NoNewTask
+-> NextTaskStarted
+OverrideTaskStarted
+OverrideTaskFinished
+SerpentPedSpawned
+SerpentPedOwnershipSwitched
+SerpentPedDespawned
+
+-- Vehicle
+SerpentVehSpawned
+SerpentVehOwnershipSwitched
+SerpentVehDespawned
+
+-- Resources
+onResourceStart
+onResourceStarting
+onResourceStop
+onClientResourceStart
+onClientResourceStop
+onServerResourceStart
+onServerResourceStop
