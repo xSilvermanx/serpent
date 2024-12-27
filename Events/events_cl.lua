@@ -24,24 +24,51 @@ gameEvents.CEventNetworkEntityDamage = function(args)
       TriggerServerEvent('ssv:SyncVehData', VehSID, '', 'VehicleEngineHealth', -4000.0)
       TriggerServerEvent('ssv:SyncVehData', VehSID, '', 'VehicleBodyHealth', 0.0)
       TriggerServerEvent('ssv:SyncVehData', VehSID, '', 'VehiclePetrolTankHealth', 0.0)
-
-      
     else
       TriggerServerEvent('ssv:SyncVehData', VehSID, '', 'VehicleEngineHealth', GetVehicleEngineHealth(args[1]))
       TriggerServerEvent('ssv:SyncVehData', VehSID, '', 'VehicleBodyHealth', GetVehicleBodyHealth(args[1]))
       TriggerServerEvent('ssv:SyncVehData', VehSID, '', 'VehiclePetrolTankHealth', GetVehiclePetrolTankHealth(args[1]))
-      if args[13] == 93 then --tyres
+    end
 
-      elseif args[13] == 116 then -- body
+    for i, tyre in ipairs(scl_VehList[VehSID].ExistingTyres) do
+      TriggerServerEvent('ssv:SyncVehData', VehSID, 'TyreHealth', tyre, GetTyreHealth(args[1], tyre))
+      TriggerServerEvent('ssv:SyncVehData', VehSID, 'WheelHealth', tyre, GetWheelHealth(args[1], tyre))
+      
+      if IsVehicleTyreBurst(args[1], tyre, true) then
+        TriggerServerEvent('ssv:SyncVehData', VehSID, 'TyreDamage', tyre, 'Destroyed')
+      elseif IsVehicleTyreBurst(args[1], tyre, false) then
+        TriggerServerEvent('ssv:SyncVehData', VehSID, 'TyreDamage', tyre, 'Flat')
+      end
 
-      elseif args[13] == 120 then -- side windows
+      -- code to check for broken off wheels is missing
+      
+    end
 
-      elseif args[13] == 121 then -- rear window
+    for i, door in ipairs(scl_VehList[VehSID].ExistingDoors) do
+      -- doors
+    end
 
-      elseif args[13] == 122 then -- front window
-
+    for window, status in pairs(scl_VehList[VehSID].WindowStatus) do
+      if not IsVehicleWindowIntact(args[1], window) then
+        TriggerServerEvent('ssv:SyncVehData', VehSID, 'WindowStatus', window, 'Smashed')
       end
     end
+    
+    if IsVehicleBumperBrokenOff(args[1], true) then
+      TriggerServerEvent('ssv:SyncVehData', VehSID, '', 'FrontBumper', 'BrokenOff')
+    elseif IsVehicleBumperBouncing(args[1], true) then
+      TriggerServerEvent('ssv:SyncVehData', VehSID, '', 'FrontBumper', 'Bouncing')
+    end
+    if IsVehicleBumperBrokenOff(args[1], false) then
+      TriggerServerEvent('ssv:SyncVehData', VehSID, '', 'RearBumper', 'BrokenOff')
+    elseif IsVehicleBumperBouncing(args[1], false) then
+      TriggerServerEvent('ssv:SyncVehData', VehSID, '', 'RearBumper', 'Bouncing')
+    end
+
+    -- lights
+
+
+
   end
 end
 
@@ -51,6 +78,8 @@ gameEvents.CEventNetworkVehicleUndrivable = function(args)
     TriggerServerEvent('ssv:SyncVehData', VehSID, '', 'IsUndrivable', true)
   end
 end
+
+
 
 AddEventHandler('gameEventTriggered', function(name, args)
  if not gameEvents[name] then return end

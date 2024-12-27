@@ -73,16 +73,8 @@ AddEventHandler('ssv:nat:res:TaskVehicleDriveToCoord:Init', function(SID, Object
         end
     end
 
-    --TriggerClientEvent('CreateBlips', -1, Path, sx, sy, sz, ex, ey, ez, vehx, vehy, vehz, tarx, tary, tarz)
-
     table.insert(Path, "START")
     table.insert(Path, 1, "GOAL")
-
-    for i, entry in ipairs(Path) do
-        print(i, entry)
-    end
-
-    print('Length of Path', #Path)
 
     if isOverride then
         ssv_PedList[SID].OverridePathfindingData['Path'] = Path
@@ -153,13 +145,6 @@ AddEventHandler('ssv:nat:res:TaskVehicleDriveToCoord:Continue', function(SID, Ob
         
         if speed == -2 then
             speed = speed * speedingvalue
-        end
-        if speed == 25.0 or speed == 50.0 then
-            print('Invalid speed detected for values:')
-            print('CurrentNode', PathfindingData['Path'][PathfindingData['CurrentNode']])
-            print('OldNode', PathfindingData['Path'][PathfindingData['CurrentNode']+1])
-            print('CurrPos', posx, posy, posz)
-            print('CurrTarget', nxttarx, nxttary, nxttarz)
         end
     end
 

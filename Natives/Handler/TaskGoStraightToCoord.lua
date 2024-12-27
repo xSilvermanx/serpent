@@ -1,7 +1,7 @@
 function ssv_nat_TaskGoStraightToCoord(SID, tx, ty, tz, tspeed, ttimeout, ttargetHeading, tdistanceToSlide, ObjType)
   if ObjType == "Next" then
-    ssv_PedList[SID].NextObjective = 'TaskGoStraightToCoord'
-    ssv_PedList[SID].NextObjectiveData = {
+    local NextObjective = 'TaskGoStraightToCoord'
+    local NextObjectiveData = {
       task = 'Init', --Continue, Ignore
       x = tx,
       y = ty,
@@ -11,17 +11,12 @@ function ssv_nat_TaskGoStraightToCoord(SID, tx, ty, tz, tspeed, ttimeout, ttarge
       targetHeading = ttargetHeading,
       distanceToSlide = tdistanceToSlide,
     }
-    if ssv_PedList[SID].IsSpawnedBool then
-      local OwnerID = ssv_PedList[SID].OwnerClientNetID
-      local NextObjective = 'TaskGoStraightToCoord'
-      local NextObjectiveData = ssv_PedList[SID].NextObjectiveData
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'NextObjective', 'NextObjective', NextObjective)
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'NextObjective', 'NextObjectiveData', NextObjectiveData)
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'NextObjective', 'NextPathfindingData', {})
-    end
+    TriggerEvent('ssv:SyncPedData', SID, '', 'NextObjective', NextObjective)
+    TriggerEvent('ssv:SyncPedData', SID, '', 'NextObjectiveData', NextObjectiveData)
+    TriggerEvent('ssv:SyncPedData', SID, '', 'NextPathfindingData', {})
   elseif ObjType == "Override" then
-    ssv_PedList[SID].OverrideObjective = 'TaskGoStraightToCoord'
-    ssv_PedList[SID].OverrideObjectiveData = {
+    local OverrideObjective = 'TaskGoStraightToCoord'
+    local OverrideObjectiveData = {
       task = 'Init', --Continue, Ignore
       x = tx,
       y = ty,
@@ -31,17 +26,12 @@ function ssv_nat_TaskGoStraightToCoord(SID, tx, ty, tz, tspeed, ttimeout, ttarge
       targetHeading = ttargetHeading,
       distanceToSlide = tdistanceToSlide,
     }
-    if ssv_PedList[SID].IsSpawnedBool then
-      local OwnerID = ssv_PedList[SID].OwnerClientNetID
-      local OverrideObjective = 'TaskGoStraightToCoord'
-      local OverrideObjectiveData = ssv_PedList[SID].OverrideObjectiveData
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'OverrideObjective', 'OverrideObjective', OverrideObjective)
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'OverrideObjective', 'OverrideObjectiveData', OverrideObjectiveData)
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'OverrideObjective', 'OverridePathfindingData', {})
-    end
+    TriggerEvent('ssv:SyncPedData', SID, '', 'OverrideObjective', OverrideObjective)
+    TriggerEvent('ssv:SyncPedData', SID, '', 'OverrideObjectiveData', OverrideObjectiveData)
+    TriggerEvent('ssv:SyncPedData', SID, '', 'OverridePathfindingData', {})
   else
-    ssv_PedList[SID].CurrObjective = 'TaskGoStraightToCoord'
-    ssv_PedList[SID].CurrObjectiveData = {
+    local CurrObjective = 'TaskGoStraightToCoord'
+    local CurrObjectiveData =  {
       task = 'Init', --Continue, Ignore
       x = tx,
       y = ty,
@@ -51,14 +41,9 @@ function ssv_nat_TaskGoStraightToCoord(SID, tx, ty, tz, tspeed, ttimeout, ttarge
       targetHeading = ttargetHeading,
       distanceToSlide = tdistanceToSlide,
     }
-    if ssv_PedList[SID].IsSpawnedBool then
-      local OwnerID = ssv_PedList[SID].OwnerClientNetID
-      local CurrObjective = 'TaskGoStraightToCoord'
-      local CurrObjectiveData = ssv_PedList[SID].CurrObjectiveData
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'CurrObjective', 'CurrObjective', CurrObjective)
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'CurrObjective', 'CurrObjectiveData', CurrObjectiveData)
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'CurrObjective', 'CurrPathfindingData', {})
-    end
+    TriggerEvent('ssv:SyncPedData', SID, '', 'CurrObjective', CurrObjective)
+    TriggerEvent('ssv:SyncPedData', SID, '', 'CurrObjectiveData', CurrObjectiveData)
+    TriggerEvent('ssv:SyncPedData', SID, '', 'CurrPathfindingData', {})
   end
 end
 
@@ -78,15 +63,9 @@ AddEventHandler('ssv:nat:TaskGoStraightToCoord', function(SID, ObjectiveData, Pa
 
   if task == 'Init' then
     if isOverride then
-      ssv_PedList[SID].OverrideObjectiveData.task = 'Continue'
-      if ssv_PedList[SID].IsSpawnedBool then
-        TriggerClientEvent('scl:RecievePedData', ssv_PedList[SID].OwnerClientNetID, SID, 'OverrideObjectiveData', 'task', 'Continue')
-      end
+      TriggerEvent('ssv:SyncPedData', SID, 'OverrideObjectiveData', 'task', 'Continue')
     else
-      ssv_PedList[SID].CurrObjectiveData.task = 'Continue'
-      if ssv_PedList[SID].IsSpawnedBool then
-        TriggerClientEvent('scl:RecievePedData', ssv_PedList[SID].OwnerClientNetID, SID, 'CurrObjectiveData', 'task', 'Continue')
-      end
+      TriggerEvent('ssv:SyncPedData', SID, 'CurrObjectiveData', 'task', 'Continue')
     end
   end
 

@@ -4,9 +4,12 @@ The server triggers appropriate serverside functions on other resources, which t
 The server should remain in control as much as possible, even if that control is only by proxy.
 Unless mentioned otherwise the events only fire AFTER the event has taken place. This is especially true for serpent events.
 
---TODO
-Vehicle Damage to include tyres, windows, doors, bumpers
-
+---TODO
+- Write code to get front and rear bumpers to bounce or break off
+- Test IsVehicleDoorDamaged - is this native able to check for broken off doors?
+- Write Event-code for a broken off wheel
+- Search for every SyncPedData, RecievePedData, SyncVehData, RecieveVehData. Check for typos
+---TODO
 
 List of clientside events
 - includes everything related to sync achieved through player actions
@@ -15,7 +18,7 @@ List of clientside events
 [i]PedDied
 [i]PedDamaged(Armor and Health) -- entity damaged
 PedPropKnockedOff
-PedBulletWound
+PedBulletWound -- visually
 PedEnteredRandomVehicle
 PedFleeing
 PedGameTaskTriggered
@@ -36,7 +39,6 @@ VehicleSirenDamaged
 VehicleLightbarDamaged
 VehicleIndicatorsDamaged
 VehicleOutOfFuel
-VehicleDirtLevel
 VehicleWindowSmashed
 VehicleDoorUnhinged(currently no native to set this up that way)
 VehicleWheelBroken

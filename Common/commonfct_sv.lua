@@ -2,38 +2,21 @@ AddEventHandler('ssv:FinishTask', function(SID, isOverride, isSuccess) --impleme
   Resource = ssv_PedList[SID].OwningRes
 
   if isOverride then
-    ssv_PedList[SID].OverrideObjective = 'none'
-    ssv_PedList[SID].OverrideObjectiveData = {}
-    ssv_PedList[SID].OverridePathfindingData = {}
-
-    if ssv_PedList[SID].IsSpawnedBool then
-      local OwnerID = ssv_PedList[SID].OwnerClientNetID
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'Objective', 'OverrideObjective', 'none')
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'Objective', 'OverrideObjectiveData', {} )
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'Objective', 'OverridePathfindingData', {} )
-    end
+    TriggerEvent('ssv:SyncPedData', SID, '', 'OverrideObjective', 'none')
+    TriggerEvent('ssv:SyncPedData', SID, 'OverrideObjectiveData', 'OverrideObjectiveData', {})
+    TriggerEvent('ssv:SyncPedData', SID, 'OverridePathfindingData', 'OverridePathfindingData', {})
   else
     local NewObjective = ssv_PedList[SID].NextObjective
     local NewObjectiveData = ssv_PedList[SID].NextObjectiveData
     local NewPathfindingData = ssv_PedList[SID].NextPathfindingData
 
-    ssv_PedList[SID].CurrObjective = NewObjective
-    ssv_PedList[SID].CurrObjectiveData = NewObjectiveData
-    ssv_PedList[SID].CurrPathfindingData = NewPathfindingData
+    TriggerEvent('ssv:SyncPedData', SID, '', 'CurrObjective', NewObjective)
+    TriggerEvent('ssv:SyncPedData', SID, 'CurrObjectiveData', 'CurrObjectiveData', NewObjectiveData)
+    TriggerEvent('ssv:SyncPedData', SID, 'Objective', 'CurrPathfindingData', NewPathfindingData)
 
-    ssv_PedList[SID].NextObjective = "idle"
-    ssv_PedList[SID].NextObjectiveData = {}
-    ssv_PedList[SID].NextPathfindingData = {}
-
-    if ssv_PedList[SID].IsSpawnedBool then
-      local OwnerID = ssv_PedList[SID].OwnerClientNetID
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'Objective', 'CurrObjective', NewObjective)
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'Objective', 'CurrObjectiveData', NewObjectiveData)
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'Objective', 'CurrPathfindingData', NewPathfindingData)
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'Objective', 'NextObjective', "idle")
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'Objective', 'NextObjectiveData', {} )
-      TriggerClientEvent('scl:RecievePedData', OwnerID, SID, 'Objective', 'NextPathfindingData', {} )
-    end
+    TriggerEvent('ssv:SyncPedData', SID, '', 'NextObjective', 'idle')
+    TriggerEvent('ssv:SyncPedData', SID, 'NextObjectiveData', 'NextObjectiveData', {})
+    TriggerEvent('ssv:SyncPedData', SID, 'NextPathfindingData', 'NextPathfindingData', {})
   end
 end)
 

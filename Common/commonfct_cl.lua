@@ -41,8 +41,7 @@ function scl_SpawnVeh(vehid, vehdata)
     local veh = CreateVehicle(vehdata.ModelHash, Pos.x, Pos.y, Pos.z, vehdata.heading, true, false)    
     local VehNetID = VehToNet(veh)
 
-    scl_VehList[vehid].VehNetID = VehNetID
-    TriggerServerEvent('ssv:RecieveVehData', vehid, '', 'VehNetID', VehNetID)
+    TriggerServerEvent('ssv:SyncVehData', vehid, '', 'VehNetID', VehNetID)
     scl_VehEventList[veh] = vehid
     TriggerServerEvent('ssv:SyncVehData', vehid, '', 'VehID', veh)
 
@@ -116,9 +115,7 @@ function scl_SpawnPed(pedid, peddata, seatindex)
         ped = CreatePed(peddata.PedType, peddata.ModelHash, x, y, z-1.0, peddata.heading, true, false)
         PedNetID = PedToNet(ped)
     end
-
-    scl_PedList[pedid].PedNetID = PedNetID
-    TriggerServerEvent('ssv:RecievePedData', pedid, '', 'PedNetID', PedNetID)
+    TriggerServerEvent('ssv:SyncPedData', pedid, '', 'PedNetID', PedNetID)
     scl_PedEventList[ped] = pedid
     TriggerServerEvent('ssv:SyncPedData', pedid, '', 'PedID', ped)
     return true

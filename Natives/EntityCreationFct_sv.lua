@@ -43,6 +43,7 @@ function ssv_nat_CreatePed(pedType, PedmodelHash, pedposx, pedposy, pedposz, ped
 
       },
     },
+    TaskType = 531,
     CurrObjective = "idle",
     CurrObjectiveData = {},
     CurrPathfindingData = {},
@@ -284,13 +285,15 @@ function ssv_nat_CreateVehicle(VehmodelHash, vehposx, vehposy, vehposz, vehheadi
     WheelHealth = {
 
     },
-    Attachments = { -- not implmented yet. Has to do with attaching entities to each other - used either very generally or specially for tow trucks, trailers and the likes. Probably generally.
+    Attachments = { -- not implemented yet. Has to do with attaching entities to each other - used either very generally or specially for tow trucks, trailers and the likes. Probably generally.
 
     },
     ConvertibleRoof = false, -- false, 'Open', 'Closed', 'Fixed'
     HasDriftTyres = false,
     IsUndrivable = false,
     IsExploded = false,
+    FrontBumper = true, --true = Undamaged, 'Bouncing', 'BrokenOff'
+    RearBumper = true, --true = Undamaged, 'Bouncing', 'BrokenOff'
     UseExactSpawnCoordinates = false,
   }
 

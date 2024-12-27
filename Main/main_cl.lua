@@ -7,23 +7,17 @@ AddEventHandler('scl:MainClientPedLoop', function()
 
       for pedid, peddata in pairs(scl_PedList) do
         if scl_PedList[pedid].JustSpawnedBool then
-          scl_PedList[pedid].JustSpawnedBool = false
-          TriggerServerEvent('ssv:RecievePedData', pedid, "", "JustSpawnedBool", false)
+          TriggerServerEvent('ssv:SyncPedData', pedid, "", "JustSpawnedBool", false)
         else
           if not scl_PedList[pedid].IsInVeh then
             local PedNetID = scl_PedList[pedid].PedNetID
             local ped = NetToPed(PedNetID)
             local pedx, pedy, pedz = table.unpack(GetEntityCoords(ped))
             local pedh = GetEntityHeading(ped)
-
-            scl_PedList[pedid].x = pedx
-            scl_PedList[pedid].y = pedy
-            scl_PedList[pedid].z = pedz
-            scl_PedList[pedid].heading = pedh
-            TriggerServerEvent('ssv:RecievePedData', pedid, 'Position', 'x', pedx)
-            TriggerServerEvent('ssv:RecievePedData', pedid, 'Position', 'y', pedy)
-            TriggerServerEvent('ssv:RecievePedData', pedid, 'Position', 'z', pedz)
-            TriggerServerEvent('ssv:RecievePedData', pedid, 'Heading', 'heading', pedh)
+            TriggerServerEvent('ssv:SyncPedData', pedid, 'Position', 'x', pedx)
+            TriggerServerEvent('ssv:SyncPedData', pedid, 'Position', 'y', pedy)
+            TriggerServerEvent('ssv:SyncPedData', pedid, 'Position', 'z', pedz)
+            TriggerServerEvent('ssv:SyncPedData', pedid, 'Heading', 'heading', pedh)
             if scl_PedList[pedid].IsDead then
               TriggerServerEvent('ssv:SyncPedData', pedid, '', 'DeadPitch', GetEntityPitch(ped))
               TriggerServerEvent('ssv:SyncPedData', pedid, '', 'DeadRoll', GetEntityRoll(ped))
@@ -91,8 +85,7 @@ AddEventHandler('scl:MainClientVehLoop', function()
 
       for vehid, vehdata in pairs(scl_VehList) do
         if scl_VehList[vehid].JustSpawnedBool then
-          scl_VehList[vehid].JustSpawnedBool = false
-          TriggerServerEvent('ssv:RecieveVehData', vehid, "", "JustSpawnedBool", false)
+          TriggerServerEvent('ssv:SyncVehData', vehid, "", "JustSpawnedBool", false)
         else
           local VehNetID = scl_VehList[vehid].VehNetID
           local veh = NetToVeh(VehNetID)
@@ -100,14 +93,10 @@ AddEventHandler('scl:MainClientVehLoop', function()
           local vehx, vehy, vehz = table.unpack(GetEntityCoords(veh))
           local vehh = GetEntityHeading(veh)
 
-          scl_VehList[vehid].x = vehx
-          scl_VehList[vehid].y = vehy
-          scl_VehList[vehid].z = vehz
-          scl_VehList[vehid].heading = vehh
-          TriggerServerEvent('ssv:RecieveVehData', vehid, 'Position', 'x', vehx)
-          TriggerServerEvent('ssv:RecieveVehData', vehid, 'Position', 'y', vehy)
-          TriggerServerEvent('ssv:RecieveVehData', vehid, 'Position', 'z', vehz)
-          TriggerServerEvent('ssv:RecieveVehData', vehid, 'Heading', 'heading', vehh)
+          TriggerServerEvent('ssv:SyncVehData', vehid, 'Position', 'x', vehx)
+          TriggerServerEvent('ssv:SyncVehData', vehid, 'Position', 'y', vehy)
+          TriggerServerEvent('ssv:SyncVehData', vehid, 'Position', 'z', vehz)
+          TriggerServerEvent('ssv:SyncVehData', vehid, 'Heading', 'heading', vehh)
 
           if ssh_VectorDistance(vehx, vehy, vehz, plx, ply, plz) > DespawnRange then
             TriggerEvent('scl:DespawnVeh', vehid)
@@ -161,6 +150,19 @@ end)
 
 AddEventHandler('scl:DespawnVeh', function(vehid)
   local vehdata = scl_VehList[vehid]
+  local VehNetID = vehdata.VehNetID
+  local veh = NetToVeh(VehNetID)
+  TriggerServerEvent('ssv:SyncVehData', vehid, '', 'VehicleFuelLevel', GetVehicleFuelLevel(veh))
+  TriggerServerEvent('ssv:SyncVehData', vehid, '', 'VehicleDirtLevel', GetVehicleDirtLevel(veh))
+  TriggerServerEvent('ssv:SyncVehData', vehid, 'Lights', 'Siren', GetVehicleFuelLevel(veh))
+  if vehdata.ConvertibleRoof == 'Open' or vehdata.ConvertibleRoof == 'Closed' then
+    local RoofState = GetConvertibleRoofState(veh)
+    if RoofState == 0 or RoofState == 3 or RoofState == 5 then
+      TriggerServerEvent('ssv:SyncVehData', vehid, '', 'ConvertibleRoof', 'Closed')
+    elseif RoofState == 1 or RoofState == 2 or RoofState == 6 then
+      TriggerServerEvent('ssv:SyncVehData', vehid, '', 'ConvertibleRoof', 'Open')
+    end
+  end
   local PedInVeh = false
   local PassengerData = {}
   for i, passenger in pairs(vehdata.Passengers) do
