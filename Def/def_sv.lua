@@ -2,7 +2,8 @@ ssv_PedList = {}
 ssv_VehList = {}
 ssv_ObjList = {}
 ssv_PlayerList = {}
-
+ssv_PedLoadingPromiseList = {}
+ssv_VehLoadingPromiseList = {}
 
 -- this stays commented but in the files. GetPedSpecificTaskType() could be used to check for proper assignment of tasks.
 -- It could be used to check whether the game assigned a different task than serpent wants.

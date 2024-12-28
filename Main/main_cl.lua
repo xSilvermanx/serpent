@@ -23,9 +23,16 @@ AddEventHandler('scl:MainClientPedLoop', function()
               TriggerServerEvent('ssv:SyncPedData', pedid, '', 'DeadRoll', GetEntityRoll(ped))
             end
             if IsPedInAnyVehicle(ped, false) then
+              local seat = -1
               local veh = GetVehiclePedIsIn(ped, false)
               local VehNetID = VehToNet(veh)
-              TriggerServerEvent('ssv:ev:SerpentPedIsInRandomVehicle', pedid, VehNetID)
+              for i =-1, 6 do
+                if GetPedInVehicleSeat(veh, i) == ped then
+                  seat = i
+                  break
+                end
+              end
+              TriggerServerEvent('ssv:ev:SerpentPedIsInRandomVehicle', pedid, VehNetID, seat)
             end
 
             if ssh_VectorDistance(pedx, pedy, pedz, plx, ply, plz) > DespawnRange then

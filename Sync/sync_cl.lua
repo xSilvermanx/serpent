@@ -21,11 +21,6 @@ AddEventHandler('scl:RecievePedData', function(pedid, type, key, value)
   end
 end)
 
-RegisterNetEvent('scl:RecievePed') --unused?
-AddEventHandler('scl:RecievePed', function(pedid, peddata)
-  scl_PedList[pedid] = peddata
-end)
-
 RegisterNetEvent('scl:RemovePed')
 AddEventHandler('scl:RemovePed', function(pedid)
   if scl_PedList[pedid].IsSpawnedBool then
@@ -67,11 +62,6 @@ AddEventHandler('scl:RecieveVehData', function(vehid, type, key, value)
   else
     scl_VehList[vehid][key] = value
   end
-end)
-
-RegisterNetEvent('scl:RecieveVeh')  --unused?
-AddEventHandler('scl:RecieveVeh', function(vehid, vehdata)
-  scl_VehList[vehid] = vehdata
 end)
 
 RegisterNetEvent('scl:RemoveVeh')

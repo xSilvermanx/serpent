@@ -55,7 +55,7 @@ function ssv_nat_CreatePed(pedType, PedmodelHash, pedposx, pedposy, pedposz, ped
     IsInVeh = false, -- refers to Serpent Vehicles only
     VehSID = 0,
     PedRelationshipGroup = "NO_RELATIONSHIP",
-    PedHealth = 100,
+    PedHealth = 200,
     PedArmor = 0,
     IsDead = false,
     DeadPitch = 0.0,
@@ -339,3 +339,399 @@ end
 function ssv_nat_DeleteObject(objid)
 
 end
+
+-- Returns PedSID.
+-- Use this only on peds NOT in vehicles. For peds in vehicles use LoadVehIntoSerpent().
+-- PedType -> Most likely 26.
+-- pedModelHash -> GetEntityModel(entity) on Server.
+-- pedposx, pedposy, pedposz -> GetEntityCoords(entity) on Server.
+-- pedheading -> GetEntityHeading(entity) on Server.
+function ssv_nat_LoadPedIntoSerpent(tempPedNetID, pedType, PedmodelHash, pedposx, pedposy, pedposz, pedheading)
+  
+  local PedOwner = GetInvokingResource()
+
+  local PedSID = 1
+
+  table.insert(PedThreads, 1)
+  local tPedCount = #PedThreads
+  local tPedCountNow = tPedCount
+
+  while tPedCount > 1 and tPedCountNow > tPedCount-1 do
+    tPedCountNow = #PedThreads
+  end
+
+  while ssv_PedList[PedSID] ~= nil do
+    PedSID = PedSID + 1
+  end
+
+  local peddata = {
+    PedSID = PedSID,
+    OwningRes = PedOwner,
+    x = pedposx,
+    y = pedposy,
+    z = pedposz,
+    heading = pedheading,
+    JustSpawnedBool = true,
+    IsSpawnedBool = true,
+    ScriptOwnerNetID = 0, -- FiveM Networking Ownership
+    OwnerClientNetID = 0, -- Serpent Ownership
+    PedNetID = tempPedNetID,
+    PedID = 0, -- used for PedEventList only on clientside
+    PedType = pedType,
+    ModelHash = PedmodelHash,
+    RandomLooks = true,
+    PedVisualData = {
+      Components = {
+
+      },
+      Props = {
+
+      },
+    },
+    CurrObjective = "idle",
+    CurrObjectiveData = {},
+    CurrPathfindingData = {},
+    OverrideObjective = "none",
+    OverrideObjectiveData = {},
+    OverridePathfindingData = {},
+    NextObjective = "idle",
+    NextObjectiveData = {},
+    NextPathfindingData = {},
+    IsInVeh = false, -- refers to Serpent Vehicles only
+    VehSID = 0,
+    PedRelationshipGroup = "NO_RELATIONSHIP",
+    PedHealth = 200,
+    PedArmor = 0,
+    IsDead = false,
+    DeadPitch = 0.0,
+    DeadRoll = 0.0,
+    BlockNonTemporaryEvents = true,
+    UseExactSpawnCoordinates = false,
+  }
+
+  if PedmodelHash == FreemodeHashM or PedmodelHash == FreemodeHashF then
+    peddata.PedVisualData.Inheritance = {
+      FirstShapeID = 0,
+      SecondShapeID = 0,
+      ThirdShapeID = 0,
+      FirstSkinID = 0,
+      SecondSkinID = 0,
+      ThirdSkinID = 0,
+      shapeMix = 0.0,
+      skinMix = 0.0,
+      thirdMix = 0.0,
+      isParentBool = false,
+    }
+    peddata.PedVisualData.FaceFeature = {
+      NoseWidth = 0.0,
+      NosePeakHeight = 0.0,
+      NosePeakLength = 0.0,
+      NoseBoneHeight = 0.0,
+      NosePeakLowering = 0.0,
+      NoseBoneTwist = 0.0,
+      EyeBrowHeight = 0.0,
+      EyeBrowForward = 0.0,
+      CheeksBoneHeight = 0.0,
+      CheeksBoneWidth = 0.0,
+      CheeksWidth = 0.0,
+      EyesOpening = 0.0,
+      LipsThickness = 0.0,
+      JawBoneWidth = 0.0,
+      JawBoneBackLength = 0.0,
+      ChimpBoneLower = 0.0,
+      ChimpBoneLength = 0.0,
+      ChimpBoneWidth = 0.0,
+      ChimpHole = 0.0,
+      NeckThickness = 0.0,
+    }
+    peddata.PedVisualData.Appearance = {
+      HairColor = 0,
+      HairHighlightColor = 0,
+      BlemishesStyle = 255,
+      BlemishesOpacity = 0.0,
+      FacialHairStyle = 255,
+      FacialHairOpacity = 0.0,
+      FacialHairFirstColor = 0,
+      FacialHairSecondColor = 0,
+      EyebrowsStyle = 255,
+      EyebrowsOpacity = 0.0,
+      EyebrowsFirstColor = 0,
+      EyebrowsSecondColor = 0,
+      AgeingStyle = 255,
+      AgeingOpacity = 0.0,
+      MakeupStyle = 255,
+      MakeupOpacity = 0.0,
+      MakeupFirstColor = 0,
+      MakeupSecondColor = 0,
+      BlushStyle = 255,
+      BlushOpacity = 0.0,
+      BlushFirstColor = 0,
+      BlushSecondColor = 0,
+      ComplexionStyle = 255,
+      ComplexionOpacity = 0.0,
+      SunDamageStyle = 255,
+      SunDamageOpacity = 0.0,
+      LipstickStyle = 255,
+      LipstickOpacity = 0.0,
+      LipstickFirstColor = 0,
+      LipstickSecondColor = 0,
+      MolesStyle = 255,
+      MolesOpacity = 0.0,
+      ChestHairStyle = 255,
+      ChestHairOpacity = 0.0,
+      ChestHairFirstColor = 0,
+      ChestHairSecondColor = 0,
+      BodyBlemishesStyle = 255,
+      BodyBlemishesOpacity = 0.0,
+      AddBodyBlemishesStyle = 255,
+      AddBodyBlemishesOpacity = 0.0,
+      EyeColor = 0,
+    }
+  end
+
+  ssv_PedLoadingPromiseList[PedSID] = promise.new()
+
+  local ClosestPlId = 0
+  local ClosestPlDist = 999999.9
+
+  for plid, pldata in pairs(ssv_PlayerList) do
+    local plx = pldata.x
+    local ply = pldata.y
+    local plz = pldata.z
+    local pldist = ssh_VectorDistance(pedposx, pedposy, pedposz, plx, ply, plz)
+    if pldist < ClosestPlDist then
+      ClosestPlId = plid
+      ClosestPlDist = pldist
+    end
+  end
+
+  peddata.OwnerClientNetID = ClosestPlId
+  peddata.ScriptOwnerNetID = NetworkGetEntityOwner(NetworkGetEntityFromNetworkId(tempPedNetID))
+  TriggerClientEvent('scl:nat:LoadPedIntoSerpent', ClosestPlId, PedSID, tempPedNetID)
+  local DataToApply = Citizen.Await(ssv_PedLoadingPromiseList[PedSID])
+
+  peddata.PedHealth = DataToApply.PedHealth
+  peddata.PedArmor = DataToApply.PedArmor
+  peddata.IsDead = DataToApply.IsDead
+  peddata.DeadPitch = DataToApply.DeadPitch
+  peddata.DeadRoll = DataToApply.DeadRoll
+
+  ssv_PedList[PedSID] = peddata
+  TriggerClientEvent('scl:LoadPedIntoSerpent:RecievePedOwnership', ClosestPlId, PedSID, peddata)
+  ssv_PedLoadingPromiseList[PedSID] = nil
+  table.remove(PedThreads)
+  return PedSID
+end
+
+RegisterNetEvent('ssv:nat:LoadPedIntoSerpent:Helper')
+AddEventHandler('ssv:nat:LoadPedIntoSerpent:Helper', function(PedSID, data)
+  ssv_PedLoadingPromiseList[PedSID]:resolve(data)  
+end)
+
+
+function ssv_nat_LoadVehIntoSerpent(tempVehNetID, VehmodelHash, vehposx, vehposy, vehposz, vehheading)
+  local VehOwner = GetInvokingResource()
+
+  local VehSID = 1
+
+  table.insert(VehThreads, 1)
+  local tVehCount = #VehThreads
+  local tVehCountNow = tVehCount
+
+  while tVehCount > 1 and tVehCountNow > tVehCount-1 do
+    tVehCountNow = #VehThreads
+  end
+
+  while ssv_VehList[VehSID] ~= nil do
+    VehSID = VehSID + 1
+  end
+
+  local vehdata = {
+    VehSID = VehSID,
+    OwningRes = VehOwner,
+    x = vehposx,
+    y = vehposy,
+    z = vehposz,
+    heading = vehheading,
+    currspeed = 0.0,
+    JustSpawnedBool = true,
+    IsSpawnedBool = true,
+    ScriptOwnerNetID = 0, -- FiveM Networking Ownership
+    OwnerClientNetID = 0, -- Serpent Ownership
+    VehNetID = tempVehNetID,
+    VehID = 0, -- used for VehEventList only clientside.
+    ModelHash = VehmodelHash,
+    DriverIsSerpentPed = false,
+    Passengers = {
+      [-1] = 0,
+      [0] = 0,
+      [1] = 0,
+      [2] = 0,
+      [3] = 0,
+      [4] = 0,
+      [5] = 0,
+      [6] = 0,
+    },
+    RandomSpawn = true,
+    VehicleMods = {
+      Tuning = {
+
+      },
+      CustomWheel = false,
+      CustomWheelHydraulics = false,
+      WheelType = 0,
+      Extras = {
+
+      },
+    },
+    Color = {
+      IsColorCombination = false,
+      PrimaryColorCustom = false,
+      SecondaryColorCustom = false,
+      ColorCombination = -1,
+      PrimaryColor = 0,
+      SecondaryColor = 0,
+      DashboardColor = 0,
+      ExtraColors = {},
+      InteriorColor = 0,
+      ModColor1 = {},
+      ModColor2 = {},
+      NeonLightsEnabled = {},
+      NeonLightsColor = {},
+      TyreSmokeColor = {},
+      XenonLightsColor = 255,
+      Livery = -1,
+      RoofLivery = -1,
+    },
+    Lights = {
+      HeadlightsState = 0, -- 0 = off, 1 = on, 2 = highbeams
+      Searchlight = false, -- false = not existent, 'Off' = Turned off, 'On' = Turned on
+      Siren = false,
+      IndicatorLeft = false,
+      IndicatorRight = false,
+      InteriorLight = false,
+    },
+    VehicleEngineHealth = 1000,
+    VehicleBodyHealth = 1000,
+    VehiclePetrolTankHealth = 1000,
+    VehicleFuelLevel = 100.0,
+    VehicleDirtLevel = 0.0,
+    WindowStatus = { -- 'Up', 'Down', 'Smashed'
+      [0] = 'Up',
+      [1] = 'Up',
+      [2] = 'Up',
+      [3] = 'Up',
+      [4] = 'Up',
+      [5] = 'Up',
+      [6] = 'Up',
+      [7] = 'Up',
+    },
+    WindowTint = 0,
+    Hydraulics = { -- not implemented yet
+
+    },
+    CheckedDoors = false,
+    ExistingDoors = {
+
+    },
+    DoorCanBreak = {
+
+    },
+    DoorsStatus = { -- "Closed", "Open", "Loose", "Broken"
+
+    },
+    DoorLockStatus = 0,
+    Deformation = { --not implemented yet, check GetVehicleDeformationAtPos()
+
+    },
+    CheckedTyres = false,
+    TyreInvincible = false,
+    ExistingTyres = {
+
+    },
+    TyreDamage = { -- false, 'Flat', 'Destroyed'
+
+    },
+    TyreHealth = {
+
+    },
+    WheelsCanBreak = false, -- use ExistingTyres for wheels
+    WheelsCanBreakBlow = false,
+    WheelsCanDeform = false,
+    WheelDamage = {  -- false, 'Broken'
+
+    },
+    WheelHealth = {
+
+    },
+    Attachments = { -- not implemented yet. Has to do with attaching entities to each other - used either very generally or specially for tow trucks, trailers and the likes. Probably generally.
+
+    },
+    ConvertibleRoof = false, -- false, 'Open', 'Closed', 'Fixed'
+    HasDriftTyres = false,
+    IsUndrivable = false,
+    IsExploded = false,
+    FrontBumper = true, --true = Undamaged, 'Bouncing', 'BrokenOff'
+    RearBumper = true, --true = Undamaged, 'Bouncing', 'BrokenOff'
+    UseExactSpawnCoordinates = false,
+  }
+
+  ssv_VehLoadingPromiseList[VehSID] = promise.new()
+  
+  local ClosestPlId = 0
+  local ClosestPlDist = 999999.9
+
+  for plid, pldata in pairs(ssv_PlayerList) do
+    local plx = pldata.x
+    local ply = pldata.y
+    local plz = pldata.z
+    local pldist = ssh_VectorDistance(vehposx, vehposy, vehposz, plx, ply, plz)
+    if pldist < ClosestPlDist then
+      ClosestPlId = plid
+      ClosestPlDist = pldist
+    end
+  end
+
+  vehdata.OwnerClientNetID = ClosestPlId
+  vehdata.ScriptOwnerNetID = NetworkGetEntityOwner(NetworkGetEntityFromNetworkId(tempVehNetID))
+  TriggerClientEvent('scl:nat:LoadVehIntoSerpent', ClosestPlId, VehSID, tempVehNetID)
+  local DataToApply = Citizen.Await(ssv_VehLoadingPromiseList[VehSID])
+
+  vehdata.VehicleEngineHealth = DataToApply.VehicleEngineHealth
+  vehdata.VehicleBodyHealth = DataToApply.VehicleBodyHealth
+  vehdata.VehiclePetrolTankHealth = DataToApply.VehiclePetrolTankHealth
+  vehdata.VehicleFuelLevel = DataToApply.VehicleFuelLevel
+  vehdata.IsUndrivable = DataToApply.IsUndrivable
+  vehdata.IsExploded = DataToApply.IsExploded
+ 
+  local PedSIDList = {}
+
+  for seat, PedNetID in pairs(DataToApply.passengers) do
+    if not ssv_nat_GetSerpentPedId(PedNetID) then
+      local ped = NetworkGetEntityFromNetworkId(PedNetID)
+      local coords = GetEntityCoords(ped)
+      local PedSID = ssv_nat_LoadPedIntoSerpent(PedNetID, 26, GetEntityModel(ped), coords.x, coords.y, coords.z, GetEntityHeading(ped))
+      TriggerEvent('ssv:SyncPedData', PedSID, '', 'OwningRes', VehOwner)
+      TriggerEvent('ssv:SyncPedData', PedSID, '', 'IsInVeh', true)
+      TriggerEvent('ssv:SyncPedData', PedSID, '', 'VehSID', VehSID)
+      table.insert(PedSIDList, PedSID)
+      vehdata.Passengers[seat] = PedSID
+      if seat == -1 then
+        vehdata.DriverIsSerpentPed = true
+      end
+    end
+  end
+
+  ssv_VehList[VehSID] = vehdata
+
+  TriggerClientEvent('scl:LoadVehIntoSerpent:RecieveVehOwnership', ClosestPlId, VehSID, vehdata)
+  ssv_VehLoadingPromiseList[VehSID] = nil
+  table.remove(VehThreads)
+
+  return VehSID, PedSIDList
+end
+
+RegisterNetEvent('ssv:nat:LoadVehIntoSerpent:Helper')
+AddEventHandler('ssv:nat:LoadVehIntoSerpent:Helper', function(VehSID, data)
+  ssv_VehLoadingPromiseList[VehSID]:resolve(data)
+end)

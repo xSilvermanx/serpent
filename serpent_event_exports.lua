@@ -28,15 +28,22 @@ server_exports { -- serpent event exports
 --]]
 
 -- Event that fires if a random ped is in a serpent vehicle.
--- Gives the VehSID and the seat the ped is in.
+-- Gives the VehSID, the PedNetID and the seat the ped is in.
 -- Event expects a return:
 -- decision = 0 -> Do nothing.
 -- decision = 1 -> Kick ped out of the seat.
 -- You can also use this event to load this ped as a serpent ped.
--- For this use the native LoadPedIntoSerpent() in this function.
--- Leave decision = 0 if you do this.
-function sev_RandomPedIsInSerpentVehicle(VehSID, seat)
+-- This is implemented as the standard.
+function sev_RandomPedIsInSerpentVehicle(VehSID, PedNetID, seat)
     local decision = 0
+    local ped = NetworkGetEntityFromNetworkId(PedNetID)
+    local coords = GetEntityCoords(ped)
+
+    local PedSID = exports.serpent:ssv_nat_LoadPedIntoSerpent(PedNetID, 26, GetEntityModel(ped), coords.x, coords.y, coords.z, GetEntityHeading(ped))
+
+    exports.serpent:ssv_nat_SetPedIntoVehicle(PedSID, VehSID, seat)
+
+    -- make sure to save the PedSID somewhere in your resource to manipulate the ped later.
 
     return decision
 end
@@ -65,10 +72,15 @@ end
 -- decision = 1 -> Kick serpent ped out of the seat. NOT RECOMMENDED especially if the serpent ped is currently fleeing.
 -- If decision == 1 serpent automatically reapplies the task that should be set currently.
 -- You can also use this event to load this vehicle as a serpent vehicle.
--- For this use the native LoadVehIntoSerpent() in this function.
--- Leave decision = 0 if you do this.
-function sev_SerpentPedIsInRandomVehicle(PedSID)
+-- This is implemented as the standard.
+function sev_SerpentPedIsInRandomVehicle(PedSID, VehNetID, seat)
     local decision = 0
+    local veh = NetworkGetEntityFromNetworkId(VehNetID)
+    local coords = GetEntityCoords(veh)
+
+    local VehSID = exports.serpent:ssv_nat_LoadVehIntoSerpent(VehNetID, GetEntityModel(veh), coords.x, coords.y, coords.z, GetEntityHeading(veh))
+
+    exports.serpent:ssv_nat_SetPedIntoVehicle(PedSID, VehSID, seat)
 
     return decision
 end

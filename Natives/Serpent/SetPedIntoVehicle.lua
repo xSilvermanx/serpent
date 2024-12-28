@@ -15,7 +15,7 @@ function ssv_nat_SetPedIntoVehicle(SID, VehSID, seat)
         local PedNetID = ssv_PedList[SID].PedNetID
         local ped = NetworkGetEntityFromNetworkId(PedNetID)
         local OwnerID = NetworkGetEntityOwner(ped)
-        TriggerServerEvent('ssv:SyncPedData', SID, '', 'ScriptOwnerNetID', OwnerID)
+        TriggerEvent('ssv:SyncPedData', SID, '', 'ScriptOwnerNetID', OwnerID)
         TriggerClientEvent('scl:nat:res:SetPedIntoVehicle', ssv_PedList[SID].ScriptOwnerNetID, ssv_PedList[SID].PedNetID, ssv_VehList[VehSID].VehNetID, seat)
     elseif PedSpawned then
         TriggerEvent('ssv:SpawnVeh', VehSID, ssv_PedList[SID].OwnerClientNetID)

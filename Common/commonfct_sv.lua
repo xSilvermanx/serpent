@@ -42,28 +42,3 @@ function ssv_FindPedSeatInSerpentVehicle(pedid)
   return seat
 end
 
-function GetSerpentPedId(PedNetID)
-  local found = false
-  local value = -1
-  for PedSID, peddata in pairs(ssv_PedList) do
-    if PedNetID == peddata.PedNetID then
-      found = true
-      value = PedSID
-      break
-    end
-  end
-  return found, value
-end
-
-function GetSerpentVehId(VehNetID)
-  local found = false
-  local value = -1
-  for VehSID, vehdata in pairs(ssv_VehList) do
-    if VehNetID == vehdata.VehNetID then
-      found = true
-      value = VehSID
-      break
-    end
-  end
-  return found, value
-end

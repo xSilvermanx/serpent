@@ -1,12 +1,12 @@
 RegisterNetEvent('ssv:ev:RandomPedIsInSerpentVehicle')
 AddEventHandler('ssv:ev:RandomPedIsInSerpentVehicle', function(VehSID, PedNetID, seat)
-    if GetSerpentPedId(PedNetID) or GetPedSpecificTaskType(NetToPed(PedNetID)) == 152 then -- this use of GetPedSpecificTaskType is necessary. Prevents the event from firing after you deleted a serpent ped inside a vehicle.
+    if ssv_nat_GetSerpentPedId(PedNetID) or GetPedSpecificTaskType(NetworkGetEntityFromNetworkId(PedNetID)) == 152 then -- this use of GetPedSpecificTaskType is necessary. Prevents the event from firing after you deleted a serpent ped inside a vehicle.
         return
     end
 
     local resource = ssv_VehList[VehSID].OwningRes
 
-    local decision = exports[resource]:sev_RandomPedIsInSerpentVehicle(VehSID, seat)
+    local decision = exports[resource]:sev_RandomPedIsInSerpentVehicle(VehSID, PedNetID, seat)
     
     if decision == 1 then -- kick ped out of the seat.
         TriggerClientEvent('scl:ev:result:RandomPedIsInSerpentVehicle', ssv_VehList[VehSID].OwnerClientNetID, VehSID, seat)
@@ -16,14 +16,14 @@ AddEventHandler('ssv:ev:RandomPedIsInSerpentVehicle', function(VehSID, PedNetID,
 end)
 
 RegisterNetEvent('ssv:ev:SerpentPedIsInRandomVehicle')
-AddEventHandler('ssv:ev:SerpentPedIsInRandomVehicle', function(PedSID, VehNetID)
-    if GetSerpentVehId(VehNetID) then
+AddEventHandler('ssv:ev:SerpentPedIsInRandomVehicle', function(PedSID, VehNetID, seat)
+    if ssv_nat_GetSerpentVehId(VehNetID) then
         return
     end
 
     local resource = ssv_PedList[PedSID].OwningRes
     
-    local decision = exports[resource]:sev_SerpentPedIsInRandomVehicle(PedSID)
+    local decision = exports[resource]:sev_SerpentPedIsInRandomVehicle(PedSID, VehNetID, seat)
 
     if decision == 1 then -- kick ped out of the seat.
         TriggerClientEvent('scl:ev:result:SerpentPedIsInRandomVehicle', ssv_PedList[PedSID].OwnerClientNetID, PedSID)
