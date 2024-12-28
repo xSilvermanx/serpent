@@ -3,6 +3,24 @@ ssv_VehList = {}
 ssv_ObjList = {}
 ssv_PlayerList = {}
 
+
+
+untragicTaskTypes = {
+	[38] = true, --set when ped sits in a vehicle without a task.
+	[531] = true, --number for undefined task. Can mean that the ped moves, can mean that it finished its task.
+}
+
+fleeingTaskTypes = {
+	[215] = true, --ExhaustedFlee
+	[216] = true, --GrowlAndFlee
+	[217] = true, --ScenarioFlee
+	[218] = true, --SmartFlee
+	[445] = true, --ReactAndFlee
+	[472] = true, --VehicleFlee
+	[473] = true, --VehicleFleeAirborne
+	[474] = true, --VehicleFleeBoat
+}
+
 --[[TaskTypeIndex= {
 	CTaskHandsUp = 0,
 	CTaskClimbLadder = 1,

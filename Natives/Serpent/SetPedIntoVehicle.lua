@@ -7,7 +7,7 @@ function ssv_nat_SetPedIntoVehicle(SID, VehSID, seat)
     else
         TriggerEvent('ssv:SyncVehData', VehSID, 'Passenger', seat, SID)
     end
-
+    
     local PedSpawned = ssv_PedList[SID].IsSpawnedBool
     local VehSpawned = ssv_VehList[VehSID].IsSpawnedBool
     

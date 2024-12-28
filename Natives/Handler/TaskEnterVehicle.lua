@@ -39,6 +39,7 @@ function ssv_nat_TaskEnterVehicle(SID, tVehSID, ttimeout, tseatIndex, tspeed, tf
     TriggerEvent('ssv:SyncPedData', SID, '', 'CurrObjectiveData', CurrObjectiveData)
     TriggerEvent('ssv:SyncPedData', SID, '', 'CurrPathfindingData', {})
   end
+  TriggerEvent('ssv:ev:SerpentPedTaskSet', SID, 'TaskEnterVehicle', ObjType)
 end
 
 RegisterNetEvent('ssv:nat:TaskEnterVehicle') -- implement timeout

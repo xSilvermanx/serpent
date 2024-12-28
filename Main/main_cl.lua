@@ -22,7 +22,13 @@ AddEventHandler('scl:MainClientPedLoop', function()
               TriggerServerEvent('ssv:SyncPedData', pedid, '', 'DeadPitch', GetEntityPitch(ped))
               TriggerServerEvent('ssv:SyncPedData', pedid, '', 'DeadRoll', GetEntityRoll(ped))
             end
+            if IsPedInAnyVehicle(ped, false) then
+              local veh = GetVehiclePedIsIn(ped, false)
+              local VehNetID = VehToNet(veh)
+              TriggerServerEvent('ssv:ev:SerpentPedIsInRandomVehicle', pedid, VehNetID)
+            end
 
+            print('I should NEVER print')
             if ssh_VectorDistance(pedx, pedy, pedz, plx, ply, plz) > DespawnRange then
               TriggerEvent('scl:DespawnPed', pedid)
             else
@@ -89,12 +95,14 @@ AddEventHandler('scl:MainClientVehLoop', function()
         else
           local VehNetID = scl_VehList[vehid].VehNetID
           local veh = NetToVeh(VehNetID)
-          local driver = GetPedInVehicleSeat(veh, -1)
-          if driver ~= 0 then
-            local DriverNetID = PedToNet(driver)
-            local serpentDriver = vehdata.Passengers[-1]
-            if scl_PedList[serpentDriver].PedNetID ~= DriverNetID then
-              TriggerServerEvent('ssv:ev:RandomDriverIsInSerpentVehicle', vehid)
+          for i=-1,6 do
+            local driver = GetPedInVehicleSeat(veh, i)
+            if driver ~= 0 then
+              local DriverNetID = PedToNet(driver)
+              local serpentDriver = vehdata.Passengers[i]
+              if not scl_PedList[serpentDriver] or (scl_PedList[serpentDriver].PedNetID ~= DriverNetID) then
+                TriggerServerEvent('ssv:ev:RandomPedIsInSerpentVehicle', vehid, DriverNetID, i)
+              end
             end
           end
 
@@ -106,15 +114,29 @@ AddEventHandler('scl:MainClientVehLoop', function()
           TriggerServerEvent('ssv:SyncVehData', vehid, 'Position', 'z', vehz)
           TriggerServerEvent('ssv:SyncVehData', vehid, 'Heading', 'heading', vehh)
 
+          for i, passenger in pairs(vehdata.Passengers) do
+            if passenger ~= 0 then
+              TriggerServerEvent('ssv:SyncPedData', passenger, 'Position', 'x', vehx)
+              TriggerServerEvent('ssv:SyncPedData', passenger, 'Position', 'y', vehy)
+              TriggerServerEvent('ssv:SyncPedData', passenger, 'Position', 'z', vehz)
+              TriggerServerEvent('ssv:SyncPedData', passenger, 'Heading', 'heading', vehh)
+            end
+          end
+
+          local VehicleFuelLevel = GetVehicleFuelLevel(veh)
+          TriggerServerEvent('ssv:SyncVehData', vehid, '', 'VehicleFuelLevel', VehicleFuelLevel)
+
+          if VehicleFuelLevel < 0.1 then
+            TriggerServerEvent('ssv:ev:SerpentVehicleOutOfFuel', VehSID)
+          end
+
+          print(ssh_VectorDistance(vehx, vehy, vehz, plx, ply, plz))
           if ssh_VectorDistance(vehx, vehy, vehz, plx, ply, plz) > DespawnRange then
+            print('Despawning')
             TriggerEvent('scl:DespawnVeh', vehid)
           else
             for i, passenger in pairs(vehdata.Passengers) do
               if passenger ~= 0 then
-                TriggerServerEvent('ssv:SyncPedData', passenger, 'Position', 'x', vehx)
-                TriggerServerEvent('ssv:SyncPedData', passenger, 'Position', 'y', vehy)
-                TriggerServerEvent('ssv:SyncPedData', passenger, 'Position', 'z', vehz)
-                TriggerServerEvent('ssv:SyncPedData', passenger, 'Heading', 'heading', vehh)
                 TriggerServerEvent('ssv:MainTaskHandler', passenger)
               end
             end
@@ -184,6 +206,8 @@ AddEventHandler('scl:DespawnVeh', function(vehid)
     end
   end
   scl_VehEventList[vehdata.VehID] = false
+  print('Sending control to server')
+  print(vehid, vehdata, PedInVeh, PassengerData)
   TriggerServerEvent('ssv:RecieveVehicleControlFromClient', vehid, vehdata, PedInVeh, PassengerData)
 
   scl_VehList[vehid] = nil

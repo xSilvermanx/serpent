@@ -45,6 +45,7 @@ function ssv_nat_TaskGoStraightToCoord(SID, tx, ty, tz, tspeed, ttimeout, ttarge
     TriggerEvent('ssv:SyncPedData', SID, '', 'CurrObjectiveData', CurrObjectiveData)
     TriggerEvent('ssv:SyncPedData', SID, '', 'CurrPathfindingData', {})
   end
+  TriggerEvent('ssv:ev:SerpentPedTaskSet', SID, 'TaskGoStraightToCoord', ObjType)
 end
 
 RegisterNetEvent('ssv:nat:TaskGoStraightToCoord') -- implement timeout

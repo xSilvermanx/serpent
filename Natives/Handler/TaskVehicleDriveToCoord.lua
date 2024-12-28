@@ -46,6 +46,7 @@ function ssv_nat_TaskVehicleDriveToCoord(SID, tVehSID, tx, ty, tz, tspeed, tdriv
         TriggerClientEvent('ssv:SyncPedData', SID, '', 'CurrObjectiveData', CurrObjectiveData)
         TriggerClientEvent('ssv:SyncPedData', SID, '', 'CurrPathfindingData', {})
     end
+    TriggerEvent('ssv:ev:SerpentPedTaskSet', SID, 'TaskVehicleDriveToCoord', ObjType)
 end
 
 RegisterNetEvent('ssv:nat:TaskVehicleDriveToCoord')

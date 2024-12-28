@@ -2,6 +2,10 @@ RegisterNetEvent('ssv:RecievePlayerPos')
 AddEventHandler('ssv:RecievePlayerPos', function(px, py, pz)
   local PlayerID = tonumber(source)
 
+  if not ssv_PlayerList[PlayerID] then
+    return
+  end
+
   ssv_PlayerList[PlayerID].x = px
   ssv_PlayerList[PlayerID].y = py
   ssv_PlayerList[PlayerID].z = pz
@@ -65,25 +69,22 @@ AddEventHandler('ssv:MainTaskHandler', function(pedid)
       PathfindingData = ssv_PedList[pedid].OverridePathfindingData
       if ObjectiveData.task == 'Init' then
         if ssv_PedList[pedid].CurrObjectiveData then
-          TriggerEvent('ssv:SyncPedData', SID, 'CurrObjectiveData', 'task', 'Init')
+          TriggerEvent('ssv:SyncPedData', pedid, 'CurrObjectiveData', 'task', 'Init')
         end
       end
     else
       Objective = ssv_PedList[pedid].CurrObjective
       ObjectiveData = ssv_PedList[pedid].CurrObjectiveData
       PathfindingData = ssv_PedList[pedid].CurrPathfindingData
-    end
-
-    if ssv_PedList[pedid].IsSpawnedBool then
-      local PedNetID = ssv_PedList[pedid].PedNetID
-      local ped = NetworkGetEntityFromNetworkId(PedNetID)
-      if ssv_PedList[pedid].TaskType ~= GetPedSpecificTaskType(ped, 0) then
-        TriggerEvent('ssv:ev:SerpentPedGameTaskTriggered', SID)
-        ObjectiveData.task = 'Ignore'
+      if Objective == 'idle' and ssv_PedList[pedid].NextObjective ~= 'idle' then
+        TriggerEvent('ssv:FinishTask', pedid, isOverride)
       end
     end
 
     if Objective ~= 'idle' and ObjectiveData.task ~= 'Ignore' then
+      if ObjectiveData.task == 'Init' then
+        TriggerEvent('ssv:ev:SerpentPedTaskStarted', pedid, Objective, isOverride)
+      end
       TriggerEvent('ssv:nat:' .. Objective, pedid, ObjectiveData, PathfindingData, isOverride)
     end
   end
@@ -113,6 +114,7 @@ end)
 
 RegisterNetEvent('ssv:RecieveEntityControlFromClient')
 AddEventHandler('ssv:RecieveEntityControlFromClient', function(pedid, peddata)
+  local PID = tonumber(source)
   ssv_PedList[pedid] = peddata
 
   if ssv_PedList[pedid].OverrideObjective ~= 'none' then
@@ -146,10 +148,14 @@ AddEventHandler('ssv:RecieveEntityControlFromClient', function(pedid, peddata)
     end
   end
 
+  if ClosestPlId == PID then
+    BoolCloseToPl = false
+  end
   if BoolCloseToPl == true then
     ssv_PedList[pedid].OwnerClientNetID = ClosestPlId
     local newpeddata = ssv_PedList[pedid]
     TriggerClientEvent('scl:RecievePedOwnership', ClosestPlId, pedid, newpeddata)
+    TriggerEvent('ssv:ev:SerpentPedOwnershipSwitched', pedid, ClosestPlId)
   else
     TriggerEvent('ssv:DespawnPed', pedid, data)
   end
@@ -301,10 +307,15 @@ AddEventHandler('ssv:RecieveVehicleControlFromClient', function(vehid, vehdata, 
     end
   end
 
+  if ClosestPlId == PID then
+    BoolCloseToPl = false
+  end
+
   if BoolCloseToPl == true then
     ssv_VehList[vehid].OwnerClientNetID = ClosestPlId
     local newvehdata = ssv_VehList[vehid]
     TriggerClientEvent('scl:RecieveVehOwnership', ClosestPlId, vehid, newvehdata)
+    TriggerEvent('ssv:ev:SerpentVehOwnershipSwitched', vehid, ClosestPlId)
     if PedInVeh then
       for i, passenger in pairs(vehdata.Passengers) do
         if passenger ~= 0 then
@@ -316,6 +327,7 @@ AddEventHandler('ssv:RecieveVehicleControlFromClient', function(vehid, vehdata, 
             ssv_PedList[passenger].OwnerClientNetID = ClosestPlId
             local newpeddata = ssv_PedList[passenger]
             TriggerClientEvent('scl:RecievePedOwnership', ClosestPlId, passenger, newpeddata)
+            TriggerEvent('ssv:ev:SerpentPedOwnershipSwitched', passenger, ClosestPlId)
           end
         end
       end
@@ -345,4 +357,6 @@ AddEventHandler('ssv:DespawnVeh', function(vehid, vehdata)
   ssv_VehList[vehid].OwnerClientNetID = 0
   ssv_VehList[vehid].VehNetID = 0
   ssv_VehList[vehid].VehID = 0
+
+  TriggerEvent('ssv:ev:SerpentVehDespawned', vehid)
 end)
