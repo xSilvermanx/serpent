@@ -3,7 +3,6 @@ AddEventHandler('scl:nat:res:TaskGoStraightToCoord', function(SID, PedNetID, x, 
   local ped = NetToPed(PedNetID)
 
   TaskGoStraightToCoord(ped, x, y, z, speed, timeout, targetHeading, distanceToSlide)
-  TriggerServerEvent('ssv:nat:GetPedSpecificTaskType', SID)
   if isOverride then
     scl_PedList[SID].OverrideObjectiveData.task = 'Continue'
   else

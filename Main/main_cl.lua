@@ -28,7 +28,6 @@ AddEventHandler('scl:MainClientPedLoop', function()
               TriggerServerEvent('ssv:ev:SerpentPedIsInRandomVehicle', pedid, VehNetID)
             end
 
-            print('I should NEVER print')
             if ssh_VectorDistance(pedx, pedy, pedz, plx, ply, plz) > DespawnRange then
               TriggerEvent('scl:DespawnPed', pedid)
             else
@@ -130,9 +129,7 @@ AddEventHandler('scl:MainClientVehLoop', function()
             TriggerServerEvent('ssv:ev:SerpentVehicleOutOfFuel', VehSID)
           end
 
-          print(ssh_VectorDistance(vehx, vehy, vehz, plx, ply, plz))
           if ssh_VectorDistance(vehx, vehy, vehz, plx, ply, plz) > DespawnRange then
-            print('Despawning')
             TriggerEvent('scl:DespawnVeh', vehid)
           else
             for i, passenger in pairs(vehdata.Passengers) do
@@ -206,8 +203,6 @@ AddEventHandler('scl:DespawnVeh', function(vehid)
     end
   end
   scl_VehEventList[vehdata.VehID] = false
-  print('Sending control to server')
-  print(vehid, vehdata, PedInVeh, PassengerData)
   TriggerServerEvent('ssv:RecieveVehicleControlFromClient', vehid, vehdata, PedInVeh, PassengerData)
 
   scl_VehList[vehid] = nil

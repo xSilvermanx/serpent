@@ -4,8 +4,12 @@ ssv_ObjList = {}
 ssv_PlayerList = {}
 
 
-
-untragicTaskTypes = {
+-- this stays commented but in the files. GetPedSpecificTaskType() could be used to check for proper assignment of tasks.
+-- It could be used to check whether the game assigned a different task than serpent wants.
+-- Would be a bit unreliable but for most cases nice to have.
+-- However the first implementation severely bugged out the task handling of serpent resulting in unreliable behavior.
+-- Idea was scrapped for the time being, might get back to it.
+--[[untragicTaskTypes = {
 	[38] = true, --set when ped sits in a vehicle without a task.
 	[531] = true, --number for undefined task. Can mean that the ped moves, can mean that it finished its task.
 }
@@ -21,7 +25,7 @@ fleeingTaskTypes = {
 	[474] = true, --VehicleFleeBoat
 }
 
---[[TaskTypeIndex= {
+TaskTypeIndex= {
 	CTaskHandsUp = 0,
 	CTaskClimbLadder = 1,
 	CTaskExitVehicle = 2,

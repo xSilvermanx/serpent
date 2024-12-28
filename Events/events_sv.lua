@@ -1,21 +1,6 @@
-RegisterNetEvent('ssv:nat:GetPedSpecificTaskType')
-AddEventHandler('ssv:nat:GetPedSpecificTaskType', function(PedSID)
-    local PedNetID = ssv_PedList[PedSID].PedNetID
-    local ped = NetworkGetEntityFromNetworkId(PedNetID)
-    local OldTaskType = ssv_PedList[PedSID].TaskType
-    local n = 0
-
-    while GetPedSpecificTaskType(ped, 0) == OldTaskType and n < 50 do
-        n = n + 1
-        Wait(10)
-    end
-
-    TriggerEvent('ssv:SyncPedData', PedSID, '', 'TaskType', GetPedSpecificTaskType(ped, 0))
-end)
-
 RegisterNetEvent('ssv:ev:RandomPedIsInSerpentVehicle')
 AddEventHandler('ssv:ev:RandomPedIsInSerpentVehicle', function(VehSID, PedNetID, seat)
-    if GetSerpentPedId(PedNetID) or GetPedSpecificTaskType(NetToPed(PedNetID)) == 152 then
+    if GetSerpentPedId(PedNetID) or GetPedSpecificTaskType(NetToPed(PedNetID)) == 152 then -- this use of GetPedSpecificTaskType is necessary. Prevents the event from firing after you deleted a serpent ped inside a vehicle.
         return
     end
 

@@ -9,7 +9,6 @@ AddEventHandler('scl:nat:res:TaskVehicleDriveToCoord:Init', function(SID, PedDat
     SetVehicleForwardSpeed(veh, VehData.currspeed) -- subject to further testing
 
     TaskVehicleDriveToCoord(ped, veh, ObjectiveData.x, ObjectiveData.y, ObjectiveData.z, ssh_mphTomps(ObjectiveData.speed), 0, VehData.ModelHash, ObjectiveData.drivingMode, ObjectiveData.stopRange, true)
-    TriggerServerEvent('ssv:nat:GetPedSpecificTaskType', SID)
 end)
 
 RegisterNetEvent('scl:nat:res:TaskVehicleDriveToCoord:Continue')

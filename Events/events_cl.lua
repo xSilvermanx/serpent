@@ -134,7 +134,6 @@ AddEventHandler('scl:ev:result:SerpentPedIsInRandomVehicle', function(PedSID)
   local ped = NetToPed(PedNetID)
   local veh = GetVehiclePedIsIn(ped, false)
   TaskLeaveVehicle(ped, veh, 0)
-  TriggerServerEvent('ssv:nat:GetPedSpecificTaskType', PedSID)
   if ssv_PedList[PedSID].OverrideObjective ~= 'none' then
     TriggerServerEvent('ssv:SyncPedData', PedSID, 'OverrideObjectiveData', 'task', 'Init')
   else

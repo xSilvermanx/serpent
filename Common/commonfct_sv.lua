@@ -1,7 +1,6 @@
 -- Event triggers when a Task was finished successfully.
 AddEventHandler('ssv:FinishTask', function(SID, isOverride)
   Resource = ssv_PedList[SID].OwningRes
-  TriggerEvent('ssv:nat:GetPedSpecificTaskType', SID)
   local OldTask = ''
   local hasNewTask = false
 
