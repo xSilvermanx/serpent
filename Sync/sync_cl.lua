@@ -1,5 +1,9 @@
 RegisterNetEvent('scl:RecievePedData')
 AddEventHandler('scl:RecievePedData', function(pedid, type, key, value)
+  if not scl_PedList[pedid] then
+    return
+  end
+
   if type == 'Component' then
     scl_PedList[pedid].PedVisualData.Components[key] = value
   elseif type == 'Prop' then
@@ -28,7 +32,7 @@ AddEventHandler('scl:RemovePed', function(pedid)
     local ped = NetToPed(scl_PedList[pedid].PedNetID)
     scl_PedEventList[ped] = false
     SetEntityAsNoLongerNeeded(ped)
-    TaskWanderStandard(ped, 10.0, 10)
+    TaskWanderStandard(ped, 10.0, 10) -- Task Type Syncing is most likely not necessary here.
   end
   scl_PedList[pedid] = nil
 end)
@@ -42,6 +46,10 @@ end)
 
 RegisterNetEvent('scl:RecieveVehData')
 AddEventHandler('scl:RecieveVehData', function(vehid, type, key, value)
+  if not scl_VehList[vehid] then
+    return
+  end
+
   if type == 'Passenger' then
     scl_VehList[vehid].Passengers[key] = value
   elseif type == 'TuningInit' or type == 'Wheel' then

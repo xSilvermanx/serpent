@@ -4,6 +4,7 @@ AddEventHandler('scl:nat:res:TaskEnterVehicle', function(SID, PedNetID, VehSID, 
   local veh = NetToVeh(VehNetID)
 
   TaskEnterVehicle(ped, veh, timeout, seatIndex, speed, flag, 0)
+  TriggerServerEvent('ssv:nat:GetPedSpecificTaskType', SID)
 
   if isOverride then
     scl_PedList[SID].OverrideObjectiveData.task = 'Continue'
@@ -49,6 +50,7 @@ AddEventHandler('scl:nat:res:TaskEnterVehicle:PedExists', function(SID, PedNetID
   local z = vehdata.z
 
   TaskGoStraightToCoord(ped, x, y, z, speed, timeout, vehdata.heading, 2.0)
+  TriggerServerEvent('ssv:nat:GetPedSpecificTaskType', SID)
   if isOverride then
     scl_PedList[SID].OverrideObjectiveData.task = 'Continue'
   else

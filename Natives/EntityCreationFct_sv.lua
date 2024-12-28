@@ -43,7 +43,7 @@ function ssv_nat_CreatePed(pedType, PedmodelHash, pedposx, pedposy, pedposz, ped
 
       },
     },
-    TaskType = 531,
+    TaskType = 531, -- Use only when ped is spawned. Result of GetPedSpecificTaskType. Used to check whether the task set by serpent is still active.
     CurrObjective = "idle",
     CurrObjectiveData = {},
     CurrPathfindingData = {},

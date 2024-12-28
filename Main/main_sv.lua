@@ -49,6 +49,10 @@ end)
 
 RegisterNetEvent('ssv:MainTaskHandler')
 AddEventHandler('ssv:MainTaskHandler', function(pedid)
+  if not ssv_PedList[pedid] then
+    return
+  end
+
   if not ssv_PedList[pedid].IsDead then
     local isOverride = false
     local Objective = nil
@@ -61,13 +65,22 @@ AddEventHandler('ssv:MainTaskHandler', function(pedid)
       PathfindingData = ssv_PedList[pedid].OverridePathfindingData
       if ObjectiveData.task == 'Init' then
         if ssv_PedList[pedid].CurrObjectiveData then
-          ssv_PedList[pedid].CurrObjectiveData = 'Init'
+          TriggerEvent('ssv:SyncPedData', SID, 'CurrObjectiveData', 'task', 'Init')
         end
       end
     else
       Objective = ssv_PedList[pedid].CurrObjective
       ObjectiveData = ssv_PedList[pedid].CurrObjectiveData
       PathfindingData = ssv_PedList[pedid].CurrPathfindingData
+    end
+
+    if ssv_PedList[pedid].IsSpawnedBool then
+      local PedNetID = ssv_PedList[pedid].PedNetID
+      local ped = NetworkGetEntityFromNetworkId(PedNetID)
+      if ssv_PedList[pedid].TaskType ~= GetPedSpecificTaskType(ped, 0) then
+        TriggerEvent('ssv:ev:SerpentPedGameTaskTriggered', SID)
+        ObjectiveData.task = 'Ignore'
+      end
     end
 
     if Objective ~= 'idle' and ObjectiveData.task ~= 'Ignore' then
@@ -155,6 +168,7 @@ AddEventHandler('ssv:DespawnPed', function(pedid, peddata)
   ssv_PedList[pedid].PedNetID = 0
   ssv_PedList[pedid].PedID = 0
 
+  TriggerEvent('ssv:ev:SerpentPedDespawned', pedid)
 end)
 
 -- Vehicle Part
@@ -213,10 +227,9 @@ AddEventHandler('ssv:SpawnVeh', function (vehid, plid)
   ssv_VehList[vehid].IsSpawnedBool = true
   ssv_VehList[vehid].OwnerClientNetID = plid
 
-  local newvehdata = ssv_VehList[vehid]
   local PedInVeh = false
   local PassengerData = {}
-  for i, passenger in pairs(newvehdata.Passengers) do
+  for i, passenger in pairs(ssv_VehList[vehid].Passengers) do
     if passenger ~= 0 then
       PedInVeh = true
       if not ssv_PedList[passenger].IsSpawnedBool then
@@ -242,7 +255,7 @@ AddEventHandler('ssv:SpawnVeh', function (vehid, plid)
       PassengerData[passenger] = ssv_PedList[passenger]
     end
   end
-  TriggerClientEvent('scl:SpawnVeh', plid, vehid, newvehdata, PedInVeh, PassengerData)
+  TriggerClientEvent('scl:SpawnVeh', plid, vehid, ssv_VehList[vehid], PedInVeh, PassengerData)
 end)
 
 RegisterNetEvent('ssv:RecieveVehicleControlFromClient')

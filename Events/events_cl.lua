@@ -64,10 +64,7 @@ gameEvents.CEventNetworkEntityDamage = function(args)
     elseif IsVehicleBumperBouncing(args[1], false) then
       TriggerServerEvent('ssv:SyncVehData', VehSID, '', 'RearBumper', 'Bouncing')
     end
-
     -- lights
-
-
 
   end
 end

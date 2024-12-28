@@ -8,7 +8,6 @@ Unless mentioned otherwise the events only fire AFTER the event has taken place.
 - Write code to get front and rear bumpers to bounce or break off
 - Test IsVehicleDoorDamaged - is this native able to check for broken off doors?
 - Write Event-code for a broken off wheel
-- Search for every SyncPedData, RecievePedData, SyncVehData, RecieveVehData. Check for typos
 ---TODO
 
 List of clientside events
@@ -17,21 +16,21 @@ List of clientside events
 --- Peds
 [i]PedDied
 [i]PedDamaged(Armor and Health) -- entity damaged
-PedPropKnockedOff
-PedBulletWound -- visually
-PedEnteredRandomVehicle
-PedFleeing
-PedGameTaskTriggered
+PedPropKnockedOff -- unimportant
+PedBulletWound -- visually, unimportant
+PedEnteredRandomVehicle -- implement via check in cl_MainPedLoop
+[i]PedFleeing
+[i]PedGameTaskTriggered
 
 --- Vehicles
 [i]VehicleDestroyed
 [i]VehicleExploded
 [i]VehicleDamaged(Engine, Body, PetrolTank) -- entity damaged
-VehicleDoorKnockedOff
+VehicleDoorKnockedOff --unimportant
 VehicleTyreBlown
 VehicleTyreFlat
 VehicleTyreDamaged(Health)
-VehicleRandomPedEntered
+VehicleRandomPedEntered -- implemented
 VehicleAppearanceDamage(Crashes, Bullets, ...)
 VehicleHeadlightsDamaged
 VehicleSearchlightDamaged
@@ -44,7 +43,7 @@ VehicleDoorUnhinged(currently no native to set this up that way)
 VehicleWheelBroken
 VehicleWheelDeformed
 VehicleWheelDamaged(Health)
-VehicleRandomVehicleAttached(Trailers, TowTrucks, Trucks)
+VehicleRandomVehicleAttached(Trailers, TowTrucks, Trucks) -- important, but implement attachments first
 
 
 List of serverside events
@@ -53,23 +52,6 @@ List of serverside events
 
 List of serpent events
 
--- Ped
-
-TaskSet(Current, Next, Override)
-TaskStarted(Current only)
-CurrentTaskFinished
--> NoNewTask
--> NextTaskStarted
-OverrideTaskStarted
-OverrideTaskFinished
-SerpentPedSpawned
-SerpentPedOwnershipSwitched
-SerpentPedDespawned
-
--- Vehicle
-SerpentVehSpawned
-SerpentVehOwnershipSwitched
-SerpentVehDespawned
 
 -- Resources
 onResourceStart

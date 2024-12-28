@@ -3,7 +3,7 @@ ssv_VehList = {}
 ssv_ObjList = {}
 ssv_PlayerList = {}
 
-eTaskTypeIndex= {
+--[[TaskTypeIndex= {
 	CTaskHandsUp = 0,
 	CTaskClimbLadder = 1,
 	CTaskExitVehicle = 2,
@@ -436,4 +436,4 @@ eTaskTypeIndex= {
 	CTaskVehiclePullAlongside = 528,
 	CTaskVehicleTransformToSubmarine = 529,
 	CTaskAnimatedFallback = 530
-}
+}]]

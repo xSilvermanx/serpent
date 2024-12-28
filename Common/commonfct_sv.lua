@@ -3,20 +3,20 @@ AddEventHandler('ssv:FinishTask', function(SID, isOverride, isSuccess) --impleme
 
   if isOverride then
     TriggerEvent('ssv:SyncPedData', SID, '', 'OverrideObjective', 'none')
-    TriggerEvent('ssv:SyncPedData', SID, 'OverrideObjectiveData', 'OverrideObjectiveData', {})
-    TriggerEvent('ssv:SyncPedData', SID, 'OverridePathfindingData', 'OverridePathfindingData', {})
+    TriggerEvent('ssv:SyncPedData', SID, '', 'OverrideObjectiveData', {})
+    TriggerEvent('ssv:SyncPedData', SID, '', 'OverridePathfindingData', {})
   else
     local NewObjective = ssv_PedList[SID].NextObjective
     local NewObjectiveData = ssv_PedList[SID].NextObjectiveData
     local NewPathfindingData = ssv_PedList[SID].NextPathfindingData
 
     TriggerEvent('ssv:SyncPedData', SID, '', 'CurrObjective', NewObjective)
-    TriggerEvent('ssv:SyncPedData', SID, 'CurrObjectiveData', 'CurrObjectiveData', NewObjectiveData)
-    TriggerEvent('ssv:SyncPedData', SID, 'Objective', 'CurrPathfindingData', NewPathfindingData)
+    TriggerEvent('ssv:SyncPedData', SID, '', 'CurrObjectiveData', NewObjectiveData)
+    TriggerEvent('ssv:SyncPedData', SID, '', 'CurrPathfindingData', NewPathfindingData)
 
     TriggerEvent('ssv:SyncPedData', SID, '', 'NextObjective', 'idle')
-    TriggerEvent('ssv:SyncPedData', SID, 'NextObjectiveData', 'NextObjectiveData', {})
-    TriggerEvent('ssv:SyncPedData', SID, 'NextPathfindingData', 'NextPathfindingData', {})
+    TriggerEvent('ssv:SyncPedData', SID, '', 'NextObjectiveData', {})
+    TriggerEvent('ssv:SyncPedData', SID, '', 'NextPathfindingData', {})
   end
 end)
 

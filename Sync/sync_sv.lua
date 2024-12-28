@@ -1,6 +1,9 @@
 RegisterNetEvent('ssv:RecievePedData')
 AddEventHandler('ssv:RecievePedData', function(pedid, type, key, value)
-  --print(pedid, type, key, value)
+  if not ssv_PedList[pedid] then
+    return
+  end
+
   if type == 'Component' then
     ssv_PedList[pedid].PedVisualData.Components[key] = value
   elseif type == 'Prop' then
@@ -20,9 +23,12 @@ end)
 
 RegisterNetEvent('ssv:SyncPedData')
 AddEventHandler('ssv:SyncPedData', function(pedid, type, key, value)
+  if not ssv_PedList[pedid] then
+    return
+  end
   TriggerEvent('ssv:RecievePedData', pedid, type, key, value)
   if ssv_PedList[pedid].OwnerClientNetID ~= 0 then
-      TriggerClientEvent('scl:RecievePedData', ssv_PedList[pedid].OwnerClientNetID, pedid, type, key, value)
+    TriggerClientEvent('scl:RecievePedData', ssv_PedList[pedid].OwnerClientNetID, pedid, type, key, value)
   end
 end)
 
@@ -30,6 +36,10 @@ end)
 
 RegisterNetEvent('ssv:RecieveVehData')
 AddEventHandler('ssv:RecieveVehData', function(vehid, type, key, value)
+  if not ssv_VehList[vehid] then
+    return
+  end
+  
   if type == 'Passenger' then
     ssv_VehList[vehid].Passengers[key] = value
   elseif type == 'TuningInit' or type == 'Wheel' then
@@ -51,8 +61,11 @@ end)
 
 RegisterNetEvent('ssv:SyncVehData')
 AddEventHandler('ssv:SyncVehData', function(vehid, type, key, value)
+  if not ssv_VehList[vehid] then
+    return
+  end
   TriggerEvent('ssv:RecieveVehData', vehid, type, key, value)
   if ssv_VehList[vehid].OwnerClientNetID ~= 0 then
-      TriggerClientEvent('scl:RecieveVehData', ssv_VehList[vehid].OwnerClientNetID, vehid, type, key, value)
+    TriggerClientEvent('scl:RecieveVehData', ssv_VehList[vehid].OwnerClientNetID, vehid, type, key, value)
   end
 end)

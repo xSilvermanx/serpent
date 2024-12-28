@@ -89,6 +89,14 @@ AddEventHandler('scl:MainClientVehLoop', function()
         else
           local VehNetID = scl_VehList[vehid].VehNetID
           local veh = NetToVeh(VehNetID)
+          local driver = GetPedInVehicleSeat(veh, -1)
+          if driver ~= 0 then
+            local DriverNetID = PedToNet(driver)
+            local serpentDriver = vehdata.Passengers[-1]
+            if scl_PedList[serpentDriver].PedNetID ~= DriverNetID then
+              TriggerServerEvent('ssv:ev:RandomDriverIsInSerpentVehicle', vehid)
+            end
+          end
 
           local vehx, vehy, vehz = table.unpack(GetEntityCoords(veh))
           local vehh = GetEntityHeading(veh)
