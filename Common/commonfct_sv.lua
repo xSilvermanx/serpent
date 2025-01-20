@@ -7,11 +7,13 @@ AddEventHandler('ssv:FinishTask', function(SID, isOverride)
   if isOverride then
     OldTask = ssv_PedList[SID].OverrideObjective
     TriggerEvent('ssv:SyncPedData', SID, '', 'OverrideObjective', 'none')
+    TriggerEvent('ssv:SyncPedData', SID, '', 'OverrideObjectiveCustom', {})
     TriggerEvent('ssv:SyncPedData', SID, '', 'OverrideObjectiveData', {})
     TriggerEvent('ssv:SyncPedData', SID, '', 'OverridePathfindingData', {})
   else
     OldTask = ssv_PedList[SID].CurrObjective
     local NewObjective = ssv_PedList[SID].NextObjective
+    local NewObjectiveCustom = ssv_PedList[SID].NextObjectiveCustom
     local NewObjectiveData = ssv_PedList[SID].NextObjectiveData
     local NewPathfindingData = ssv_PedList[SID].NextPathfindingData
     
@@ -20,10 +22,12 @@ AddEventHandler('ssv:FinishTask', function(SID, isOverride)
     end
 
     TriggerEvent('ssv:SyncPedData', SID, '', 'CurrObjective', NewObjective)
+    TriggerEvent('ssv:SyncPedData', SID, '', 'CurrObjectiveCustom', NewObjectiveCustom)
     TriggerEvent('ssv:SyncPedData', SID, '', 'CurrObjectiveData', NewObjectiveData)
     TriggerEvent('ssv:SyncPedData', SID, '', 'CurrPathfindingData', NewPathfindingData)
 
     TriggerEvent('ssv:SyncPedData', SID, '', 'NextObjective', 'idle')
+    TriggerEvent('ssv:SyncPedData', SID, '', 'NextObjectiveCustom', {})
     TriggerEvent('ssv:SyncPedData', SID, '', 'NextObjectiveData', {})
     TriggerEvent('ssv:SyncPedData', SID, '', 'NextPathfindingData', {})
   end

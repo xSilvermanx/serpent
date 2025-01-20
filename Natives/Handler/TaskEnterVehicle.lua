@@ -1,53 +1,20 @@
 function ssv_nat_TaskEnterVehicle(SID, tVehSID, ttimeout, tseatIndex, tspeed, tflag, p6, ObjType)
-  if ObjType == "Next" then
-    local NextObjective = 'TaskEnterVehicle'
-    local NextObjectiveData = {
-      task = 'Init', --Continue, Ignore
-      VehSID = tVehSID,
-      timeout = ttimeout,
-      seatIndex = tseatIndex,
-      speed = tspeed,
-      flag = tflag,
-    }
-    TriggerEvent('ssv:SyncPedData', SID, '', 'NextObjective', NextObjective)
-    TriggerEvent('ssv:SyncPedData', SID, '', 'NextObjectiveData', NextObjectiveData)
-    TriggerEvent('ssv:SyncPedData', SID, '', 'NextPathfindingData', {})
-  elseif ObjType == "Override" then
-    local OverrideObjective = 'TaskEnterVehicle'
-    local OverrideObjectiveData = {
-      task = 'Init', --Continue, Ignore
-      VehSID = tVehSID,
-      timeout = ttimeout,
-      seatIndex = tseatIndex,
-      speed = tspeed,
-      flag = tflag,
-    }
-    TriggerEvent('ssv:SyncPedData', SID, '', 'OverrideObjective', OverrideObjective)
-    TriggerEvent('ssv:SyncPedData', SID, '', 'OverrideObjectiveData', OverrideObjectiveData)
-    TriggerEvent('ssv:SyncPedData', SID, '', 'OverridePathfindingData', {})
-  else
-    local CurrObjective = 'TaskEnterVehicle'
-    local CurrObjectiveData = {
-      task = 'Init', --Continue, Ignore
-      VehSID = tVehSID,
-      timeout = ttimeout,
-      seatIndex = tseatIndex,
-      speed = tspeed,
-      flag = tflag,
-    }
-    TriggerEvent('ssv:SyncPedData', SID, '', 'CurrObjective', CurrObjective)
-    TriggerEvent('ssv:SyncPedData', SID, '', 'CurrObjectiveData', CurrObjectiveData)
-    TriggerEvent('ssv:SyncPedData', SID, '', 'CurrPathfindingData', {})
-  end
-  TriggerEvent('ssv:ev:SerpentPedTaskSet', SID, 'TaskEnterVehicle', ObjType)
-end
+  local Objective = 'TaskEnterVehicle'
+  local ObjectiveCustom = {}
+  local ObjectiveData = {
+    task = 'Init', --Continue, Ignore
+    VehSID = tVehSID,
+    timeout = ttimeout,
+    seatIndex = tseatIndex,
+    speed = tspeed,
+    flag = tflag,
+  }
+  local PathfindingData = {}
+  ssv_nat_SetSerpentPedTask(SID, Objective, ObjectiveCustom, ObjectiveData, PathfindingData, ObjType)
+end  
 
 RegisterNetEvent('ssv:nat:TaskEnterVehicle') -- implement timeout
 AddEventHandler('ssv:nat:TaskEnterVehicle', function(SID, ObjectiveData, PathfindingData, isOverride)
-  local x = ssv_PedList[SID].x
-  local y = ssv_PedList[SID].y
-  local z = ssv_PedList[SID].z
-
   ssv_nat_PedUseExactSpawnCoordinates(SID, false)
 
   if ssv_nat_IsPedInSerpentVehicle(SID, ObjectiveData.VehSID) then

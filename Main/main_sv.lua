@@ -60,11 +60,15 @@ AddEventHandler('ssv:MainTaskHandler', function(pedid)
   if not ssv_PedList[pedid].IsDead then
     local isOverride = false
     local Objective = nil
+    local ObjectiveCustom = nil
     local ObjectiveData = nil
     local PathfindingData = nil
     if ssv_PedList[pedid].OverrideObjective ~= 'none' then
       isOverride = true
       Objective = ssv_PedList[pedid].OverrideObjective
+      if Objective == 'Custom' then
+        ObjectiveCustom = ssv_PedList[pedid].OverrideObjectiveCustom
+      end
       ObjectiveData = ssv_PedList[pedid].OverrideObjectiveData
       PathfindingData = ssv_PedList[pedid].OverridePathfindingData
       if ObjectiveData.task == 'Init' then
@@ -74,6 +78,9 @@ AddEventHandler('ssv:MainTaskHandler', function(pedid)
       end
     else
       Objective = ssv_PedList[pedid].CurrObjective
+      if Objective == 'Custom' then
+        ObjectiveCustom = ssv_PedList[pedid].CurrObjectiveCustom
+      end
       ObjectiveData = ssv_PedList[pedid].CurrObjectiveData
       PathfindingData = ssv_PedList[pedid].CurrPathfindingData
       if Objective == 'idle' and ssv_PedList[pedid].NextObjective ~= 'idle' then
@@ -82,10 +89,19 @@ AddEventHandler('ssv:MainTaskHandler', function(pedid)
     end
 
     if Objective ~= 'idle' and ObjectiveData.task ~= 'Ignore' then
-      if ObjectiveData.task == 'Init' then
-        TriggerEvent('ssv:ev:SerpentPedTaskStarted', pedid, Objective, isOverride)
+      if Objective == 'Custom' then
+        if ObjectiveData.task == 'Init' then
+          TriggerEvent('ssv:ev:SerpentPedTaskStarted', pedid, ObjectiveCustom.name, isOverride)
+        end
+        local resource = ObjectiveCustom.resource
+        local name = ObjectiveCustom.name
+        exports[resource]:sev_TriggerSerpentCustomTask(pedid, name, ObjectiveData, PathfindingData, isOverride)
+      else
+        if ObjectiveData.task == 'Init' then
+          TriggerEvent('ssv:ev:SerpentPedTaskStarted', pedid, Objective, isOverride)
+        end
+        TriggerEvent('ssv:nat:' .. Objective, pedid, ObjectiveData, PathfindingData, isOverride)
       end
-      TriggerEvent('ssv:nat:' .. Objective, pedid, ObjectiveData, PathfindingData, isOverride)
     end
   end
 end)

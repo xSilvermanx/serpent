@@ -22,6 +22,7 @@ server_exports { -- serpent event exports
     'sev_SerpentVehicleUndrivable',
     'sev_SerpentVehOwnershipSwitched',
     'sev_SerpentVehSpawned',
+    'sev_TriggerSerpentCustomTask',
 }
 
 -- END OF THE PART TO COPY TO FXMANIFEST.LUA --
@@ -39,9 +40,11 @@ function sev_RandomPedIsInSerpentVehicle(VehSID, PedNetID, seat)
     local ped = NetworkGetEntityFromNetworkId(PedNetID)
     local coords = GetEntityCoords(ped)
 
-    local PedSID = exports.serpent:ssv_nat_LoadPedIntoSerpent(PedNetID, 26, GetEntityModel(ped), coords.x, coords.y, coords.z, GetEntityHeading(ped))
+    if not IsPedAPlayer(ped) then
+        local PedSID = exports.serpent:ssv_nat_LoadPedIntoSerpent(PedNetID, 26, GetEntityModel(ped), coords.x, coords.y, coords.z, GetEntityHeading(ped))
 
-    exports.serpent:ssv_nat_SetPedIntoVehicle(PedSID, VehSID, seat)
+        exports.serpent:ssv_nat_SetPedIntoVehicle(PedSID, VehSID, seat)
+    end
 
     -- make sure to save the PedSID somewhere in your resource to manipulate the ped later.
 
@@ -177,4 +180,15 @@ end
 -- Gives the VehSID of the serpent vehicle and the serpent owner client of the vehicle.
 function sev_SerpentVehSpawned(VehSID, owner)
 
+end
+
+-- END OF SERPENT EVENTS
+-- ----------------------------------------------
+-- !!! DO NOT CHANGE ANYTHING BELOW THIS LINE !!!
+-- ----------------------------------------------
+-- END OF SERPENT EVENTS
+
+-- Event used to trigger custom events from resources.
+function sev_TriggerSerpentCustomTask(PedSID, Objective, ObjectiveData, PathfindingData, isOverride)
+    TriggerEvent(Objective, PedSID, ObjectiveData, PathfindingData, isOverride)
 end

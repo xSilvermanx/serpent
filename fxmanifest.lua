@@ -60,6 +60,7 @@ server_exports {
   'ssv_nat_DeletePed',
   'ssv_nat_DeleteVehicle',
   'ssv_nat_DeleteObject',
+  'ssv_nat_FinishSerpentPedTask',
   'ssv_nat_GetSerpentPedData',
   'ssv_nat_GetSerpentPedId',
   'ssv_nat_GetSerpentPedNetId',
@@ -85,6 +86,8 @@ server_exports {
   'ssv_nat_SetPedHeadOverlayColor',
   'ssv_nat_SetPedIntoVehicle',
   'ssv_nat_SetPedPropIndex',
+  'ssv_nat_SetSerpentPedData',
+  'ssv_nat_SetSerpentPedTask',
   'ssv_nat_SetTyreHealth',
   'ssv_nat_SetVehicleBodyHealth',
   'ssv_nat_SetVehicleCanDeformWheels',
@@ -122,6 +125,8 @@ server_exports {
   'ssv_nat_TaskEnterVehicle',
   'ssv_nat_TaskGoStraightToCoord',
   'ssv_nat_TaskVehicleDriveToCoord',
+  'ssv_nat_TaskWait',
+  'ssv_nat_UpdateSerpentPedTaskStatus',
   'ssv_nat_VehUseExactSpawnCoordinates',
 }
 
