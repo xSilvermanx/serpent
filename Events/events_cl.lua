@@ -20,7 +20,7 @@ gameEvents.CEventNetworkEntityDamage = function(args)
     if args[2]~= -1 then
       AttackerNetID = NetworkGetNetworkIdFromEntity(args[2])
     end
-    TriggerServerEvent('ssv:ev:SerpentPedDamaged', PedSID, AttackerNetID, args[6], args[7])
+    TriggerServerEvent('ssv:ev:SerpentPedDamaged:Internal', PedSID, AttackerNetID, args[6], args[7])
   elseif scl_VehEventList[args[1]] then
     local VehSID = scl_VehEventList[args[1]]
     if args[6] == 1 then
@@ -101,7 +101,7 @@ gameEvents.CEventNetworkEntityDamage = function(args)
     if args[2]~= -1 then
       AttackerNetID = NetworkGetNetworkIdFromEntity(args[2])
     end
-    TriggerServerEvent('ssv:ev:SerpentVehDamaged', VehSID, AttackerNetID, args[6], args[7], args[12], isTyreAffected, TyreDamageList, isWheelAffected, WheelDamageList, isDoorAffected, DoorDamageList, isWindowAffected, WindowDamageList, isBumperAffected, BumperDamageList, areLightsAffected, LightsDamageList)
+    TriggerServerEvent('ssv:ev:SerpentVehDamaged:Internal', VehSID, AttackerNetID, args[6], args[7], args[12], isTyreAffected, TyreDamageList, isWheelAffected, WheelDamageList, isDoorAffected, DoorDamageList, isWindowAffected, WindowDamageList, isBumperAffected, BumperDamageList, areLightsAffected, LightsDamageList)
   end
 end
 
@@ -120,23 +120,10 @@ end)
 
 
 
-RegisterNetEvent('scl:ev:result:RandomPedIsInSerpentVehicle')
-AddEventHandler('scl:ev:result:RandomPedIsInSerpentVehicle', function(VehSID, seat)
+RegisterNetEvent('scl:ev:KickRandomPedFromSerpentVehicle')
+AddEventHandler('scl:ev:KickRandomPedFromSerpentVehicle', function(VehSID, seat)
   local VehNetID = scl_VehList[VehSID].VehNetID
   local veh = NetToVeh(VehNetID)
   local ped = GetPedInVehicleSeat(veh, seat)
   TaskLeaveVehicle(ped, veh, 0)
-end)
-
-RegisterNetEvent('scl:ev:result:SerpentPedIsInRandomVehicle')
-AddEventHandler('scl:ev:result:SerpentPedIsInRandomVehicle', function(PedSID)
-  local PedNetID = scl_PedList[PedSID].PedNetID
-  local ped = NetToPed(PedNetID)
-  local veh = GetVehiclePedIsIn(ped, false)
-  TaskLeaveVehicle(ped, veh, 0)
-  if ssv_PedList[PedSID].OverrideObjective ~= 'none' then
-    TriggerServerEvent('ssv:SyncPedData', PedSID, 'OverrideObjectiveData', 'task', 'Init')
-  else
-    TriggerServerEvent('ssv:SyncPedData', PedSID, 'CurrObjectiveData', 'task', 'Init')
-  end
 end)

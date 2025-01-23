@@ -59,7 +59,7 @@ AddEventHandler('ssv:nat:TaskVehicleDriveToCoord', function(SID, ObjectiveData, 
     local tary = ObjectiveData.y
     local tarz = ObjectiveData.z
     local distance = ssh_VectorDistance(x, y, z, tarx, tary, tarz)
-    
+
     ssv_nat_PedUseExactSpawnCoordinates(SID, false)
     ssv_nat_VehUseExactSpawnCoordinates(ssv_PedList[SID].VehSID, false)
     ssv_VehList[ssv_PedList[SID].VehSID].currspeed = 20.0
