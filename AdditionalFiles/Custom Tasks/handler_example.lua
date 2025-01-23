@@ -18,7 +18,7 @@ function testres_TaskVehicleTempAction(PedSID, tVehSID, taction, ttime, ObjType)
     local Objective = 'Custom'
     local ObjectiveCustom = {
         resource = source,
-        name = 'testres:TaskVehicleTempAction',
+        name = 'TaskVehicleTempAction',
     }
     local ObjectiveData = {
         task = 'Init',
