@@ -81,6 +81,11 @@ function HeuristicFunction(NodeA, NodeB) -- to determine the costs between two n
   return ( math.sqrt ( math.pow ( NodeA.x - NodeB.x, 2 ) + math.pow ( NodeA.y - NodeB.y, 2 ) + math.pow ( NodeA.z - NodeB.z, 2 ) ) / 60 )
 end
 
+function ssh_nat_GetNodeData(Id)
+  local Data = ListNodes[Id]
+  return Data
+end
+
 function ssh_nat_GetClosestNodeId(x, y, z)
   local Id = nil
   local Found = false
@@ -100,7 +105,37 @@ function ssh_nat_GetClosestNodeId(x, y, z)
   return Found, Id
 end
 
-function ssh_nat_GetNodeData(Id)
-  local Data = ListNodes[Id]
-  return Data
+function ssh_nat_FindAllNodesInRadius(x, y, z, radius)
+  local Found = false
+  local NodeIds = {}
+  for name, data in pairs(ListNodes) do
+    local Dist = ssh_VectorDistance(x, y, z, data.x, data.y, data.z)
+    if Dist < radius then
+      Found = true
+      table.insert(NodeIds, name)
+    end
+  end
+  
+  return Found, NodeIds
+end
+
+function ssh_nat_FindClosestRoads(x, y, z)
+  local Found = false
+  local ClosestPaths = {}
+  local FoundNode, Nodes = ssh_nat_FindAllNodesInRadius(x, y, z, SearchDistance)
+
+  if FoundNode then
+    for i, name in ipairs(Nodes) do
+      for j, path in ipairs(ListNodes[name].paths) do
+        local _, _, _, _, d = ssh_GetPositionOnLineClosestToPoint(x, y, z, ListNodes[name].x, ListNodes[name].y, ListNodes[name].z, ListNodes[path[1]].x, ListNodes[path[1]].y, ListNodes[path[1]].z)
+        if d < MaximumDistanceFromSerpentPathToRoad then
+          Found = true
+          local ClosePath = {name, path[1]}
+          table.insert(ClosestPaths, ClosePath)
+        end
+      end
+    end
+  end
+
+  return Found, ClosestPaths
 end

@@ -95,7 +95,7 @@ AddEventHandler('ssv:MainTaskHandler', function(pedid)
         end
         local resource = ObjectiveCustom.resource
         local name = ObjectiveCustom.name
-        exports[resource]:sev_TriggerSerpentCustomTask(pedid, name, ObjectiveData, PathfindingData, isOverride)
+        TriggerEvent('ssv:custom:' .. resource .. ':' .. name, pedid, name, ObjectiveData, PathfindingData, isOverride)
       else
         if ObjectiveData.task == 'Init' then
           TriggerEvent('ssv:ev:SerpentPedTaskStarted', pedid, Objective, isOverride)

@@ -31,7 +31,8 @@ function testres_TaskVehicleTempAction(PedSID, tVehSID, taction, ttime, ObjType)
     exports.serpent:ssv_nat_SetSerpentPedTask(PedSID, Objective, ObjectiveCustom, ObjectiveData, PathfindingData, ObjType)
 end
 
-AddEventHandler('testres:TaskVehicleTempAction', function(SID, ObjectiveData, PathfindingData, isOverride)
+RegisterNetEvent('ssv:custom:testres:TaskVehicleTempAction')
+AddEventHandler('ssv:custom:testres:TaskVehicleTempAction', function(SID, ObjectiveData, PathfindingData, isOverride)
     local task = ObjectiveData.task
     if task == 'Init' then
         -- as this is a movement task the peds and vehicles are not using exact spawn coordinates.

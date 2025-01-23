@@ -79,7 +79,8 @@ end
 -- ObjectiveData - The objective data of the ped for this task as defined in the $task$-function.
 -- PathfindingData - The pathfinding data of the ped for this task as defined in the $task$-function and the $task$:Init-event.
 -- isOverride - Boolean that states whether the task is the "Curr" task or the "Override" task.
-AddEventHandler('$yourTaskEventName$', function(SID, ObjectiveData, PathfindingData, isOverride)
+RegisterNetEvent('ssv:custom:$yourResourceName$:$yourTaskEventName$')
+AddEventHandler('ssv:custom:$yourResourceName$:$yourTaskEventName$', function(SID, ObjectiveData, PathfindingData, isOverride)
     local task = ObjectiveData.task -- writes the task status
     if task == 'Init' then
         %(yourDecisionsForWhenThisEventIsExecuted)% -- place to set different functions like behavior flags for peds or something else.

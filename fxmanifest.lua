@@ -9,6 +9,7 @@ shared_scripts {
   'Common/commonfct_shared.lua',
   'Config/config_shared.lua',
   'Def/def_shared.lua',
+  'NodeConfig/nodes_constants_sh.lua',
   'NodeConfig/nodes_sh.lua',
   'Pathfinding/paths_sh.lua',
 }
