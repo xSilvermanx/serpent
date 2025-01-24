@@ -40,6 +40,7 @@ function scl_SpawnVeh(vehid, vehdata)
     
     local veh = CreateVehicle(vehdata.ModelHash, Pos.x, Pos.y, Pos.z, vehdata.heading, true, false)    
     local VehNetID = VehToNet(veh)
+    SetVehicleForwardSpeed(veh, vehdata.currspeed)
 
     TriggerServerEvent('ssv:ev:SerpentVehSpawned', vehid)
     scl_VehList[vehid].VehNetID = VehNetID

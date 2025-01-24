@@ -6,8 +6,6 @@ AddEventHandler('scl:nat:res:TaskVehicleDriveToCoord:Init', function(SID, PedDat
     -- todo: Speed == -1 -> Driving the speed limit on any given street
     -- todo: Speed == -2 -> Speeding reasonably on any given street (Factor 2 or 2.5 of the given speed limit)
 
-    SetVehicleForwardSpeed(veh, VehData.currspeed) -- subject to further testing
-
     TaskVehicleDriveToCoord(ped, veh, ObjectiveData.x, ObjectiveData.y, ObjectiveData.z, ssh_mphTomps(ObjectiveData.speed), 0, VehData.ModelHash, ObjectiveData.drivingMode, ObjectiveData.stopRange, true)
 end)
 

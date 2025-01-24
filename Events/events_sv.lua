@@ -38,7 +38,7 @@ AddEventHandler('ssv:ev:SerpentPedDamaged:Internal', function(PedSID, AttackerNe
             end
         end
     end
-    TriggerServerEvent('ssv:ev:SerpentPedDamaged', PedSID, AttackerType, AttackerSID, AttackerNetID, isDead, weaponHash)
+    TriggerEvent('ssv:ev:SerpentPedDamaged', PedSID, AttackerType, AttackerSID, AttackerNetID, isDead, weaponHash)
 end)
 
 
@@ -68,5 +68,5 @@ AddEventHandler('ssv:ev:SerpentVehDamaged:Internal', function(VehSID, AttackerNe
         end
     end
 
-    TriggerServerEvent('ssv:ev:SerpentVehDamaged', VehSID, AttackerType, AttackerSID, AttackerNetID, isExploded, weaponHash, damageFlag, isTyreAffected, TyreDamageList, isWheelAffected, WheelDamageList, isDoorAffected, DoorDamageList, isWindowAffected, WindowDamageList, isBumperAffected, BumperDamageList, areLightsAffected, LightsDamageList)
+    TriggerEvent('ssv:ev:SerpentVehDamaged', VehSID, AttackerType, AttackerSID, AttackerNetID, isExploded, weaponHash, damageFlag, isTyreAffected, TyreDamageList, isWheelAffected, WheelDamageList, isDoorAffected, DoorDamageList, isWindowAffected, WindowDamageList, isBumperAffected, BumperDamageList, areLightsAffected, LightsDamageList)
 end)
