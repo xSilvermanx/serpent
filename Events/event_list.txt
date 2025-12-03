@@ -21,50 +21,34 @@ Unless mentioned otherwise the events only fire AFTER the event has taken place.
 - Write sync for weapons (how did I forget?)
 - Create docs for everything, especially "ObjType".
 - Expand 'Natives/Serpent/SerpentSetFunctions.lua' similar to '*/SerpentGetFunctions.lua'.
+- Write check to prevent serverside "overshooting" of calculations. This is related to "TaskVehicleDriveToCoord". Write a check whether the ped / vehicle is within one distance increment (speed * 500 ms) of the target. If yes, mark the task as success.
+- Write logic to teleport peds and vehicles to target location if the ped or vehicle is currently not spawned.
 ---TODO
 
 List of clientside events
 - includes everything related to sync achieved through player actions
 
 --- Peds
-[i]PedDied
-[i]PedDamaged(Armor and Health) -- entity damaged
 PedPropKnockedOff -- unimportant
 PedBulletWound -- visually, unimportant
-PedEnteredRandomVehicle -- implement via check in cl_MainPedLoop
-[i]PedFleeing
-[i]PedGameTaskTriggered
 
 --- Vehicles
-[i]VehicleDestroyed
-[i]VehicleExploded
-[i]VehicleDamaged(Engine, Body, PetrolTank) -- entity damaged
 VehicleDoorKnockedOff --unimportant
-VehicleTyreBlown
-VehicleTyreFlat
-VehicleTyreDamaged(Health)
-VehicleRandomPedEntered -- implemented
 VehicleAppearanceDamage(Crashes, Bullets, ...)
 VehicleHeadlightsDamaged
 VehicleSearchlightDamaged
 VehicleSirenDamaged
 VehicleLightbarDamaged
 VehicleIndicatorsDamaged
-VehicleOutOfFuel
-VehicleWindowSmashed
 VehicleDoorUnhinged(currently no native to set this up that way)
 VehicleWheelBroken
 VehicleWheelDeformed
 VehicleWheelDamaged(Health)
 VehicleRandomVehicleAttached(Trailers, TowTrucks, Trucks) -- important, but implement attachments first
 
-
 List of serverside events
 
-
-
 List of serpent events
-
 
 -- Resources
 onResourceStart

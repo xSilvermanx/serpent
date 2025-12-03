@@ -199,6 +199,10 @@ AddEventHandler('ssv:nat:res:TaskVehicleDriveToCoord:Continue', function(SID, Ob
     -- check for passengers and update their position too!
 
     if distancecheckbool then
-        ssv_PedList[SID].CurrPathfindingData['CurrentNode'] = ssv_PedList[SID].CurrPathfindingData['CurrentNode']-1
+        if isOverride then
+            ssv_PedList[SID].OverridePathfindingData['CurrentNode'] = ssv_PedList[SID].OverridePathfindingData['CurrentNode']-1
+        else
+            ssv_PedList[SID].CurrPathfindingData['CurrentNode'] = ssv_PedList[SID].CurrPathfindingData['CurrentNode']-1
+        end
     end
 end)
